@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  VOTER
+}
+
+model User {
+  id          String        @id @default(cuid())
+  nim         String        @unique
+  password    String        // bcrypt hashed
+  name        String
+  role        Role          @default(VOTER)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  voterAccess VoterAccess[]
+  auditLogs   AuditLog[]   @relation("Actor")
+
+  @@map("users")
+}
+
+model Organization {
+  id          String        @id @default(cuid())
+  name        String        @unique
+  createdAt   DateTime      @default(now())
+  candidates  Candidate[]
+  voterAccess VoterAccess[]
+  votes       Vote[]
+
+  @@map("organizations")
+}
+
+model Candidate {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  nameKetua      String
+  nameWakil      String
+  vision         String       @db.Text
+  mission        String       @db.Text
+  photo          String       // URL to stored image
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  votes          Vote[]
+
+  @@map("candidates")
+}
+
+model VoterAccess {
+  id             String       @id @default(cuid())
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now())
+
+  @@unique([userId, organizationId])
+  @@map("voter_access")
+}
+
+model Vote {
+  id                 String       @id @default(cuid())
+  organizationId     String
+  organization       Organization @relation(fields: [organizationId], references: [id])
+  candidateId        String
+  candidate          Candidate    @relation(fields: [candidateId], references: [id])
+  encryptedVoterHash String
+  createdAt          DateTime     @default(now())
+
+  @@unique([encryptedVoterHash])
+  @@index([organizationId])
+  @@index([candidateId])
+  @@map("votes")
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String
+  actor      User     @relation("Actor", fields: [actorId], references: [id])
+  actionType String
+  details    String   @db.Text
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  @@index([actionType])
+  @@index([actorId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
