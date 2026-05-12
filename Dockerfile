@@ -14,8 +14,12 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# DATABASE_URL is required by prisma.config.ts during build
+ARG DATABASE_URL
+ENV DATABASE_URL=${DATABASE_URL}
+
 # Generate Prisma Client
-RUN npx prisma generate --schema=prisma/schema.prisma
+RUN npx prisma generate
 
 # Build Next.js
 RUN npm run build
@@ -36,8 +40,9 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copy prisma schema and migrations for migrate deploy
+# Copy prisma schema, config and migrations for migrate deploy at runtime
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+COPY --from=builder --chown=nextjs:nodejs /app/prisma.config.ts ./prisma.config.ts
 
 # Copy full node_modules so prisma CLI has all its .wasm and binary files
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
