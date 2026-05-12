@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
 
 interface NavLink {
   href: string;
@@ -62,9 +63,14 @@ export function AdminSideNav({ links, userName }: AdminSideNavProps) {
         })}
       </nav>
 
-      <button className="mt-auto flex min-h-[60px] items-center justify-center gap-3 rounded-full border-2 border-[var(--shadow-hard)] bg-[var(--primary)] px-5 text-base font-bold text-white shadow-[5px_5px_0_var(--shadow-hard)]">
-        <span className="geo-mini geo-mini-plus" aria-hidden="true" />
-        Export Data
+      <button
+        onClick={() => signOut({ callbackUrl: '/login' })}
+        className="mt-auto flex min-h-[60px] items-center justify-center gap-3 rounded-full border-2 border-[var(--shadow-hard)] bg-red-600 px-5 text-base font-bold text-white shadow-[5px_5px_0_var(--shadow-hard)] hover:bg-red-700 transition-colors"
+      >
+        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
+        Logout
       </button>
     </aside>
   );

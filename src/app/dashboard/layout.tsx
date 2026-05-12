@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { authOptions } from '@/lib/auth';
 import LogoutButton from '@/components/LogoutButton';
+import { DashboardNav } from '@/components/DashboardNav';
 
 export default async function DashboardLayout({
   children,
@@ -22,11 +23,7 @@ export default async function DashboardLayout({
           <Link href="/dashboard" className="brand-text">
             Poltekkes Jakarta 1
           </Link>
-          <nav className="hidden items-center gap-10 md:flex" aria-label="Navigasi pemilih">
-            <Link href="/dashboard" className="nav-link nav-link-active">Beranda</Link>
-            <Link href="/#panduan" className="nav-link">Panduan</Link>
-            <Link href="/#statistik" className="nav-link">Statistik</Link>
-          </nav>
+          <DashboardNav />
           <div className="flex items-center gap-3">
             <span className="grid h-10 w-10 place-items-center rounded-lg border-2 border-[var(--shadow-hard)] bg-[var(--secondary)] text-sm font-black text-[var(--primary-dark)] shadow-[3px_3px_0_var(--shadow-hard)]">
               {session.user.name?.slice(0, 2).toUpperCase() ?? 'JD'}
