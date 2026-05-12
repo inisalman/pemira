@@ -18,7 +18,7 @@ COPY . .
 ARG DATABASE_URL
 ENV DATABASE_URL=${DATABASE_URL}
 
-# Generate Prisma Client (skip config file to avoid dotenv issues at build time)
+# Generate Prisma Client
 RUN npx prisma generate --schema=prisma/schema.prisma
 
 # Build Next.js
@@ -40,15 +40,14 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copy prisma files for migrations
+# Copy prisma schema and migrations for migrate deploy
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/prisma ./node_modules/prisma
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
+
+# Copy full node_modules so prisma CLI has all its .wasm and binary files
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
 
 # Copy start script
-COPY --from=builder --chown=nextjs:nodejs /app/start.sh ./start.sh
+COPY --chown=nextjs:nodejs start.sh ./start.sh
 RUN chmod +x ./start.sh
 
 USER nextjs
