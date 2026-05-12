@@ -37,6 +37,7 @@ export default async function DashboardPage() {
       return {
         id: va.organization.id,
         name: va.organization.name,
+        logo: va.organization.logo,
         hasVoted: !!existingVote,
       };
     })
@@ -70,7 +71,7 @@ export default async function DashboardPage() {
           {organizationsWithStatus.map((org) => (
             <OrgCard
               key={org.id}
-              organization={{ id: org.id, name: org.name }}
+              organization={{ id: org.id, name: org.name, logo: org.logo }}
               hasVoted={org.hasVoted}
             />
           ))}

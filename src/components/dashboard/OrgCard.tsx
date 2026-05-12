@@ -1,22 +1,19 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 interface OrgCardProps {
   organization: {
     id: string;
     name: string;
+    logo?: string;
   };
   hasVoted: boolean;
 }
 
 export function OrgCard({ organization, hasVoted }: OrgCardProps) {
   const router = useRouter();
-  const thumbClass = organization.name.toLowerCase().includes('mpm')
-    ? 'election-thumb-alt'
-    : organization.name.toLowerCase().includes('himpunan')
-      ? 'election-thumb-dark'
-      : '';
 
   function handleClick() {
     if (!hasVoted) {
@@ -30,7 +27,21 @@ export function OrgCard({ organization, hasVoted }: OrgCardProps) {
         hasVoted ? 'border-[var(--secondary)]' : 'hover:-translate-y-1 hover:border-[var(--primary)]'
       }`}
     >
-      <div className={`election-thumb ${thumbClass}`} />
+      <div className="relative h-40 w-full bg-gradient-to-br from-[var(--primary)] to-[var(--accent-purple)]">
+        {organization.logo ? (
+          <Image
+            src={organization.logo}
+            alt={`Logo ${organization.name}`}
+            fill
+            className="object-contain p-4"
+            unoptimized
+          />
+        ) : (
+          <div className="grid h-full w-full place-items-center text-5xl font-black text-white/30">
+            {organization.name.slice(0, 3).toUpperCase()}
+          </div>
+        )}
+      </div>
       <div className="p-7">
         <div className="flex items-start justify-between gap-4">
         <h3 className="text-3xl font-black leading-tight text-[var(--ink)]">

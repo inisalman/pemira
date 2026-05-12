@@ -24,6 +24,7 @@ export default async function AdminLayout({
   const navLinks = [
     { href: '/admin', label: 'Dashboard', icon: 'dashboard' },
     { href: '/admin/users', label: 'Manajemen User', icon: 'users' },
+    { href: '/admin/organizations', label: 'Organisasi', icon: 'results' },
     { href: '/admin/candidates', label: 'Kandidat', icon: 'candidates' },
     { href: '/admin/results', label: 'Hasil Suara', icon: 'results' },
     { href: '/admin/audit', label: 'Pengaturan', icon: 'settings' },

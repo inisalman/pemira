@@ -29,6 +29,7 @@ model User {
 model Organization {
   id          String        @id @default(cuid())
   name        String        @unique
+  logo        String        @default("")
   createdAt   DateTime      @default(now())
   candidates  Candidate[]
   voterAccess VoterAccess[]
