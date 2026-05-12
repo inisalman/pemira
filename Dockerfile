@@ -14,8 +14,8 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Generate Prisma Client
-RUN npx prisma generate
+# Generate Prisma Client (skip config file to avoid dotenv issues at build time)
+RUN npx prisma generate --schema=prisma/schema.prisma
 
 # Build Next.js
 RUN npm run build
