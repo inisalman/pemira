@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 import type { AuditEntry, AuditFilterParams, PaginationParams, PaginatedResult } from '@/types';
 import type { AuditLog } from '@prisma/client';
 
@@ -11,7 +12,7 @@ export async function log(entry: AuditEntry): Promise<void> {
       actorId: entry.actorId,
       actionType: entry.actionType,
       details: entry.details,
-      metadata: entry.metadata ?? undefined,
+      metadata: entry.metadata ? (entry.metadata as Prisma.InputJsonValue) : undefined,
     },
   });
 }
