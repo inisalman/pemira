@@ -34,7 +34,10 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Copy public assets
-COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+
+# Ensure uploads directory exists and is writable
+RUN mkdir -p ./public/uploads/candidates && chown -R nextjs:nodejs ./public/uploads
 
 # Copy standalone output
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
