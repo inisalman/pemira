@@ -14,10 +14,6 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Make DATABASE_URL available during build (needed by prisma.config.ts)
-ARG DATABASE_URL
-ENV DATABASE_URL=${DATABASE_URL}
-
 # Generate Prisma Client
 RUN npx prisma generate --schema=prisma/schema.prisma
 
