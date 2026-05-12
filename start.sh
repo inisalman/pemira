@@ -3,8 +3,11 @@ set -e
 
 echo "Running database migrations..."
 
-# Resolve any failed migrations first, then deploy
+# Resolve any previously failed migrations
 node_modules/.bin/prisma migrate resolve --rolled-back 20260510120000_add_candidate_photo_wakil 2>/dev/null || true
+node_modules/.bin/prisma migrate resolve --rolled-back 20260512090000_add_user_department 2>/dev/null || true
+
+# Apply all pending migrations
 node_modules/.bin/prisma migrate deploy
 
 echo "Starting Next.js server..."
