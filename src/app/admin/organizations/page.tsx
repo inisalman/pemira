@@ -1,17 +1,17 @@
 import { prisma } from '@/lib/prisma';
+import { getSiteSetting } from '@/lib/site-settings';
 import { OrganizationManagementClient } from './OrganizationManagementClient';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminOrganizationsPage() {
-  const organizations = await prisma.organization.findMany({
-    orderBy: { name: 'asc' },
-    select: {
-      id: true,
-      name: true,
-      logo: true,
-    },
-  });
+  const [organizations, siteLogo] = await Promise.all([
+    prisma.organization.findMany({
+      orderBy: { name: 'asc' },
+      select: { id: true, name: true, logo: true },
+    }),
+    getSiteSetting('site_logo'),
+  ]);
 
   return (
     <div>
@@ -21,11 +21,11 @@ export default async function AdminOrganizationsPage() {
           Manajemen Organisasi
         </h2>
         <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
-          Kelola organisasi dan upload logo
+          Kelola organisasi, upload logo organisasi, dan logo utama Pemira
         </p>
       </div>
 
-      <OrganizationManagementClient organizations={organizations} />
+      <OrganizationManagementClient organizations={organizations} siteLogo={siteLogo} />
     </div>
   );
 }

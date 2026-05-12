@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { getSiteSetting } from "@/lib/site-settings";
+import { BrandLogo } from "@/components/BrandLogo";
 
 export const dynamic = "force-dynamic";
 
@@ -35,6 +37,7 @@ function getElectionStatus(org: {
 
 export default async function LandingPage() {
   const organizations = await getOrganizations();
+  const siteLogo = await getSiteSetting('site_logo');
   const totalVotes = organizations.reduce((sum, org) => sum + org.voteCount, 0);
   const totalPemilih = 4520;
   const votePercent =
@@ -44,9 +47,7 @@ export default async function LandingPage() {
     <div className="app-shell flex flex-col">
       <header className="top-nav">
         <div className="page-container flex h-16 items-center justify-between">
-          <Link href="/" className="brand-text">
-            Poltekkes Jakarta 1
-          </Link>
+          <BrandLogo href="/" logoUrl={siteLogo} />
           <div aria-hidden="true" className="hidden md:block" />
           <Link href="/login" className="btn-primary min-w-[92px]">
             Login

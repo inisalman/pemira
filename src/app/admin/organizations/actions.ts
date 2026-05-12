@@ -80,3 +80,44 @@ export async function createOrganization(name: string) {
     return { success: false, error: 'Gagal membuat organisasi. Nama mungkin sudah digunakan.' };
   }
 }
+
+export async function updateSiteLogo(logoData: string) {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user.role !== 'ADMIN') {
+    return { success: false, error: 'Unauthorized' };
+  }
+
+  try {
+    const logoDir = path.join(process.cwd(), 'public', 'uploads', 'site');
+    const match = logoData.match(/^data:(image\/(jpeg|png|webp));base64,(.+)$/);
+    if (!match) {
+      return { success: false, error: 'Format logo tidak valid. Gunakan JPG, PNG, atau WebP.' };
+    }
+
+    const mimeType = match[1];
+    const base64Data = match[3];
+    const buffer = Buffer.from(base64Data, 'base64');
+
+    if (buffer.length > MAX_LOGO_SIZE) {
+      return { success: false, error: 'Logo terlalu besar. Maksimal 2MB.' };
+    }
+
+    await mkdir(logoDir, { recursive: true });
+
+    const extension = LOGO_MIME_EXTENSIONS[mimeType];
+    const filename = `pemira-logo-${randomUUID()}.${extension}`;
+    await writeFile(path.join(logoDir, filename), buffer);
+
+    const { setSiteSetting } = await import('@/lib/site-settings');
+    await setSiteSetting('site_logo', `/uploads/site/${filename}`);
+
+    revalidatePath('/');
+    revalidatePath('/login');
+    revalidatePath('/dashboard');
+    revalidatePath('/admin');
+    return { success: true };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Gagal mengupload logo.';
+    return { success: false, error: message };
+  }
+}

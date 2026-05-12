@@ -38,6 +38,14 @@ model Organization {
   @@map("organizations")
 }
 
+model SiteSetting {
+  key       String   @id
+  value     String   @db.Text
+  updatedAt DateTime @updatedAt
+
+  @@map("site_settings")
+}
+
 model Candidate {
   id             String       @id @default(cuid())
   organizationId String

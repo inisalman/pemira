@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import Image from 'next/image';
-import { updateOrganizationLogo, createOrganization } from './actions';
+import { updateOrganizationLogo, createOrganization, updateSiteLogo } from './actions';
 
 interface Organization {
   id: string;
@@ -12,37 +12,55 @@ interface Organization {
 
 interface OrganizationManagementClientProps {
   organizations: Organization[];
+  siteLogo: string;
 }
 
-export function OrganizationManagementClient({ organizations }: OrganizationManagementClientProps) {
+export function OrganizationManagementClient({ organizations, siteLogo }: OrganizationManagementClientProps) {
   const [uploading, setUploading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [newOrgName, setNewOrgName] = useState('');
   const [creating, setCreating] = useState(false);
+  const [currentSiteLogo, setCurrentSiteLogo] = useState(siteLogo);
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+  const siteLogoInputRef = useRef<HTMLInputElement | null>(null);
 
-  async function handleLogoUpload(orgId: string, file: File) {
+  function showFeedback(type: 'success' | 'error', msg: string) {
     setError(null);
     setSuccess(null);
+    if (type === 'success') setSuccess(msg);
+    else setError(msg);
+  }
+
+  async function handleLogoUpload(orgId: string, file: File) {
+    showFeedback('success', '');
     setUploading(orgId);
-
     try {
-      const reader = new FileReader();
-      const base64 = await new Promise<string>((resolve, reject) => {
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-
+      const base64 = await fileToBase64(file);
       const result = await updateOrganizationLogo(orgId, base64);
+      if (result.success) showFeedback('success', 'Logo organisasi berhasil diupload!');
+      else showFeedback('error', result.error ?? 'Gagal mengupload logo.');
+    } catch {
+      showFeedback('error', 'Terjadi kesalahan saat mengupload logo.');
+    } finally {
+      setUploading(null);
+    }
+  }
+
+  async function handleSiteLogoUpload(file: File) {
+    showFeedback('success', '');
+    setUploading('site');
+    try {
+      const base64 = await fileToBase64(file);
+      const result = await updateSiteLogo(base64);
       if (result.success) {
-        setSuccess('Logo berhasil diupload!');
+        setCurrentSiteLogo(base64); // preview immediately
+        showFeedback('success', 'Logo Pemira berhasil diupload!');
       } else {
-        setError(result.error ?? 'Gagal mengupload logo.');
+        showFeedback('error', result.error ?? 'Gagal mengupload logo.');
       }
     } catch {
-      setError('Terjadi kesalahan saat mengupload logo.');
+      showFeedback('error', 'Terjadi kesalahan saat mengupload logo.');
     } finally {
       setUploading(null);
     }
@@ -51,17 +69,14 @@ export function OrganizationManagementClient({ organizations }: OrganizationMana
   async function handleCreateOrg(e: React.FormEvent) {
     e.preventDefault();
     if (!newOrgName.trim()) return;
-
     setCreating(true);
-    setError(null);
-    setSuccess(null);
-
+    showFeedback('success', '');
     const result = await createOrganization(newOrgName.trim());
     if (result.success) {
-      setSuccess('Organisasi berhasil dibuat!');
+      showFeedback('success', 'Organisasi berhasil dibuat!');
       setNewOrgName('');
     } else {
-      setError(result.error ?? 'Gagal membuat organisasi.');
+      showFeedback('error', result.error ?? 'Gagal membuat organisasi.');
     }
     setCreating(false);
   }
@@ -78,6 +93,53 @@ export function OrganizationManagementClient({ organizations }: OrganizationMana
           {success}
         </div>
       )}
+
+      {/* Site logo upload */}
+      <div className="panel mb-8 p-6">
+        <h3 className="text-lg font-extrabold text-[var(--primary)]">Logo Utama Pemira</h3>
+        <p className="mt-1 text-sm text-[var(--muted)]">
+          Logo ini akan tampil di navbar, halaman login, dan dashboard pemilih.
+        </p>
+        <div className="mt-5 flex items-center gap-6">
+          <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border-2 border-[var(--border)] bg-slate-100">
+            {currentSiteLogo ? (
+              <Image
+                src={currentSiteLogo}
+                alt="Logo Pemira"
+                fill
+                className="object-contain p-2"
+                unoptimized
+              />
+            ) : (
+              <div className="grid h-full w-full place-items-center text-xs font-black text-[var(--muted)]">
+                No Logo
+              </div>
+            )}
+          </div>
+          <div>
+            <input
+              ref={siteLogoInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleSiteLogoUpload(file);
+                e.target.value = '';
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => siteLogoInputRef.current?.click()}
+              disabled={uploading === 'site'}
+              className="rounded-lg border-2 border-[var(--shadow-hard)] bg-[var(--primary)] px-6 py-3 text-sm font-bold text-white shadow-[3px_3px_0_var(--shadow-hard)] hover:bg-[var(--primary-dark)] disabled:opacity-50"
+            >
+              {uploading === 'site' ? 'Mengupload...' : currentSiteLogo ? 'Ganti Logo Pemira' : 'Upload Logo Pemira'}
+            </button>
+            <p className="mt-2 text-xs text-[var(--muted)]">JPG, PNG, atau WebP. Maks 2MB.</p>
+          </div>
+        </div>
+      </div>
 
       {/* Create new organization */}
       <div className="panel mb-8 p-6">
@@ -102,19 +164,14 @@ export function OrganizationManagementClient({ organizations }: OrganizationMana
       </div>
 
       {/* Organization list */}
+      <h3 className="mb-4 text-lg font-extrabold text-[var(--primary)]">Logo Organisasi</h3>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {organizations.map((org) => (
           <div key={org.id} className="panel p-5">
             <div className="flex items-center gap-4">
               <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border-2 border-[var(--border)] bg-slate-100">
                 {org.logo ? (
-                  <Image
-                    src={org.logo}
-                    alt={`Logo ${org.name}`}
-                    fill
-                    className="object-cover"
-                    unoptimized
-                  />
+                  <Image src={org.logo} alt={`Logo ${org.name}`} fill className="object-cover" unoptimized />
                 ) : (
                   <div className="grid h-full w-full place-items-center text-2xl font-black text-[var(--muted)]">
                     {org.name.slice(0, 2).toUpperCase()}
@@ -140,7 +197,6 @@ export function OrganizationManagementClient({ organizations }: OrganizationMana
                 e.target.value = '';
               }}
             />
-
             <button
               type="button"
               onClick={() => fileInputRefs.current[org.id]?.click()}
@@ -160,4 +216,13 @@ export function OrganizationManagementClient({ organizations }: OrganizationMana
       )}
     </div>
   );
+}
+
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }

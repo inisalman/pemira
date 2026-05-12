@@ -1,7 +1,8 @@
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
-import Link from 'next/link';
 import { authOptions } from '@/lib/auth';
+import { getSiteSetting } from '@/lib/site-settings';
+import { BrandLogo } from '@/components/BrandLogo';
 import LogoutButton from '@/components/LogoutButton';
 import { DashboardNav } from '@/components/DashboardNav';
 
@@ -16,13 +17,13 @@ export default async function DashboardLayout({
     redirect('/login');
   }
 
+  const siteLogo = await getSiteSetting('site_logo');
+
   return (
     <div className="app-shell">
       <header className="top-nav">
         <div className="page-container flex h-20 items-center justify-between">
-          <Link href="/dashboard" className="brand-text">
-            Poltekkes Jakarta 1
-          </Link>
+          <BrandLogo href="/dashboard" logoUrl={siteLogo} />
           <DashboardNav />
           <div className="flex items-center gap-3">
             <span className="grid h-10 w-10 place-items-center rounded-lg border-2 border-[var(--shadow-hard)] bg-[var(--secondary)] text-sm font-black text-[var(--primary-dark)] shadow-[3px_3px_0_var(--shadow-hard)]">

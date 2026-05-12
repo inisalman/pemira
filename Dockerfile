@@ -37,7 +37,7 @@ RUN adduser --system --uid 1001 nextjs
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
 # Ensure uploads directory exists and is writable
-RUN mkdir -p ./public/uploads/candidates ./public/uploads/organizations && chown -R nextjs:nodejs ./public/uploads
+RUN mkdir -p ./public/uploads/candidates ./public/uploads/organizations ./public/uploads/site && chown -R nextjs:nodejs ./public/uploads
 
 # Copy standalone output
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
