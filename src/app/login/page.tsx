@@ -39,16 +39,13 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="app-shell flex min-h-screen flex-col">
-      <header className="top-nav">
+    <div className="app-shell flex min-h-screen flex-col pt-16">
+      <header className="top-nav public-header">
         <div className="page-container flex h-16 items-center justify-between">
           <Link href="/" className="brand-text">
-            E-VOTE POLTEKKES JKT1
+            Poltekkes Jakarta 1
           </Link>
-          <nav className="hidden items-center gap-8 md:flex" aria-label="Navigasi utama">
-            <Link href="/" className="nav-link">Beranda</Link>
-            <Link href="/#panduan" className="nav-link">Panduan</Link>
-          </nav>
+          <div aria-hidden="true" className="hidden md:block" />
         </div>
       </header>
 
@@ -59,12 +56,13 @@ export default function LoginPage() {
           noValidate
           aria-label="Form login"
         >
-          <div className="absolute left-0 top-0 h-1 w-32 bg-[var(--secondary)]" />
+          <div className="absolute -right-12 -top-12 h-36 w-36 rounded-full bg-[var(--accent)]/60" />
+          <div className="absolute -left-10 bottom-10 h-28 w-28 rounded-full bg-[var(--accent-purple)]/20" />
           <div className="text-center">
-            <div className="mx-auto grid h-20 w-20 place-items-center rounded-2xl bg-[var(--secondary)] text-4xl text-white shadow-lg shadow-emerald-200">
-              ♢
+            <div className="mx-auto grid h-20 w-20 place-items-center rounded-lg border-2 border-[var(--shadow-hard)] bg-[var(--secondary)] text-2xl font-black text-[var(--primary-dark)] shadow-[5px_5px_0_var(--shadow-hard)]">
+              01
             </div>
-            <h1 className="mt-7 text-4xl font-black tracking-[-0.05em] text-[var(--primary)]">
+            <h1 className="mt-7 text-4xl font-black text-[var(--primary)]">
               Masuk Sekarang
             </h1>
             <p className="mt-2 text-lg text-[var(--muted)]">
@@ -84,11 +82,8 @@ export default function LoginPage() {
 
           <div className="space-y-4">
             <div>
-              <label
-                htmlFor="nim"
-                className="block text-sm font-bold tracking-wide text-[var(--ink)]"
-              >
-                ♙&nbsp;&nbsp;NIM atau Username
+              <label htmlFor="nim" className="block text-sm font-bold text-[var(--ink)]">
+                NIM atau Username
               </label>
               <input
                 id="nim"
@@ -107,9 +102,9 @@ export default function LoginPage() {
             <div>
               <label
                 htmlFor="password"
-                className="flex items-center justify-between text-sm font-bold tracking-wide text-[var(--ink)]"
+                className="flex items-center justify-between text-sm font-bold text-[var(--ink)]"
               >
-                <span>▣&nbsp;&nbsp;Password</span>
+                <span>Password</span>
                 <span className="text-xs font-medium text-[var(--primary)]">Lupa Password?</span>
               </label>
               <div className="relative mt-2">
@@ -125,7 +120,7 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   disabled={isLoading}
                 />
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xl text-[var(--muted)]">◉</span>
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full border-2 border-[var(--border)] px-2 py-0.5 text-xs font-black text-[var(--muted)]">••</span>
               </div>
             </div>
           </div>
@@ -135,29 +130,27 @@ export default function LoginPage() {
             disabled={isLoading}
             className="btn-primary w-full disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {isLoading ? 'Memproses...' : 'Masuk Sekarang  ↪'}
+            {isLoading ? 'Memproses...' : 'Masuk Sekarang'}
           </button>
 
-          <div className="border-t border-[var(--border)] pt-7">
-            <div className="rounded-lg border border-sky-200 bg-sky-50 px-5 py-4 text-sm font-medium text-sky-800">
-              ⓘ &nbsp; Gunakan akun Portal Mahasiswa aktif Anda.
+          <div className="border-t-2 border-[var(--border)] pt-7">
+            <div className="rounded-lg border-2 border-[var(--shadow-hard)] bg-[var(--accent-blue)] px-5 py-4 text-sm font-medium text-[var(--ink)]">
+              Gunakan akun Portal Mahasiswa aktif Anda.
             </div>
             <p className="mt-7 text-center text-base font-bold text-[var(--ink)]">
-              ☎ &nbsp; Butuh bantuan? Hubungi Admin
+              Butuh bantuan? Hubungi Admin
             </p>
           </div>
         </form>
       </main>
 
-      <footer className="bg-[var(--primary)] text-white">
+      <footer className="border-t-2 border-[var(--border)] bg-[var(--accent-blue)] text-[var(--ink)]">
         <div className="page-container flex flex-col gap-4 py-8 text-sm md:flex-row md:items-center md:justify-between">
-          <p className="font-bold">
-            © 2024 Poltekkes Kemenkes Jakarta 1. Komisi Pemilihan Raya.
+          <p className="font-bold text-[var(--primary)]">
+            PEMIRA 2026
           </p>
-          <div className="flex gap-8 text-emerald-100">
-            <span>Kebijakan Privasi</span>
-            <span>Kontak Kami</span>
-            <span>Peta Situs</span>
+          <div className="flex gap-8 font-bold">
+            <Link href="/login">Login</Link>
           </div>
         </div>
       </footer>

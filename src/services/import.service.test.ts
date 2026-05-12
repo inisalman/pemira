@@ -27,7 +27,8 @@ vi.mock('@/lib/prisma', () => ({
   prisma: mockPrisma,
 }));
 
-import { parseCsv, bulkImport, importFromCsv } from './import.service';
+import { readFileSync } from 'fs';
+import { parseCsv, parseXlsx, bulkImport, importFromCsv } from './import.service';
 
 describe('Import Service', () => {
   beforeEach(() => {
@@ -46,15 +47,35 @@ describe('Import Service', () => {
       expect(rows[0]).toEqual({
         nim: '12345',
         name: 'John Doe',
+        department: '',
         password: 'pass123',
+        role: 'VOTER',
         organizations: 'BEM',
       });
       expect(rows[1]).toEqual({
         nim: '67890',
         name: 'Jane Doe',
+        department: '',
         password: 'pass456',
+        role: 'VOTER',
         organizations: 'MPM',
       });
+    });
+
+    it('should parse role column when present', () => {
+      const csv = 'nim,name,password,role,organizations\nadmin2,Admin Dua,secret123,ADMIN,';
+      const rows = parseCsv(csv);
+
+      expect(rows).toEqual([
+        {
+          nim: 'admin2',
+          name: 'Admin Dua',
+          department: '',
+          password: 'secret123',
+          role: 'ADMIN',
+          organizations: '',
+        },
+      ]);
     });
 
     it('should handle quoted fields with commas', () => {
@@ -98,6 +119,31 @@ describe('Import Service', () => {
     });
   });
 
+  describe('parseXlsx', () => {
+    it('should parse the Excel import template', () => {
+      const file = readFileSync('public/templates/user-import-template.xlsx');
+      const rows = parseXlsx(file);
+
+      expect(rows).toHaveLength(4);
+      expect(rows[0]).toEqual({
+        nim: '240001',
+        name: 'Contoh Mahasiswa',
+        department: 'Keperawatan',
+        password: 'ubah-password-ini',
+        role: 'VOTER',
+        organizations: 'BEM',
+      });
+      expect(rows[3]).toEqual({
+        nim: 'admin2',
+        name: 'Contoh Admin',
+        department: 'Manajemen',
+        password: 'ubah-password-ini',
+        role: 'ADMIN',
+        organizations: '',
+      });
+    });
+  });
+
   describe('bulkImport', () => {
     it('should successfully import valid rows', async () => {
       const rows = [
@@ -114,6 +160,29 @@ describe('Import Service', () => {
       expect(result.totalRows).toBe(1);
       expect(result.successCount).toBe(1);
       expect(result.failedRows).toHaveLength(0);
+    });
+
+    it('should import admin rows without organization access', async () => {
+      const rows = [
+        { nim: 'admin2', name: 'Admin Dua', password: 'secret123', role: 'ADMIN' as const, organizations: '' },
+      ];
+
+      mockPrisma.user.findUnique.mockResolvedValue(null);
+      mockPrisma.user.create.mockResolvedValue({ id: 'user-1', nim: 'admin2' });
+
+      const result = await bulkImport(rows);
+
+      expect(result.successCount).toBe(1);
+      expect(mockPrisma.voterAccess.createMany).not.toHaveBeenCalled();
+      expect(mockPrisma.user.create).toHaveBeenCalledWith({
+        data: {
+          nim: 'admin2',
+          name: 'Admin Dua',
+          department: '',
+          password: 'hashed_secret123',
+          role: 'ADMIN',
+        },
+      });
     });
 
     it('should reject rows with missing required fields', async () => {

@@ -22,6 +22,7 @@ export interface OrgVoteCount {
 export interface CreateUserInput {
   nim: string;
   name: string;
+  department?: string;
   password: string;
   role: 'ADMIN' | 'VOTER';
   organizationIds?: string[];
@@ -30,6 +31,7 @@ export interface CreateUserInput {
 export interface UpdateUserInput {
   nim?: string;
   name?: string;
+  department?: string;
   password?: string;
   role?: 'ADMIN' | 'VOTER';
   organizationIds?: string[];
@@ -55,6 +57,7 @@ export interface CreateCandidateInput {
   vision: string;
   mission: string;
   photo: string;
+  photoWakil?: string;
 }
 
 export interface UpdateCandidateInput {
@@ -64,6 +67,7 @@ export interface UpdateCandidateInput {
   vision?: string;
   mission?: string;
   photo?: string;
+  photoWakil?: string;
 }
 
 // Audit Service types
@@ -77,6 +81,7 @@ export type AuditActionType =
   | 'CANDIDATE_CREATED'
   | 'CANDIDATE_DELETED'
   | 'CANDIDATE_UPDATED'
+  | 'VOTES_RESET'
   | 'BULK_IMPORT';
 
 export interface AuditEntry {

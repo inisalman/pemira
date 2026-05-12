@@ -6,6 +6,7 @@ import Link from 'next/link';
 interface NavLink {
   href: string;
   label: string;
+  icon: string;
 }
 
 interface AdminMobileNavProps {
@@ -26,13 +27,9 @@ export function AdminMobileNav({ links }: AdminMobileNavProps) {
         className="btn-secondary min-w-[44px] p-2"
       >
         {isOpen ? (
-          <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
+          <span className="geo-close" aria-hidden="true" />
         ) : (
-          <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
+          <span className="geo-menu" aria-hidden="true" />
         )}
       </button>
 
@@ -48,8 +45,12 @@ export function AdminMobileNav({ links }: AdminMobileNavProps) {
                 <Link
                   href={link.href}
                   onClick={() => setIsOpen(false)}
-                  className="flex min-h-[44px] items-center px-2 py-3 text-base font-bold text-[var(--muted)] hover:text-[var(--primary)] focus:outline-none"
+                  className="flex min-h-[44px] items-center gap-3 px-2 py-3 text-base font-bold text-[var(--muted)] hover:text-[var(--primary)] focus:outline-none"
                 >
+                  <span
+                    className={`geo-icon geo-icon-${link.icon} h-8 w-8 shadow-[2px_2px_0_var(--shadow-hard)]`}
+                    aria-hidden="true"
+                  />
                   {link.label}
                 </Link>
               </li>

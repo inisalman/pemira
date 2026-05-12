@@ -16,7 +16,7 @@ export default function BulkImportForm() {
 
     const file = fileInputRef.current?.files?.[0];
     if (!file) {
-      setError('Pilih file CSV terlebih dahulu');
+      setError('Pilih file CSV atau Excel terlebih dahulu');
       return;
     }
 
@@ -64,8 +64,18 @@ export default function BulkImportForm() {
         Import User Bulk
       </h3>
       <p className="mb-4 text-sm text-[var(--muted)]">
-        Upload file CSV dengan kolom: nim, name, password, organizations
+        Upload file CSV atau Excel (.xlsx) dengan kolom: nim, name, department, password, role, organizations.
+        Role boleh ADMIN atau VOTER. Untuk VOTER, isi organizations dengan nama organisasi,
+        misalnya BEM atau &quot;BEM,MPM&quot;.
       </p>
+      <div className="mb-4 flex flex-wrap gap-2 text-sm">
+        <a className="btn-secondary" href="/templates/user-import-template.csv" download>
+          Download Template CSV
+        </a>
+        <a className="btn-secondary" href="/templates/user-import-template.xlsx" download>
+          Download Template Excel
+        </a>
+      </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -73,13 +83,13 @@ export default function BulkImportForm() {
             htmlFor="csv-file"
             className="block text-sm font-bold text-[var(--primary)]"
           >
-            File CSV
+            File CSV / Excel
           </label>
           <input
             id="csv-file"
             ref={fileInputRef}
             type="file"
-            accept=".csv"
+            accept=".csv,.xlsx"
             disabled={state === 'uploading'}
             className="mt-1 block w-full text-sm text-[var(--muted)] file:mr-4 file:rounded-lg file:border-0 file:bg-[var(--surface-muted)] file:px-4 file:py-2 file:text-sm file:font-bold file:text-[var(--primary)] hover:file:bg-emerald-50 disabled:opacity-50"
           />

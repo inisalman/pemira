@@ -1,0 +1,1 @@
+ALTER TABLE "candidates" ADD COLUMN "photoWakil" TEXT NOT NULL DEFAULT '';

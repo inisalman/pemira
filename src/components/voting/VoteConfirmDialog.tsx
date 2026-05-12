@@ -6,6 +6,7 @@ interface VoteConfirmDialogProps {
     nameKetua: string;
     nameWakil: string;
     photo: string;
+    photoWakil: string;
   };
   orgName: string;
   isOpen: boolean;
@@ -53,7 +54,8 @@ export function VoteConfirmDialog({
           </p>
 
           <div className="mt-3 flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] p-3">
-            <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg border border-[var(--border)]">
+            <div className="flex flex-shrink-0 -space-x-2">
+            <div className="h-12 w-12 overflow-hidden rounded-lg border border-[var(--border)] bg-white">
               {candidate.photo ? (
                 <img
                   src={candidate.photo}
@@ -72,6 +74,20 @@ export function VoteConfirmDialog({
                   </svg>
                 </div>
               )}
+            </div>
+            <div className="h-12 w-12 overflow-hidden rounded-lg border border-[var(--border)] bg-white">
+              {candidate.photoWakil ? (
+                <img
+                  src={candidate.photoWakil}
+                  alt={`Foto ${candidate.nameWakil}`}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-slate-100 text-sm font-black text-[var(--primary)]">
+                  {candidate.nameWakil.slice(0, 1)}
+                </div>
+              )}
+            </div>
             </div>
             <div>
               <p className="font-extrabold text-[var(--primary)]">

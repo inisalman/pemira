@@ -22,11 +22,11 @@ export default async function AdminLayout({
   }
 
   const navLinks = [
-    { href: '/admin', label: 'Dashboard', icon: '▦' },
-    { href: '/admin/users', label: 'Manajemen User', icon: '♙' },
-    { href: '/admin/candidates', label: 'Kandidat', icon: '▣' },
-    { href: '/admin/results', label: 'Hasil Suara', icon: '▤' },
-    { href: '/admin/audit', label: 'Pengaturan', icon: '⚙' },
+    { href: '/admin', label: 'Dashboard', icon: 'dashboard' },
+    { href: '/admin/users', label: 'Manajemen User', icon: 'users' },
+    { href: '/admin/candidates', label: 'Kandidat', icon: 'candidates' },
+    { href: '/admin/results', label: 'Hasil Suara', icon: 'results' },
+    { href: '/admin/audit', label: 'Pengaturan', icon: 'settings' },
   ];
 
   return (
@@ -45,6 +45,10 @@ export default async function AdminLayout({
                   href={link.href}
                   className="inline-flex min-h-[44px] items-center rounded-lg px-3 py-2 text-sm font-bold text-[var(--muted)] hover:bg-[var(--surface-muted)] hover:text-[var(--primary)] focus:outline-none"
                 >
+                  <span
+                    className={`geo-icon geo-icon-${link.icon} h-8 w-8 shadow-[2px_2px_0_var(--shadow-hard)]`}
+                    aria-hidden="true"
+                  />
                   {link.label}
                 </Link>
               ))}

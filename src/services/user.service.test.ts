@@ -79,6 +79,7 @@ describe('User Service', () => {
         data: {
           nim: '12345',
           name: 'Test User',
+          department: '',
           password: 'hashed_password123',
           role: 'VOTER',
         },
@@ -116,6 +117,7 @@ describe('User Service', () => {
         data: {
           nim: '12345',
           name: 'Test User',
+          department: '',
           password: 'hashed_password123',
           role: 'VOTER',
           voterAccess: {

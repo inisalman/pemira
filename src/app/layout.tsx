@@ -10,7 +10,7 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Pemira E-Voting | Poltekkes Kemenkes Jakarta 1",
+  title: "Pemira 2026 | Poltekkes Kemenkes Jakarta 1",
   description:
     "Platform pemungutan suara elektronik untuk pemilihan ketua dan wakil ketua organisasi mahasiswa Poltekkes Kemenkes Jakarta 1.",
 };

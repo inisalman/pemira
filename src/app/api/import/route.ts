@@ -1,11 +1,11 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { importFromCsv } from '@/services/import.service';
+import { importFromCsv, importFromXlsx } from '@/services/import.service';
 import { log as auditLog } from '@/services/audit.service';
 
 /**
  * POST /api/import
- * Accepts multipart form data with a CSV file upload.
+ * Accepts multipart form data with a CSV or XLSX file upload.
  * Requires admin authentication.
  * Returns ImportResult as JSON.
  */
@@ -32,17 +32,16 @@ export async function POST(request: Request) {
 
     // Validate file type
     const fileName = file.name.toLowerCase();
-    if (!fileName.endsWith('.csv')) {
+    const isCsv = fileName.endsWith('.csv');
+    const isXlsx = fileName.endsWith('.xlsx');
+    if (!isCsv && !isXlsx) {
       return Response.json(
-        { error: 'Only CSV files are supported' },
+        { error: 'Only CSV and XLSX files are supported' },
         { status: 400 }
       );
     }
 
-    // Read file content
-    const content = await file.text();
-
-    if (!content.trim()) {
+    if (file.size === 0) {
       return Response.json(
         { error: 'File is empty' },
         { status: 400 }
@@ -50,7 +49,9 @@ export async function POST(request: Request) {
     }
 
     // Process the import
-    const result = await importFromCsv(content);
+    const result = isCsv
+      ? await importFromCsv(await file.text())
+      : await importFromXlsx(Buffer.from(await file.arrayBuffer()));
 
     // Log audit entry for bulk import
     await auditLog({

@@ -87,6 +87,7 @@ describe('createCandidateSchema', () => {
       vision: 'A better campus',
       mission: 'Improve facilities',
       photo: 'https://example.com/photo.jpg',
+      photoWakil: 'https://example.com/photo-wakil.jpg',
     };
     const result = createCandidateSchema.safeParse(input);
     expect(result.success).toBe(true);
@@ -140,6 +141,7 @@ describe('csvRowSchema', () => {
       nim: '12345678',
       name: 'John Doe',
       password: 'secret123',
+      role: 'VOTER',
       organizations: 'BEM,MPM',
     };
     const result = csvRowSchema.safeParse(input);
@@ -155,5 +157,17 @@ describe('csvRowSchema', () => {
     };
     const result = csvRowSchema.safeParse(input);
     expect(result.success).toBe(false);
+  });
+
+  it('allows admin rows without organizations', () => {
+    const input = {
+      nim: 'admin2',
+      name: 'Admin Dua',
+      password: 'secret123',
+      role: 'ADMIN',
+      organizations: '',
+    };
+    const result = csvRowSchema.safeParse(input);
+    expect(result.success).toBe(true);
   });
 });

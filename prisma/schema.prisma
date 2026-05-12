@@ -16,6 +16,7 @@ model User {
   nim         String        @unique
   password    String        // bcrypt hashed
   name        String
+  department  String        @default("")
   role        Role          @default(VOTER)
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
@@ -45,6 +46,7 @@ model Candidate {
   vision         String       @db.Text
   mission        String       @db.Text
   photo          String       // URL to stored image
+  photoWakil     String       @default("") // URL to stored wakil image
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
   votes          Vote[]

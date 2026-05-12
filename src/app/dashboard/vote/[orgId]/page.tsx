@@ -56,19 +56,22 @@ export default async function BilikSuaraPage({
       vision: true,
       mission: true,
       photo: true,
+      photoWakil: true,
     },
   });
 
   return (
     <div>
-      <div className="mb-16 border-t-4 border-[#17c191] pt-12 text-center">
-        <p className="text-sm font-bold uppercase tracking-[0.34em] text-[var(--primary)]">
+      <div className="relative mb-16 overflow-hidden rounded-lg border-2 border-[var(--shadow-hard)] bg-white px-6 py-14 text-center shadow-[8px_8px_0_var(--shadow-hard)]">
+        <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full border-8 border-[var(--accent)]" />
+        <div className="absolute -left-14 bottom-6 h-36 w-36 rounded-full border-8 border-[var(--accent-purple)] opacity-30" />
+        <p className="relative text-sm font-black uppercase text-[var(--primary)]">
           Bilik Suara Digital
         </p>
-        <h2 className="mt-5 text-5xl font-black tracking-[-0.06em] text-[var(--primary)]">
+        <h2 className="relative mx-auto mt-5 max-w-4xl text-5xl font-black leading-tight text-[var(--primary)]">
           Pemilihan Ketua &amp; Wakil Ketua {organization.name}
         </h2>
-        <p className="mx-auto mt-7 max-w-3xl text-lg leading-8 text-[var(--ink)]">
+        <p className="relative mx-auto mt-7 max-w-3xl text-lg leading-8 text-[var(--ink)]">
           Gunakan hak suara Anda dengan bijak. Pilihlah pasangan calon yang
           menurut Anda terbaik untuk membawa perubahan positif bagi institusi.
         </p>

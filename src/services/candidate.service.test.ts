@@ -10,7 +10,9 @@ const mockPrisma = vi.hoisted(() => ({
   },
   vote: {
     count: vi.fn(),
+    deleteMany: vi.fn(),
   },
+  $transaction: vi.fn(),
 }));
 
 // Mock Prisma
@@ -29,6 +31,9 @@ import {
 describe('Candidate Service', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockPrisma.$transaction.mockImplementation(
+      (fn: (tx: typeof mockPrisma) => Promise<unknown>) => fn(mockPrisma)
+    );
   });
 
   describe('createCandidate', () => {
@@ -63,6 +68,7 @@ describe('Candidate Service', () => {
           vision: 'A better campus',
           mission: 'Improve facilities',
           photo: 'https://example.com/photo.jpg',
+          photoWakil: '',
         },
         include: { organization: true },
       });
@@ -245,26 +251,30 @@ describe('Candidate Service', () => {
   });
 
   describe('deleteCandidate', () => {
-    it('should prevent deletion if candidate has received votes', async () => {
-      mockPrisma.vote.count.mockResolvedValue(5);
-
-      const result = await deleteCandidate('cand-1');
-
-      expect(result).toEqual({
-        success: false,
-        error: 'Tidak dapat menghapus kandidat yang sudah menerima suara',
-      });
-      expect(mockPrisma.candidate.delete).not.toHaveBeenCalled();
-    });
-
-    it('should delete candidate when no votes exist', async () => {
-      mockPrisma.vote.count.mockResolvedValue(0);
+    it('should delete votes before deleting a candidate', async () => {
+      mockPrisma.vote.deleteMany.mockResolvedValue({ count: 5 });
       mockPrisma.candidate.delete.mockResolvedValue({ id: 'cand-1' });
 
       const result = await deleteCandidate('cand-1');
 
       expect(result).toEqual({ success: true });
-      expect(mockPrisma.vote.count).toHaveBeenCalledWith({
+      expect(mockPrisma.$transaction).toHaveBeenCalled();
+      expect(mockPrisma.vote.deleteMany).toHaveBeenCalledWith({
+        where: { candidateId: 'cand-1' },
+      });
+      expect(mockPrisma.candidate.delete).toHaveBeenCalledWith({
+        where: { id: 'cand-1' },
+      });
+    });
+
+    it('should delete candidate when no votes exist', async () => {
+      mockPrisma.vote.deleteMany.mockResolvedValue({ count: 0 });
+      mockPrisma.candidate.delete.mockResolvedValue({ id: 'cand-1' });
+
+      const result = await deleteCandidate('cand-1');
+
+      expect(result).toEqual({ success: true });
+      expect(mockPrisma.vote.deleteMany).toHaveBeenCalledWith({
         where: { candidateId: 'cand-1' },
       });
       expect(mockPrisma.candidate.delete).toHaveBeenCalledWith({

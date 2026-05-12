@@ -33,6 +33,7 @@ export default async function AdminCandidatesPage() {
       vision: string;
       mission: string;
       photo: string;
+      photoWakil: string;
       createdAt: string;
       organization: { id: string; name: string };
       _count: { votes: number };
@@ -51,6 +52,7 @@ export default async function AdminCandidatesPage() {
       vision: candidate.vision,
       mission: candidate.mission,
       photo: candidate.photo,
+      photoWakil: candidate.photoWakil,
       createdAt: candidate.createdAt.toISOString(),
       organization: {
         id: candidate.organization.id,

@@ -13,6 +13,7 @@ export async function createCandidate(data: CreateCandidateInput) {
       vision: data.vision,
       mission: data.mission,
       photo: data.photo,
+      photoWakil: data.photoWakil ?? '',
     },
     include: {
       organization: true,
@@ -75,6 +76,7 @@ export async function updateCandidate(id: string, data: UpdateCandidateInput) {
   if (data.vision !== undefined) updateData.vision = data.vision;
   if (data.mission !== undefined) updateData.mission = data.mission;
   if (data.photo !== undefined) updateData.photo = data.photo;
+  if (data.photoWakil !== undefined) updateData.photoWakil = data.photoWakil;
 
   const candidate = await prisma.candidate.update({
     where: { id },
@@ -89,23 +91,14 @@ export async function updateCandidate(id: string, data: UpdateCandidateInput) {
 
 /**
  * Deletes a candidate by ID.
- * If the candidate has received any votes, deletion is rejected.
+ * Votes for the candidate are deleted in the same transaction so admins can
+ * remove candidates even after voting has started.
  */
 export async function deleteCandidate(id: string): Promise<DeleteResult> {
-  // Check if candidate has received any votes
-  const voteCount = await prisma.vote.count({
-    where: { candidateId: id },
+  await prisma.$transaction(async (tx) => {
+    await tx.vote.deleteMany({ where: { candidateId: id } });
+    await tx.candidate.delete({ where: { id } });
   });
-
-  if (voteCount > 0) {
-    return {
-      success: false,
-      error: 'Tidak dapat menghapus kandidat yang sudah menerima suara',
-    };
-  }
-
-  // Safe to delete
-  await prisma.candidate.delete({ where: { id } });
 
   return { success: true };
 }

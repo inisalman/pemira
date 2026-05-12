@@ -27,23 +27,27 @@ export function OrgCard({ organization, hasVoted }: OrgCardProps) {
   return (
     <article
       className={`panel overflow-hidden transition-all ${
-        hasVoted ? 'border-[var(--secondary)]' : 'hover:border-[var(--primary)]'
+        hasVoted ? 'border-[var(--secondary)]' : 'hover:-translate-y-1 hover:border-[var(--primary)]'
       }`}
     >
       <div className={`election-thumb ${thumbClass}`} />
       <div className="p-7">
         <div className="flex items-start justify-between gap-4">
-        <h3 className="text-3xl font-black leading-tight tracking-[-0.05em] text-[var(--ink)]">
+        <h3 className="text-3xl font-black leading-tight text-[var(--ink)]">
           {organization.name}
         </h3>
         <span
-          className={`inline-flex shrink-0 items-center rounded-full px-4 py-2 text-sm font-bold ${
+          className={`inline-flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-bold ${
             hasVoted
               ? 'bg-[var(--primary)] text-white'
               : 'bg-[var(--ink)] text-white'
           }`}
         >
-          {hasVoted ? '✓ Sudah Memilih' : '⊙ Belum Memilih'}
+          <span
+            className={`geo-icon ${hasVoted ? 'geo-icon-check' : 'geo-icon-dot'} h-7 w-7 border-white bg-white text-[var(--primary)] shadow-none`}
+            aria-hidden="true"
+          />
+          {hasVoted ? 'Sudah Memilih' : 'Belum Memilih'}
         </span>
         </div>
         <p className="mt-7 min-h-[56px] text-lg leading-7 text-[var(--muted)]">
@@ -61,9 +65,9 @@ export function OrgCard({ organization, hasVoted }: OrgCardProps) {
               ? `${organization.name} - sudah memilih`
               : `Masuk bilik suara ${organization.name}`
           }
-          className={`mt-6 w-full rounded-md px-5 py-4 text-base font-bold transition ${
+          className={`mt-6 w-full rounded-full border-2 border-[var(--shadow-hard)] px-5 py-4 text-base font-bold shadow-[4px_4px_0_var(--shadow-hard)] transition ${
             hasVoted
-              ? 'cursor-not-allowed border border-[var(--border)] text-slate-400'
+              ? 'cursor-not-allowed bg-white text-slate-400'
               : 'bg-[var(--ink)] text-white hover:bg-[var(--primary)]'
           }`}
         >

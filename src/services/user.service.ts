@@ -19,6 +19,7 @@ export async function createUser(data: CreateUserInput) {
     data: {
       nim: data.nim,
       name: data.name,
+      department: data.department ?? '',
       password: hashedPassword,
       role: data.role,
       ...(data.organizationIds && data.organizationIds.length > 0
@@ -90,6 +91,7 @@ export async function updateUser(id: string, data: UpdateUserInput) {
 
   if (data.nim !== undefined) updateData.nim = data.nim;
   if (data.name !== undefined) updateData.name = data.name;
+  if (data.department !== undefined) updateData.department = data.department;
   if (data.role !== undefined) updateData.role = data.role;
   if (data.password !== undefined) {
     updateData.password = await bcrypt.hash(data.password, 10);

@@ -8,6 +8,7 @@ interface UserData {
   id: string;
   nim: string;
   name: string;
+  department: string;
   role: 'ADMIN' | 'VOTER';
   createdAt: string;
   voterAccess: { id: string; organizationId: string }[];
@@ -81,7 +82,7 @@ export default function UserManagementClient({
   return (
     <div className="space-y-6">
       {/* Search and Filter Controls */}
-      <div id="user-controls" className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div id="user-controls" className="panel flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-1 gap-2">
           <label htmlFor="user-search" className="sr-only">Cari NIM atau nama</label>
           <input
@@ -99,7 +100,7 @@ export default function UserManagementClient({
           <button
             onClick={handleSearch}
             aria-label="Cari user"
-            className="btn-secondary min-w-[44px]"
+            className="btn-secondary min-w-[88px]"
           >
             Cari
           </button>
@@ -122,9 +123,10 @@ export default function UserManagementClient({
               setShowCreateForm(true);
               setCreateError('');
             }}
-            className="btn-primary"
+            className="btn-primary gap-2"
           >
-            + Tambah User
+            <span className="geo-mini geo-mini-plus" aria-hidden="true" />
+            Tambah User
           </button>
         </div>
       </div>
@@ -132,43 +134,49 @@ export default function UserManagementClient({
       {/* User Table */}
       <div className="panel overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-slate-100">
+          <table className="min-w-full divide-y-2 divide-[var(--border)]">
             <thead className="bg-[var(--surface-muted)]">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-extrabold uppercase tracking-wider text-[var(--muted)]">
+                <th className="px-6 py-5 text-left text-xs font-extrabold uppercase text-[var(--ink)]">
                   NIM
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-extrabold uppercase tracking-wider text-[var(--muted)]">
+                <th className="px-6 py-5 text-left text-xs font-extrabold uppercase text-[var(--ink)]">
                   Nama
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-extrabold uppercase tracking-wider text-[var(--muted)]">
+                <th className="px-6 py-5 text-left text-xs font-extrabold uppercase text-[var(--ink)]">
+                  Jurusan
+                </th>
+                <th className="px-6 py-5 text-left text-xs font-extrabold uppercase text-[var(--ink)]">
                   Role
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-extrabold uppercase tracking-wider text-[var(--muted)]">
+                <th className="px-6 py-5 text-left text-xs font-extrabold uppercase text-[var(--ink)]">
                   Org. Access
                 </th>
-                <th className="px-4 py-3 text-right text-xs font-extrabold uppercase tracking-wider text-[var(--muted)]">
+                <th className="px-6 py-5 text-right text-xs font-extrabold uppercase text-[var(--ink)]">
                   Aksi
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y-2 divide-[var(--border)] bg-white">
               {users.length === 0 ? (
                 <tr>
-                    <td colSpan={5} className="px-4 py-8 text-center text-sm text-[var(--muted)]">
+                    <td colSpan={6} className="px-6 py-8 text-center text-sm text-[var(--muted)]">
                     Tidak ada user ditemukan.
                   </td>
                 </tr>
               ) : (
                 users.map((user) => (
                   <tr key={user.id} className="hover:bg-[var(--surface-muted)]/70">
-                    <td className="whitespace-nowrap px-4 py-3 text-sm font-bold text-[var(--primary)]">
+                    <td className="whitespace-nowrap px-6 py-5 text-sm font-bold text-[var(--primary)]">
                       {user.nim}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm text-[var(--foreground)]">
+                    <td className="whitespace-nowrap px-6 py-5 text-sm font-bold text-[var(--foreground)]">
                       {user.name}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm">
+                    <td className="whitespace-nowrap px-6 py-5 text-sm text-[var(--muted)]">
+                      {user.department || '-'}
+                    </td>
+                    <td className="whitespace-nowrap px-6 py-5 text-sm">
                       <span
                         className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
                           user.role === 'ADMIN'
@@ -179,20 +187,21 @@ export default function UserManagementClient({
                         {user.role}
                       </span>
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm text-[var(--muted)]">
+                    <td className="whitespace-nowrap px-6 py-5 text-sm text-[var(--muted)]">
                       {user.voterAccess.length > 0
                         ? `${user.voterAccess.length} org`
                         : '-'}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-right text-sm">
+                    <td className="whitespace-nowrap px-6 py-5 text-right text-sm">
                       <button
                         onClick={() => {
                           setEditingUser(user);
                           setEditError('');
                         }}
-                        className="mr-1 inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md px-2 py-1 text-blue-600 hover:bg-blue-50 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        className="mr-2 inline-flex min-h-[44px] min-w-[56px] items-center justify-center gap-2 rounded-lg border-2 border-[var(--shadow-hard)] bg-white px-3 py-1 font-bold text-[var(--primary)] shadow-[3px_3px_0_var(--shadow-hard)] hover:bg-[var(--accent)] focus:outline-none"
                         aria-label={`Edit user ${user.name}`}
                       >
+                        <span className="geo-mini geo-mini-edit" aria-hidden="true" />
                         Edit
                       </button>
                       <button
@@ -200,9 +209,10 @@ export default function UserManagementClient({
                           setDeletingUser(user);
                           setDeleteError('');
                         }}
-                        className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md px-2 py-1 text-red-600 hover:bg-red-50 hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                        className="inline-flex min-h-[44px] min-w-[56px] items-center justify-center gap-2 rounded-lg border-2 border-[var(--shadow-hard)] bg-white px-3 py-1 font-bold text-red-700 shadow-[3px_3px_0_var(--shadow-hard)] hover:bg-red-50 focus:outline-none"
                         aria-label={`Hapus user ${user.name}`}
                       >
+                        <span className="geo-mini geo-mini-delete" aria-hidden="true" />
                         Hapus
                       </button>
                     </td>
@@ -215,7 +225,7 @@ export default function UserManagementClient({
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <nav aria-label="Pagination" className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3">
+          <nav aria-label="Pagination" className="flex items-center justify-between border-t-2 border-[var(--border)] bg-white px-6 py-4">
             <div className="text-sm text-gray-500">
               Menampilkan {(page - 1) * pageSize + 1}–
               {Math.min(page * pageSize, total)} dari {total} user
@@ -225,7 +235,7 @@ export default function UserManagementClient({
                 onClick={() => handlePageChange(page - 1)}
                 disabled={page <= 1}
                 aria-label="Halaman sebelumnya"
-                className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md border border-gray-300 px-3 py-1 text-sm disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border-2 border-[var(--shadow-hard)] px-3 py-1 text-sm font-bold disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none"
               >
                 Prev
               </button>
@@ -245,10 +255,10 @@ export default function UserManagementClient({
                       onClick={() => handlePageChange(p)}
                       aria-label={`Halaman ${p}`}
                       aria-current={p === page ? 'page' : undefined}
-                      className={`inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md border px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                      className={`inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border-2 px-3 py-1 text-sm font-bold focus:outline-none ${
                         p === page
-                          ? 'border-blue-600 bg-blue-600 text-white'
-                          : 'border-gray-300 hover:bg-gray-50'
+                          ? 'border-[var(--shadow-hard)] bg-[var(--primary)] text-white'
+                          : 'border-[var(--border)] hover:bg-gray-50'
                       }`}
                     >
                       {p}
@@ -259,7 +269,7 @@ export default function UserManagementClient({
                 onClick={() => handlePageChange(page + 1)}
                 disabled={page >= totalPages}
                 aria-label="Halaman berikutnya"
-                className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md border border-gray-300 px-3 py-1 text-sm disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border-2 border-[var(--shadow-hard)] px-3 py-1 text-sm font-bold disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none"
               >
                 Next
               </button>
@@ -340,6 +350,7 @@ function CreateUserDialog({
   onSubmit: (data: {
     nim: string;
     name: string;
+    department?: string;
     password: string;
     role: 'ADMIN' | 'VOTER';
     organizationIds?: string[];
@@ -347,6 +358,7 @@ function CreateUserDialog({
 }) {
   const [nim, setNim] = useState('');
   const [name, setName] = useState('');
+  const [department, setDepartment] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<'ADMIN' | 'VOTER'>('VOTER');
   const [selectedOrgs, setSelectedOrgs] = useState<string[]>([]);
@@ -358,6 +370,7 @@ function CreateUserDialog({
     await onSubmit({
       nim,
       name,
+      department,
       password,
       role,
       organizationIds: role === 'VOTER' ? selectedOrgs : undefined,
@@ -413,6 +426,21 @@ function CreateUserDialog({
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              style={{ minHeight: '44px' }}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="create-department" className="block text-sm font-medium text-gray-700">
+              Jurusan
+            </label>
+            <input
+              id="create-department"
+              type="text"
+              value={department}
+              onChange={(e) => setDepartment(e.target.value)}
+              placeholder="Contoh: Keperawatan"
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               style={{ minHeight: '44px' }}
             />
           </div>
@@ -510,6 +538,7 @@ function EditUserDialog({
   onSubmit: (data: {
     nim?: string;
     name?: string;
+    department?: string;
     password?: string;
     role?: 'ADMIN' | 'VOTER';
     organizationIds?: string[];
@@ -517,6 +546,7 @@ function EditUserDialog({
 }) {
   const [nim, setNim] = useState(user.nim);
   const [name, setName] = useState(user.name);
+  const [department, setDepartment] = useState(user.department);
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<'ADMIN' | 'VOTER'>(user.role);
   const [selectedOrgs, setSelectedOrgs] = useState<string[]>(
@@ -531,6 +561,7 @@ function EditUserDialog({
     const data: {
       nim?: string;
       name?: string;
+      department?: string;
       password?: string;
       role?: 'ADMIN' | 'VOTER';
       organizationIds?: string[];
@@ -538,6 +569,7 @@ function EditUserDialog({
 
     if (nim !== user.nim) data.nim = nim;
     if (name !== user.name) data.name = name;
+    if (department !== user.department) data.department = department;
     if (password) data.password = password;
     if (role !== user.role) data.role = role;
 
@@ -600,6 +632,21 @@ function EditUserDialog({
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              style={{ minHeight: '44px' }}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="edit-department" className="block text-sm font-medium text-gray-700">
+              Jurusan
+            </label>
+            <input
+              id="edit-department"
+              type="text"
+              value={department}
+              onChange={(e) => setDepartment(e.target.value)}
+              placeholder="Contoh: Keperawatan"
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               style={{ minHeight: '44px' }}
             />
           </div>

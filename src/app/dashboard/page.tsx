@@ -56,7 +56,7 @@ export default async function DashboardPage() {
 
       {organizationsWithStatus.length === 0 ? (
         <div className="rounded-lg border-2 border-dashed border-[var(--border)] p-16 text-center">
-          <div className="mx-auto grid h-24 w-24 place-items-center rounded-full bg-[#e7ebff] text-5xl text-[var(--primary)]">♢</div>
+          <span className="geo-icon geo-icon-empty mx-auto text-[var(--primary)]" aria-hidden="true" />
           <h3 className="mt-8 text-3xl font-black text-[var(--primary)]">
             Belum Ada Pemilihan
           </h3>
@@ -76,7 +76,7 @@ export default async function DashboardPage() {
           ))}
         </div>
         <div className="mt-20 rounded-lg border-2 border-dashed border-[var(--border)] px-6 py-16 text-center">
-          <div className="mx-auto grid h-28 w-28 place-items-center rounded-full bg-[#e7ebff] text-6xl text-[var(--primary)]">♢</div>
+          <span className="geo-icon geo-icon-empty mx-auto text-[var(--primary)]" aria-hidden="true" />
           <h3 className="mt-8 text-3xl font-black tracking-[-0.04em] text-[var(--primary)]">
             Belum Ada Pemilihan Lainnya
           </h3>

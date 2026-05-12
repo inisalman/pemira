@@ -137,3 +137,15 @@ export async function getAllVoteCounts(): Promise<OrgVoteCount[]> {
     })),
   }));
 }
+
+/**
+ * Deletes votes globally or for a single organization.
+ * Returns how many vote rows were removed.
+ */
+export async function resetVotes(organizationId?: string): Promise<number> {
+  const result = await prisma.vote.deleteMany({
+    where: organizationId ? { organizationId } : undefined,
+  });
+
+  return result.count;
+}

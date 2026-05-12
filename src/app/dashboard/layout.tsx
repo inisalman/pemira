@@ -1,5 +1,6 @@
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 import { authOptions } from '@/lib/auth';
 import LogoutButton from '@/components/LogoutButton';
 
@@ -18,16 +19,16 @@ export default async function DashboardLayout({
     <div className="app-shell">
       <header className="top-nav">
         <div className="page-container flex h-20 items-center justify-between">
-          <a href="/dashboard" className="brand-text">
-            E-VOTE POLTEKKES JKT1
-          </a>
+          <Link href="/dashboard" className="brand-text">
+            Poltekkes Jakarta 1
+          </Link>
           <nav className="hidden items-center gap-10 md:flex" aria-label="Navigasi pemilih">
-            <a href="/dashboard" className="nav-link nav-link-active">Beranda</a>
-            <a href="/#panduan" className="nav-link">Panduan</a>
-            <a href="/#statistik" className="nav-link">Statistik</a>
+            <Link href="/dashboard" className="nav-link nav-link-active">Beranda</Link>
+            <Link href="/#panduan" className="nav-link">Panduan</Link>
+            <Link href="/#statistik" className="nav-link">Statistik</Link>
           </nav>
           <div className="flex items-center gap-3">
-            <span className="grid h-10 w-10 place-items-center rounded-full bg-[var(--secondary)] text-sm font-black text-white">
+            <span className="grid h-10 w-10 place-items-center rounded-lg border-2 border-[var(--shadow-hard)] bg-[var(--secondary)] text-sm font-black text-[var(--primary-dark)] shadow-[3px_3px_0_var(--shadow-hard)]">
               {session.user.name?.slice(0, 2).toUpperCase() ?? 'JD'}
             </span>
             <LogoutButton />

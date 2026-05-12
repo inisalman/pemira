@@ -12,6 +12,7 @@ const mockPrisma = vi.hoisted(() => ({
   vote: {
     findUnique: vi.fn(),
     create: vi.fn(),
+    deleteMany: vi.fn(),
   },
   auditLog: {
     create: vi.fn(),
@@ -34,7 +35,13 @@ vi.mock('@/lib/prisma', () => ({
   prisma: mockPrisma,
 }));
 
-import { castVote, hasVoted, getVoteCounts, getAllVoteCounts } from './vote.service';
+import {
+  castVote,
+  hasVoted,
+  getVoteCounts,
+  getAllVoteCounts,
+  resetVotes,
+} from './vote.service';
 
 describe('Vote Service', () => {
   beforeEach(() => {
@@ -284,6 +291,30 @@ describe('Vote Service', () => {
       const result = await getAllVoteCounts();
 
       expect(result).toEqual([]);
+    });
+  });
+
+  describe('resetVotes', () => {
+    it('should delete votes for a specific organization', async () => {
+      mockPrisma.vote.deleteMany.mockResolvedValue({ count: 12 });
+
+      const result = await resetVotes('org-1');
+
+      expect(result).toBe(12);
+      expect(mockPrisma.vote.deleteMany).toHaveBeenCalledWith({
+        where: { organizationId: 'org-1' },
+      });
+    });
+
+    it('should delete all votes when organization is not provided', async () => {
+      mockPrisma.vote.deleteMany.mockResolvedValue({ count: 42 });
+
+      const result = await resetVotes();
+
+      expect(result).toBe(42);
+      expect(mockPrisma.vote.deleteMany).toHaveBeenCalledWith({
+        where: undefined,
+      });
     });
   });
 });

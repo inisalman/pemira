@@ -32,6 +32,10 @@ const PHOTO_MIME_EXTENSIONS: Record<string, string> = {
 };
 
 async function saveUploadedPhoto(photo: string) {
+  if (!photo) {
+    return photo;
+  }
+
   if (!photo.startsWith('data:image/')) {
     return photo;
   }
@@ -62,7 +66,8 @@ export async function createCandidateAction(data: CreateCandidateInput) {
 
   try {
     const photo = await saveUploadedPhoto(data.photo);
-    const candidate = await createCandidate({ ...data, photo });
+    const photoWakil = await saveUploadedPhoto(data.photoWakil ?? '');
+    const candidate = await createCandidate({ ...data, photo, photoWakil });
     await auditLog({
       actorId: session.user.id,
       actionType: 'CANDIDATE_CREATED',
@@ -70,6 +75,7 @@ export async function createCandidateAction(data: CreateCandidateInput) {
       metadata: { candidateId: candidate.id, organizationId: data.organizationId },
     });
     revalidatePath('/admin/candidates');
+    revalidatePath('/admin/results');
     return { success: true, error: null };
   } catch (error: unknown) {
     const message =
@@ -83,7 +89,14 @@ export async function updateCandidateAction(id: string, data: UpdateCandidateInp
 
   try {
     const photo = data.photo ? await saveUploadedPhoto(data.photo) : undefined;
-    await updateCandidate(id, photo ? { ...data, photo } : data);
+    const photoWakil = data.photoWakil
+      ? await saveUploadedPhoto(data.photoWakil)
+      : undefined;
+    await updateCandidate(id, {
+      ...data,
+      ...(photo ? { photo } : {}),
+      ...(photoWakil ? { photoWakil } : {}),
+    });
     await auditLog({
       actorId: session.user.id,
       actionType: 'CANDIDATE_UPDATED',

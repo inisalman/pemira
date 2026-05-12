@@ -43,63 +43,77 @@ export default async function LandingPage() {
       <header className="top-nav">
         <div className="page-container flex h-16 items-center justify-between">
           <Link href="/" className="brand-text">
-            E-VOTE POLTEKKES JKT1
+            Poltekkes Jakarta 1
           </Link>
-          <nav className="hidden items-center gap-8 md:flex" aria-label="Navigasi utama">
-            <a href="#beranda" className="nav-link nav-link-active">Beranda</a>
-            <a href="#panduan" className="nav-link">Panduan</a>
-            <a href="#statistik" className="nav-link">Statistik</a>
-          </nav>
+          <div aria-hidden="true" className="hidden md:block" />
           <Link href="/login" className="btn-primary min-w-[92px]">
-            Masuk
+            Login
           </Link>
         </div>
       </header>
 
       <main id="main-content" className="flex-1">
         <section id="beranda" className="hero-green">
-          <div className="page-container grid min-h-[610px] items-center gap-10 py-16 lg:grid-cols-[1fr_0.92fr]">
+          <div className="page-container relative z-10 grid min-h-[610px] items-center gap-10 py-16 lg:grid-cols-[0.86fr_1fr]">
             <div className="max-w-xl">
-              <span className="inline-flex items-center rounded-full border border-emerald-300/30 bg-emerald-300/12 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-emerald-200">
-                Official Pemira 2024
+              <span className="inline-flex items-center rounded-full border-2 border-[var(--primary-dark)] bg-[var(--accent)] px-4 py-1 text-xs font-black uppercase text-[var(--primary-dark)]">
+                Pemilihan Raya Mahasiswa Poltekkes Jakarta 1 | 2026
               </span>
-              <h1 className="mt-8 text-5xl font-black leading-[0.95] tracking-[-0.06em] sm:text-6xl">
-                Pemilihan Raya <span className="block text-[var(--accent)]">Mahasiswa</span>
+              <h1 className="mt-7 text-5xl font-black leading-[1.02] text-[var(--ink)] sm:text-6xl">
+                Suarakan Aspirasimu untuk{" "}
+                <span className="text-[var(--primary)] underline decoration-[var(--accent-lime)] decoration-8 underline-offset-4">
+                  Perubahan Nyata
+                </span>
               </h1>
-              <p className="mt-6 max-w-lg text-lg leading-8 text-emerald-100">
-                Wujudkan demokrasi kampus yang transparan dan akuntabel.
-                Suaramu adalah kunci masa depan transformasi Poltekkes
-                Kemenkes Jakarta 1.
+              <p className="mt-6 max-w-lg text-lg leading-8 text-[var(--muted)]">
+                Wujudkan demokrasi kampus yang transparan dan berintegritas.
+                Pilih pemimpin masa depan Poltekkes Kemenkes Jakarta 1 hari ini.
               </p>
               <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-                <Link href="/login" className="btn-primary bg-[var(--secondary)] text-[var(--primary-dark)] hover:bg-emerald-300 sm:min-w-[190px]">
+                <Link href="/login" className="btn-primary sm:min-w-[190px]">
                   Mulai Memilih
                 </Link>
-                <a href="#panduan" className="btn-secondary border-white/25 bg-white/5 text-white hover:bg-white/10 sm:min-w-[190px]">
-                  Lihat Panduan
+                <a href="#panduan" className="btn-secondary sm:min-w-[190px]">
+                  Lihat Kandidat
                 </a>
               </div>
             </div>
 
-            <div className="mx-auto w-full max-w-[470px] rounded-[24px] border border-emerald-200/20 bg-white/8 p-10">
+            <div className="mx-auto w-full max-w-[690px]">
               <div className="hero-visual" />
+              <div className="mt-5 flex items-center justify-between gap-3 rounded-lg border-2 border-[var(--shadow-hard)] bg-white px-5 py-4 shadow-[6px_6px_0_var(--shadow-hard)]">
+                <p className="text-xs font-black uppercase text-[var(--primary)]">
+                  Lokasi Terkini
+                </p>
+                <p className="text-base font-extrabold text-[var(--ink)]">
+                  Kampus Poltekkes Jakarta 1, Jl. Wijaya Kusuma No.47-48
+                </p>
+              </div>
             </div>
           </div>
         </section>
 
-        <section id="statistik" className="bg-[#eef1ff] py-14">
+        <section id="statistik" className="py-14">
           <div className="page-container grid gap-6 md:grid-cols-3">
             {[
-              ["▦", "Organisasi", organizations.length || 12, "Hima/UKM"],
-              ["♟", "Total Pemilih", totalPemilih.toLocaleString("id-ID"), "Mahasiswa"],
-              ["▤", "Suara Masuk", votePercent || 82.4, "%"],
+              ["01", "Organisasi", organizations.length || 12, "Hima/UKM"],
+              [
+                "02",
+                "Total Pemilih",
+                totalPemilih.toLocaleString("id-ID"),
+                "Mahasiswa",
+              ],
+              ["03", "Suara Masuk", votePercent || 82.4, "%"],
             ].map(([icon, label, value, suffix]) => (
               <div key={label} className="stat-card">
                 <span className="icon-tile">{icon}</span>
                 <div>
                   <p className="text-sm text-[var(--ink)]">{label}</p>
-                  <p className="mt-1 text-3xl font-black tracking-[-0.05em] text-[var(--primary)]">
-                    {value} <span className="text-sm font-medium tracking-normal text-[var(--ink)]">{suffix}</span>
+                  <p className="mt-1 text-3xl font-black text-[var(--primary)]">
+                    {value}{" "}
+                    <span className="text-sm font-medium tracking-normal text-[var(--ink)]">
+                      {suffix}
+                    </span>
                   </p>
                 </div>
               </div>
@@ -109,83 +123,111 @@ export default async function LandingPage() {
 
         <section id="panduan" className="page-container py-20">
           <div className="mx-auto max-w-xl text-center">
-            <h2 className="text-3xl font-black tracking-[-0.05em] text-[var(--primary)]">
-              Panduan Memilih
+            <h2 className="text-3xl font-black text-[var(--ink)]">
+              Bagaimana Cara Memilih?
             </h2>
             <p className="mt-4 text-[var(--muted)]">
-              Ikuti langkah-langkah mudah di bawah ini untuk menyalurkan
-              aspirasimu melalui sistem e-voting yang aman dan terpercaya.
+              Ikuti langkah mudah berikut untuk menggunakan hak suaramu.
             </p>
           </div>
 
-          <div className="mt-14 grid gap-7 md:grid-cols-4">
+          <div className="mt-14 grid gap-7 md:grid-cols-3">
             {[
-              ["1", "↪", "Login Akun", "Gunakan NIM dan Password Portal Mahasiswa Anda."],
-              ["2", "⌕", "Pilih Kandidat", "Pelajari visi misi kandidat dan pilih pilihan Anda."],
-              ["3", "✓", "Konfirmasi", "Pastikan pilihan Anda sudah benar sebelum dikirim."],
-              ["4", "♢", "Selesai", "Terima kasih atas partisipasi aktif Anda."],
-            ].map(([step, icon, title, body]) => (
-              <div key={step} className="panel relative min-h-[230px] p-7 text-center">
-                <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-[var(--primary)] text-lg font-black text-white">
+              [
+                "1",
+                "Verifikasi",
+                "Login menggunakan NIM dan Password Portal Mahasiswa Anda.",
+              ],
+              [
+                "2",
+                "Kenali",
+                "Baca visi, misi, dan program kerja dari setiap pasangan calon.",
+              ],
+              [
+                "3",
+                "Pilih",
+                "Klik tombol pilih pada kandidat favoritmu dan konfirmasi pilihan.",
+              ],
+            ].map(([step, title, body]) => (
+              <div
+                key={step}
+                className="panel relative min-h-[220px] p-7 text-center"
+              >
+                <span className="mx-auto grid h-14 w-14 place-items-center rounded-lg border-2 border-[var(--shadow-hard)] bg-white text-xl font-black text-[var(--primary)] shadow-[4px_4px_0_var(--accent)]">
                   {step}
                 </span>
-                <div className="mt-7 text-4xl font-light text-[var(--primary)]">{icon}</div>
-                <h3 className="mt-4 text-xl font-bold text-[var(--ink)]">{title}</h3>
-                <p className="mt-4 text-sm leading-6 text-[var(--muted)]">{body}</p>
+                <h3 className="mt-7 text-xl font-bold text-[var(--ink)]">
+                  {title}
+                </h3>
+                <p className="mt-4 text-sm leading-6 text-[var(--muted)]">
+                  {body}
+                </p>
               </div>
             ))}
+          </div>
+
+          <div className="mt-16 rounded-lg border-2 border-[var(--shadow-hard)] bg-[var(--secondary)] px-6 py-12 text-center shadow-[8px_8px_0_var(--shadow-hard)]">
+            <h2 className="text-4xl font-black text-[var(--primary-dark)]">
+              Siap Memilih Sekarang?
+            </h2>
+            <Link
+              href="/login"
+              className="btn-secondary mt-6 min-w-[240px] bg-white"
+            >
+              Ayo Berikan Suaramu
+            </Link>
           </div>
         </section>
 
         <section aria-labelledby="org-heading" className="hidden">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <h2 id="org-heading" className="text-2xl font-extrabold text-[var(--primary)]">
-                  Daftar Organisasi
-                </h2>
-                <p className="mt-1 text-sm text-[var(--muted)]">
-                  Organisasi yang berpartisipasi dalam Pemira.
-                </p>
-              </div>
-            </div>
-
-            <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {organizations.map((org) => {
-                const status = getElectionStatus(org);
-                return (
-                  <li key={org.id} className="panel p-5">
-                    <div className="flex items-start justify-between gap-2">
-                      <h3 className="text-base font-extrabold text-[var(--primary)]">
-                        {org.name}
-                      </h3>
-                      <span className={`badge shrink-0 ${status.color}`}>
-                        {status.label}
-                      </span>
-                    </div>
-                    <p className="mt-3 text-sm text-[var(--muted)]">
-                      {org.candidateCount} pasangan calon terdaftar
-                    </p>
-                  </li>
-                );
-              })}
-            </ul>
-
-            {organizations.length === 0 && (
-              <p className="panel mt-4 py-8 text-center text-[var(--muted)]">
-                Belum ada organisasi yang terdaftar.
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h2
+                id="org-heading"
+                className="text-2xl font-extrabold text-[var(--primary)]"
+              >
+                Daftar Organisasi
+              </h2>
+              <p className="mt-1 text-sm text-[var(--muted)]">
+                Organisasi yang berpartisipasi dalam Pemira.
               </p>
-            )}
+            </div>
+          </div>
+
+          <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {organizations.map((org) => {
+              const status = getElectionStatus(org);
+              return (
+                <li key={org.id} className="panel p-5">
+                  <div className="flex items-start justify-between gap-2">
+                    <h3 className="text-base font-extrabold text-[var(--primary)]">
+                      {org.name}
+                    </h3>
+                    <span className={`badge shrink-0 ${status.color}`}>
+                      {status.label}
+                    </span>
+                  </div>
+                  <p className="mt-3 text-sm text-[var(--muted)]">
+                    {org.candidateCount} pasangan calon terdaftar
+                  </p>
+                </li>
+              );
+            })}
+          </ul>
+
+          {organizations.length === 0 && (
+            <p className="panel mt-4 py-8 text-center text-[var(--muted)]">
+              Belum ada organisasi yang terdaftar.
+            </p>
+          )}
         </section>
       </main>
 
-      <footer className="bg-[var(--primary)] text-white">
+      <footer className="border-t-2 border-[var(--border)] bg-[var(--accent-blue)] text-[var(--ink)]">
         <div className="page-container flex flex-col gap-4 py-8 text-sm md:flex-row md:items-center md:justify-between">
-          <p className="font-bold">
-            E-VOTE POLTEKKES JKT1
-          </p>
-          <div className="flex gap-8 text-emerald-100">
-            <span>Kebijakan Privasi</span>
-            <span>Kontak Kami</span>
+          <p className="font-black text-[var(--primary)]">PEMIRA 2026</p>
+          <div className="flex gap-8 font-bold">
+            <Link href="/login">Login</Link>
           </div>
         </div>
       </footer>

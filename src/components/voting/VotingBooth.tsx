@@ -13,6 +13,7 @@ interface Candidate {
   vision: string;
   mission: string;
   photo: string;
+  photoWakil: string;
 }
 
 interface VotingBoothProps {
@@ -134,18 +135,20 @@ export function VotingBooth({ orgId, orgName, candidates }: VotingBoothProps) {
         ))}
       </div>
 
-      <div className="mt-20 rounded-lg border-2 border-dashed border-[var(--secondary)] bg-[#eef1ff] px-6 py-12 text-center">
-        <div className="mx-auto grid h-12 w-12 place-items-center rounded-full border-4 border-[var(--primary)] text-2xl font-black text-[var(--primary)]">
+      <div className="mt-16 rounded-lg border-2 border-[var(--primary)] bg-[var(--accent-blue)] px-6 py-10 shadow-[6px_6px_0_var(--accent-purple)] sm:flex sm:items-center sm:gap-8 sm:text-left">
+        <div className="mx-auto grid h-16 w-16 shrink-0 place-items-center rounded-full border-2 border-[var(--shadow-hard)] bg-[var(--primary)] text-2xl font-black text-white sm:mx-0">
           i
         </div>
-        <h3 className="mt-7 text-2xl font-black text-[var(--primary)]">
-          Informasi Penting
-        </h3>
-        <p className="mx-auto mt-5 max-w-2xl leading-7 text-[var(--ink)]">
-          Suara yang telah dikirimkan bersifat final dan tidak dapat diubah
-          kembali. <strong>Sistem mengenkripsi pilihan Anda secara aman.</strong>
-          Pastikan pilihan Anda sudah benar sebelum menekan tombol konfirmasi.
-        </p>
+        <div>
+          <h3 className="mt-6 text-2xl font-black text-[var(--primary)] sm:mt-0">
+            Informasi Penting
+          </h3>
+          <p className="mt-3 max-w-4xl leading-7 text-[var(--ink)]">
+            Satu akun hanya memiliki kesempatan <strong>satu kali memilih.</strong>{' '}
+            Pastikan pilihanmu sudah benar sebelum menekan tombol konfirmasi.
+            Sistem mengenkripsi pilihan Anda secara aman.
+          </p>
+        </div>
       </div>
 
       {selectedCandidate && (

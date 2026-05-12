@@ -15,6 +15,7 @@ interface CandidateData {
   vision: string;
   mission: string;
   photo: string;
+  photoWakil: string;
   createdAt: string;
   organization: { id: string; name: string };
   _count?: { votes: number };
@@ -90,9 +91,10 @@ export default function CandidateManagementClient({
             setShowCreateForm(true);
             setCreateError('');
           }}
-          className="btn-primary"
+          className="btn-primary gap-2"
         >
-          + Tambah Kandidat
+          <span className="geo-mini geo-mini-plus" aria-hidden="true" />
+          Tambah Kandidat
         </button>
       </div>
 
@@ -210,15 +212,36 @@ function CandidateCard({
   return (
     <div className="panel p-4">
       {/* Photo */}
-      {candidate.photo && (
-        <div className="mb-3 aspect-video w-full overflow-hidden rounded-lg bg-slate-100">
-          <img
-            src={candidate.photo}
-            alt={`Foto ${candidate.nameKetua} & ${candidate.nameWakil}`}
-            className="h-full w-full object-cover"
-          />
-        </div>
-      )}
+      <div className="mb-3 grid gap-2 sm:grid-cols-2">
+        {candidate.photo && (
+          <div className="overflow-hidden rounded-lg bg-slate-100">
+            <div className="aspect-[3/4]">
+              <img
+                src={candidate.photo}
+                alt={`Foto ketua ${candidate.nameKetua}`}
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <p className="bg-[var(--surface-muted)] px-2 py-1 text-xs font-bold text-[var(--primary)]">
+              Ketua
+            </p>
+          </div>
+        )}
+        {candidate.photoWakil && (
+          <div className="overflow-hidden rounded-lg bg-slate-100">
+            <div className="aspect-[3/4]">
+              <img
+                src={candidate.photoWakil}
+                alt={`Foto wakil ${candidate.nameWakil}`}
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <p className="bg-[var(--surface-muted)] px-2 py-1 text-xs font-bold text-[var(--primary)]">
+              Wakil
+            </p>
+          </div>
+        )}
+      </div>
 
       {/* Names */}
       <h4 className="text-sm font-extrabold text-[var(--primary)]">
@@ -249,15 +272,17 @@ function CandidateCard({
         <button
           onClick={onEdit}
           aria-label={`Edit kandidat ${candidate.nameKetua} & ${candidate.nameWakil}`}
-          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md px-2 py-1 text-sm text-blue-600 hover:bg-blue-50 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 rounded-md px-2 py-1 text-sm text-blue-600 hover:bg-blue-50 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         >
+          <span className="geo-mini geo-mini-edit" aria-hidden="true" />
           Edit
         </button>
         <button
           onClick={onDelete}
           aria-label={`Hapus kandidat ${candidate.nameKetua} & ${candidate.nameWakil}`}
-          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md px-2 py-1 text-sm text-red-600 hover:bg-red-50 hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 rounded-md px-2 py-1 text-sm text-red-600 hover:bg-red-50 hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
         >
+          <span className="geo-mini geo-mini-delete" aria-hidden="true" />
           Hapus
         </button>
       </div>
@@ -283,6 +308,7 @@ function CreateCandidateDialog({
     vision: string;
     mission: string;
     photo: string;
+    photoWakil: string;
   }) => Promise<void>;
 }) {
   const [organizationId, setOrganizationId] = useState(organizations[0]?.id || '');
@@ -291,31 +317,42 @@ function CreateCandidateDialog({
   const [vision, setVision] = useState('');
   const [mission, setMission] = useState('');
   const [photo, setPhoto] = useState('');
+  const [photoWakil, setPhotoWakil] = useState('');
   const [photoError, setPhotoError] = useState('');
+  const [photoWakilError, setPhotoWakilError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!photo) {
-      setPhotoError('Foto paslon wajib diupload.');
+      setPhotoError('Foto ketua wajib diupload.');
+      return;
+    }
+
+    if (!photoWakil) {
+      setPhotoWakilError('Foto wakil wajib diupload.');
       return;
     }
 
     setIsSubmitting(true);
-    await onSubmit({ organizationId, nameKetua, nameWakil, vision, mission, photo });
+    await onSubmit({ organizationId, nameKetua, nameWakil, vision, mission, photo, photoWakil });
     setIsSubmitting(false);
   }
 
-  async function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handlePhotoChange(
+    e: React.ChangeEvent<HTMLInputElement>,
+    onSuccess: (value: string) => void,
+    onError: (value: string) => void
+  ) {
     const file = e.target.files?.[0];
     if (!file) return;
 
     try {
-      setPhotoError('');
-      setPhoto(await preparePhotoUpload(file));
+      onError('');
+      onSuccess(await preparePhotoUpload(file));
     } catch (error) {
-      setPhoto('');
-      setPhotoError(error instanceof Error ? error.message : 'Gagal mengupload foto');
+      onSuccess('');
+      onError(error instanceof Error ? error.message : 'Gagal mengupload foto');
       e.target.value = '';
     }
   }
@@ -414,13 +451,13 @@ function CreateCandidateDialog({
 
           <div>
             <label htmlFor="create-photo" className="block text-sm font-medium text-gray-700">
-              Foto Paslon
+              Foto Ketua
             </label>
             {photo && (
-              <div className="mt-2 aspect-video w-full overflow-hidden rounded-md bg-slate-100">
+              <div className="mt-2 aspect-[3/4] w-full overflow-hidden rounded-md bg-slate-100">
                 <img
                   src={photo}
-                  alt="Preview foto paslon"
+                  alt="Preview foto ketua"
                   className="h-full w-full object-cover"
                 />
               </div>
@@ -430,13 +467,41 @@ function CreateCandidateDialog({
               type="file"
               accept="image/jpeg,image/png,image/webp"
               required
-              onChange={handlePhotoChange}
+              onChange={(e) => handlePhotoChange(e, setPhoto, setPhotoError)}
               className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               style={{ minHeight: '44px' }}
             />
             <p className="mt-1 text-xs text-gray-500">JPG, PNG, atau WebP. Maksimal 2 MB.</p>
             {photoError && (
               <p className="mt-1 text-xs font-medium text-red-600">{photoError}</p>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="create-photo-wakil" className="block text-sm font-medium text-gray-700">
+              Foto Wakil
+            </label>
+            {photoWakil && (
+              <div className="mt-2 aspect-[3/4] w-full overflow-hidden rounded-md bg-slate-100">
+                <img
+                  src={photoWakil}
+                  alt="Preview foto wakil"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            )}
+            <input
+              id="create-photo-wakil"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              required
+              onChange={(e) => handlePhotoChange(e, setPhotoWakil, setPhotoWakilError)}
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              style={{ minHeight: '44px' }}
+            />
+            <p className="mt-1 text-xs text-gray-500">JPG, PNG, atau WebP. Maksimal 2 MB.</p>
+            {photoWakilError && (
+              <p className="mt-1 text-xs font-medium text-red-600">{photoWakilError}</p>
             )}
           </div>
 
@@ -482,6 +547,7 @@ function EditCandidateDialog({
     vision?: string;
     mission?: string;
     photo?: string;
+    photoWakil?: string;
   }) => Promise<void>;
 }) {
   const [organizationId, setOrganizationId] = useState(candidate.organizationId);
@@ -490,13 +556,20 @@ function EditCandidateDialog({
   const [vision, setVision] = useState(candidate.vision);
   const [mission, setMission] = useState(candidate.mission);
   const [photo, setPhoto] = useState(candidate.photo);
+  const [photoWakil, setPhotoWakil] = useState(candidate.photoWakil);
   const [photoError, setPhotoError] = useState('');
+  const [photoWakilError, setPhotoWakilError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!photo) {
-      setPhotoError('Foto paslon wajib diupload.');
+      setPhotoError('Foto ketua wajib diupload.');
+      return;
+    }
+
+    if (!photoWakil) {
+      setPhotoWakilError('Foto wakil wajib diupload.');
       return;
     }
 
@@ -509,6 +582,7 @@ function EditCandidateDialog({
       vision?: string;
       mission?: string;
       photo?: string;
+      photoWakil?: string;
     } = {};
 
     if (organizationId !== candidate.organizationId) data.organizationId = organizationId;
@@ -517,20 +591,25 @@ function EditCandidateDialog({
     if (vision !== candidate.vision) data.vision = vision;
     if (mission !== candidate.mission) data.mission = mission;
     if (photo !== candidate.photo) data.photo = photo;
+    if (photoWakil !== candidate.photoWakil) data.photoWakil = photoWakil;
 
     await onSubmit(data);
     setIsSubmitting(false);
   }
 
-  async function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handlePhotoChange(
+    e: React.ChangeEvent<HTMLInputElement>,
+    onSuccess: (value: string) => void,
+    onError: (value: string) => void
+  ) {
     const file = e.target.files?.[0];
     if (!file) return;
 
     try {
-      setPhotoError('');
-      setPhoto(await preparePhotoUpload(file));
+      onError('');
+      onSuccess(await preparePhotoUpload(file));
     } catch (error) {
-      setPhotoError(error instanceof Error ? error.message : 'Gagal mengupload foto');
+      onError(error instanceof Error ? error.message : 'Gagal mengupload foto');
       e.target.value = '';
     }
   }
@@ -629,13 +708,13 @@ function EditCandidateDialog({
 
           <div>
             <label htmlFor="edit-photo" className="block text-sm font-medium text-gray-700">
-              Foto Paslon
+              Foto Ketua
             </label>
             {photo && (
-              <div className="mt-2 aspect-video w-full overflow-hidden rounded-md bg-slate-100">
+              <div className="mt-2 aspect-[3/4] w-full overflow-hidden rounded-md bg-slate-100">
                 <img
                   src={photo}
-                  alt="Preview foto paslon"
+                  alt="Preview foto ketua"
                   className="h-full w-full object-cover"
                 />
               </div>
@@ -644,13 +723,40 @@ function EditCandidateDialog({
               id="edit-photo"
               type="file"
               accept="image/jpeg,image/png,image/webp"
-              onChange={handlePhotoChange}
+              onChange={(e) => handlePhotoChange(e, setPhoto, setPhotoError)}
               className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               style={{ minHeight: '44px' }}
             />
             <p className="mt-1 text-xs text-gray-500">Kosongkan bila foto tidak diubah.</p>
             {photoError && (
               <p className="mt-1 text-xs font-medium text-red-600">{photoError}</p>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="edit-photo-wakil" className="block text-sm font-medium text-gray-700">
+              Foto Wakil
+            </label>
+            {photoWakil && (
+              <div className="mt-2 aspect-[3/4] w-full overflow-hidden rounded-md bg-slate-100">
+                <img
+                  src={photoWakil}
+                  alt="Preview foto wakil"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            )}
+            <input
+              id="edit-photo-wakil"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={(e) => handlePhotoChange(e, setPhotoWakil, setPhotoWakilError)}
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              style={{ minHeight: '44px' }}
+            />
+            <p className="mt-1 text-xs text-gray-500">Kosongkan bila foto wakil tidak diubah.</p>
+            {photoWakilError && (
+              <p className="mt-1 text-xs font-medium text-red-600">{photoWakilError}</p>
             )}
           </div>
 
@@ -691,7 +797,6 @@ function DeleteCandidateDialog({
 }) {
   const [isDeleting, setIsDeleting] = useState(false);
   const hasVotes = (candidate._count?.votes ?? 0) > 0;
-  const hasVotedError = error?.includes('sudah menerima suara');
 
   async function handleDelete() {
     setIsDeleting(true);
@@ -717,7 +822,7 @@ function DeleteCandidateDialog({
         {hasVotes && !error && (
           <div className="mb-4 rounded-md bg-yellow-50 p-3 text-sm text-yellow-700" role="alert">
             Kandidat ini sudah menerima {candidate._count?.votes} suara.
-            Penghapusan tidak dapat dilakukan.
+            Suara kandidat ini akan ikut dihapus.
           </div>
         )}
 
@@ -735,15 +840,13 @@ function DeleteCandidateDialog({
           >
             Batal
           </button>
-          {!hasVotes && !hasVotedError && (
-            <button
-              onClick={handleDelete}
-              disabled={isDeleting}
-              className="inline-flex min-h-[44px] items-center rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-            >
-              {isDeleting ? 'Menghapus...' : 'Hapus'}
-            </button>
-          )}
+          <button
+            onClick={handleDelete}
+            disabled={isDeleting}
+            className="inline-flex min-h-[44px] items-center rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+          >
+            {isDeleting ? 'Menghapus...' : 'Hapus'}
+          </button>
         </div>
       </div>
     </div>

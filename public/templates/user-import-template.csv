@@ -1,0 +1,5 @@
+nim,name,department,password,role,organizations
+240001,Contoh Mahasiswa,Keperawatan,ubah-password-ini,VOTER,BEM
+240002,Contoh Mahasiswa Multi Org,Kebidanan,ubah-password-ini,VOTER,"BEM,MPM"
+dosen001,Contoh Dosen,Kesehatan Gigi,ubah-password-ini,VOTER,MPM
+admin2,Contoh Admin,Manajemen,ubah-password-ini,ADMIN,
