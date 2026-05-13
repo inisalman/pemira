@@ -70,7 +70,17 @@ export default async function LandingPage() {
       <header className="top-nav">
         <div className="page-container flex h-16 items-center justify-between">
           <BrandLogo href="/" logoUrl={siteLogo} />
-          <div aria-hidden="true" className="hidden md:block" />
+          <nav className="hidden items-center gap-8 md:flex" aria-label="Navigasi utama">
+            <a href="#jadwal" className="nav-link">
+              Jadwal
+            </a>
+            <a href="#tata-tertib" className="nav-link">
+              Tata Tertib
+            </a>
+            <a href="#cara-voting" className="nav-link">
+              Cara Voting
+            </a>
+          </nav>
           <Link href="/login" className="btn-primary min-w-[92px]">
             Login
           </Link>
@@ -100,7 +110,7 @@ export default async function LandingPage() {
                 <Link href="/login" className="btn-primary sm:min-w-[190px]">
                   Mulai Memilih
                 </Link>
-                <a href="#panduan" className="btn-secondary sm:min-w-[190px]">
+                <a href="#tata-tertib" className="btn-secondary sm:min-w-[190px]">
                   Tata Tertib
                 </a>
               </div>
@@ -148,14 +158,14 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        <section id="pemilihan-lkm" className="page-container py-20">
+        <section id="jadwal" className="page-container py-20">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-black text-[var(--ink)]">
               Daftar Pemilihan LKM
             </h2>
             <p className="mt-4 text-[var(--muted)]">
               Pilih organisasi kemahasiswaan sesuai dengan jurusan dan hak
-              pilihmu.
+              pilihmu. Pelaksanaan serentak pada 10 Desember 2026.
             </p>
           </div>
 
@@ -178,10 +188,35 @@ export default async function LandingPage() {
           </ul>
         </section>
 
-        <section id="panduan" className="page-container py-20">
+        <section id="tata-tertib" className="page-container py-20">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-3xl font-black text-[var(--ink)]">
+              Tata Tertib Pemilihan Umum
+            </h2>
+            <p className="mt-4 text-[var(--muted)]">
+              Pahami aturan main untuk mewujudkan demokrasi kampus yang jujur
+              dan adil.
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            {electionRules.map((rule, index) => (
+              <div key={rule} className="panel p-5">
+                <span className="icon-tile text-sm">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <h3 className="mt-5 text-base font-black text-[var(--ink)]">
+                  {rule}
+                </h3>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section id="cara-voting" className="page-container py-20">
           <div className="mx-auto max-w-xl text-center">
             <h2 className="text-3xl font-black text-[var(--ink)]">
-              Tata Cara Pemilihan
+              Cara Voting
             </h2>
             <p className="mt-4 text-[var(--muted)]">
               Pelajari langkah-langkah untuk menggunakan sistem PEMIRA 2026
@@ -224,28 +259,29 @@ export default async function LandingPage() {
             ))}
           </div>
 
-          <div className="mt-16">
+          <div className="mt-14">
             <div className="mx-auto max-w-2xl text-center">
-              <h2 className="text-3xl font-black text-[var(--ink)]">
-                Tata Tertib Pemilihan Umum
-              </h2>
-              <p className="mt-4 text-[var(--muted)]">
-                Pahami aturan main untuk mewujudkan demokrasi kampus yang
-                jujur dan adil.
+              <h3 className="text-2xl font-black text-[var(--ink)]">
+                Tutorial Video
+              </h3>
+              <p className="mt-3 text-sm text-[var(--muted)]">
+                Tonton panduan singkat untuk memahami cara memberikan suara
+                Anda.
               </p>
             </div>
 
-            <div className="mt-10 grid gap-4 md:grid-cols-3">
-              {electionRules.map((rule, index) => (
-                <div key={rule} className="panel p-5">
-                  <span className="icon-tile text-sm">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <h3 className="mt-5 text-base font-black text-[var(--ink)]">
-                    {rule}
-                  </h3>
-                </div>
-              ))}
+            <div className="mx-auto mt-8 max-w-3xl overflow-hidden rounded-lg border-2 border-[var(--shadow-hard)] bg-black shadow-[8px_8px_0_var(--shadow-hard)]">
+              <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
+                <iframe
+                  className="absolute inset-0 h-full w-full"
+                  src="https://www.youtube.com/embed/5I8_aq-xd0Q"
+                  title="Tutorial Cara Voting Pemira 2026"
+                  loading="lazy"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                />
+              </div>
             </div>
           </div>
 
@@ -262,56 +298,59 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        <section id="kontak-panitia" className="page-container pb-20">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-black text-[var(--ink)]">
-              Kontak Panitia
-            </h2>
-            <p className="mt-4 text-[var(--muted)]">
-              Hubungi panitia jika Anda memiliki pertanyaan atau membutuhkan
-              bantuan terkait Pemilihan Raya 2026.
-            </p>
-          </div>
-
-          <div className="mt-10 grid gap-6 md:grid-cols-3">
-            <div className="panel p-6">
-              <span className="badge badge-teal">Instagram</span>
-              <h3 className="mt-5 text-lg font-black text-[var(--ink)]">
-                Kirim pertanyaan via IG
-              </h3>
-              <p className="mt-3 text-[var(--primary)] font-extrabold">
-                @mpmpoltekkesjakarta1
-              </p>
-            </div>
-
-            <div className="panel p-6">
-              <span className="badge badge-gold">Telepon</span>
-              <h3 className="mt-5 text-lg font-black text-[var(--ink)]">
-                Hubungi kami langsung
-              </h3>
-              <p className="mt-3 text-[var(--primary)] font-extrabold">
-                (+62)857-8275-6279
-              </p>
-            </div>
-
-            <div className="panel p-6">
-              <span className="badge badge-muted">Alamat</span>
-              <h3 className="mt-5 text-lg font-black text-[var(--ink)]">
-                Kunjungi kantor panitia
-              </h3>
-              <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
-                Politeknik Kesehatan Kementerian Kesehatan Jakarta 1
-              </p>
-            </div>
-          </div>
-        </section>
       </main>
 
-      <footer className="border-t-2 border-[var(--border)] bg-[var(--accent-blue)] text-[var(--ink)]">
-        <div className="page-container flex flex-col gap-4 py-8 text-sm md:flex-row md:items-center md:justify-between">
-          <p className="font-black text-[var(--primary)]">PEMIRA 2026</p>
-          <div className="flex gap-8 font-bold">
-            <Link href="/login">Login</Link>
+      <footer
+        id="kontak-panitia"
+        className="border-t-2 border-[var(--border)] bg-white/40 text-[var(--ink)] backdrop-blur"
+      >
+        <div className="page-container py-12">
+          <div className="grid gap-10 md:grid-cols-[1.1fr_2fr]">
+            <div>
+              <p className="text-2xl font-black text-[var(--primary)]">
+                PEMIRA 2026
+              </p>
+              <p className="mt-3 max-w-sm text-sm leading-6 text-[var(--muted)]">
+                Hubungi panitia jika Anda memiliki pertanyaan atau membutuhkan
+                bantuan terkait Pemilihan Raya 2026.
+              </p>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div>
+                <span className="badge badge-teal">Instagram</span>
+                <p className="mt-3 text-sm font-bold text-[var(--ink)]">
+                  Kirim pertanyaan via IG
+                </p>
+                <p className="mt-1 text-sm font-extrabold text-[var(--primary)]">
+                  @mpmpoltekkesjakarta1
+                </p>
+              </div>
+
+              <div>
+                <span className="badge badge-gold">Telepon</span>
+                <p className="mt-3 text-sm font-bold text-[var(--ink)]">
+                  Hubungi kami langsung
+                </p>
+                <p className="mt-1 text-sm font-extrabold text-[var(--primary)]">
+                  (+62)857-8275-6279
+                </p>
+              </div>
+
+              <div>
+                <span className="badge badge-muted">Alamat</span>
+                <p className="mt-3 text-sm font-bold text-[var(--ink)]">
+                  Kunjungi kantor panitia
+                </p>
+                <p className="mt-1 text-sm leading-6 text-[var(--muted)]">
+                  Politeknik Kesehatan Kementerian Kesehatan Jakarta 1
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-10 border-t-2 border-[var(--border)] pt-5 text-xs font-bold text-[var(--muted)]">
+            © 2026 Pemira Poltekkes Jakarta 1
           </div>
         </div>
       </footer>

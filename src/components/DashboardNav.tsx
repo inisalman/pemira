@@ -21,10 +21,11 @@ export function DashboardNav() {
   }
 
   return (
-    <nav className="hidden items-center gap-10 md:flex" aria-label="Navigasi pemilih">
+    <nav className="hidden items-center gap-8 md:flex" aria-label="Navigasi pemilih">
       <Link href="/dashboard" className="nav-link nav-link-active">Beranda</Link>
-      <Link href="/#panduan" className="nav-link">Panduan</Link>
-      <Link href="/#statistik" className="nav-link">Statistik</Link>
+      <Link href="/#jadwal" className="nav-link">Jadwal</Link>
+      <Link href="/#tata-tertib" className="nav-link">Tata Tertib</Link>
+      <Link href="/#cara-voting" className="nav-link">Cara Voting</Link>
     </nav>
   );
 }
