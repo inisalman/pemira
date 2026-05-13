@@ -5,39 +5,61 @@ import { BrandLogo } from "@/components/BrandLogo";
 
 export const dynamic = "force-dynamic";
 
-async function getOrganizations() {
+type OrganizationSummary = {
+  id: string;
+  name: string;
+  voteCount: number;
+};
+
+type OrganizationRow = {
+  id: string;
+  name: string;
+  votes: { id: string }[];
+};
+
+async function getOrganizations(): Promise<OrganizationSummary[]> {
   const organizations = await prisma.organization.findMany({
     include: {
-      candidates: { select: { id: true } },
       votes: { select: { id: true } },
     },
     orderBy: { name: "asc" },
   });
 
-  return organizations.map((org) => ({
+  return organizations.map((org: OrganizationRow) => ({
     id: org.id,
     name: org.name,
-    candidateCount: org.candidates.length,
     voteCount: org.votes.length,
   }));
 }
 
-function getElectionStatus(org: {
-  candidateCount: number;
-  voteCount: number;
-}): { label: string; color: string } {
-  if (org.candidateCount === 0) {
-    return { label: "Belum Dimulai", color: "badge-muted" };
-  }
-  if (org.voteCount > 0) {
-    return { label: "Berlangsung", color: "badge-teal" };
-  }
-  return { label: "Siap Dibuka", color: "badge-gold" };
-}
+const defaultLkmItems = [
+  "Hima Jurusan Keperawatan",
+  "Hima Jurusan Kebidanan",
+  "Hima Jurusan Kesehatan Gigi",
+  "Hima Jurusan Ortotik Prostetik",
+  "Badan Eksekutif Mahasiswa",
+  "Majelis Permusyawaratan Mahasiswa",
+];
+
+const electionRules = [
+  "Ketentuan Umum",
+  "Hak dan Kewajiban Pemilih",
+  "Persyaratan Pemilih",
+  "Tata Cara Pelaksanaan Pemungutan Suara",
+  "Larangan Dalam Pelaksanaan E-Voting",
+  "Pengawasan dan Keamanan",
+  "Mekanisme Pelaporan Pelanggaran",
+  "Penutupan Pemungutan Suara dan Pengumuman Hasil",
+  "Sanksi",
+];
 
 export default async function LandingPage() {
   const organizations = await getOrganizations();
-  const siteLogo = await getSiteSetting('site_logo');
+  const siteLogo = await getSiteSetting("site_logo");
+  const lkmItems =
+    organizations.length > 0
+      ? organizations.map((org) => org.name)
+      : defaultLkmItems;
   const totalVotes = organizations.reduce((sum, org) => sum + org.voteCount, 0);
   const totalPemilih = 4520;
   const votePercent =
@@ -60,24 +82,26 @@ export default async function LandingPage() {
           <div className="page-container relative z-10 grid min-h-[610px] items-center gap-10 py-16 lg:grid-cols-[0.86fr_1fr]">
             <div className="max-w-xl">
               <span className="inline-flex items-center rounded-full border-2 border-[var(--primary-dark)] bg-[var(--accent)] px-4 py-1 text-xs font-black uppercase text-[var(--primary-dark)]">
-                Pemilihan Raya Mahasiswa Poltekkes Jakarta 1 | 2026
+                Pesta Demokrasi Kampus
               </span>
               <h1 className="mt-7 text-5xl font-black leading-[1.02] text-[var(--ink)] sm:text-6xl">
-                Suarakan Aspirasimu untuk{" "}
+                Pemilihan Raya{" "}
                 <span className="text-[var(--primary)] underline decoration-[var(--accent-lime)] decoration-8 underline-offset-4">
-                  Perubahan Nyata
+                  2026
                 </span>
               </h1>
               <p className="mt-6 max-w-lg text-lg leading-8 text-[var(--muted)]">
-                Wujudkan demokrasi kampus yang transparan dan berintegritas.
-                Pilih pemimpin masa depan Poltekkes Kemenkes Jakarta 1 hari ini.
+                Pemira dilaksanakan di Politeknik Kesehatan Kementerian
+                Kesehatan Jakarta 1 tiap periode kepengurusan satu tahun
+                sekali, sebagai ajang pemilihan perangkat lembaga
+                kemahasiswaan.
               </p>
               <div className="mt-10 flex flex-col gap-4 sm:flex-row">
                 <Link href="/login" className="btn-primary sm:min-w-[190px]">
                   Mulai Memilih
                 </Link>
                 <a href="#panduan" className="btn-secondary sm:min-w-[190px]">
-                  Lihat Kandidat
+                  Tata Tertib
                 </a>
               </div>
             </div>
@@ -89,7 +113,7 @@ export default async function LandingPage() {
                   Lokasi Terkini
                 </p>
                 <p className="text-base font-extrabold text-[var(--ink)]">
-                  Kampus Poltekkes Jakarta 1, Jl. Wijaya Kusuma No.47-48
+                  Jl. Wijaya Kusuma Raya No. 47-48, Cilandak, Jakarta Selatan
                 </p>
               </div>
             </div>
@@ -99,7 +123,7 @@ export default async function LandingPage() {
         <section id="statistik" className="py-14">
           <div className="page-container grid gap-6 md:grid-cols-3">
             {[
-              ["01", "Organisasi", organizations.length || 12, "Hima/UKM"],
+              ["01", "Pemilihan LKM", lkmItems.length, "Organisasi"],
               [
                 "02",
                 "Total Pemilih",
@@ -124,13 +148,44 @@ export default async function LandingPage() {
           </div>
         </section>
 
+        <section id="pemilihan-lkm" className="page-container py-20">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-3xl font-black text-[var(--ink)]">
+              Daftar Pemilihan LKM
+            </h2>
+            <p className="mt-4 text-[var(--muted)]">
+              Pilih organisasi kemahasiswaan sesuai dengan jurusan dan hak
+              pilihmu.
+            </p>
+          </div>
+
+          <ul className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {lkmItems.map((name) => (
+              <li key={name} className="panel p-6">
+                <span className="badge badge-teal">LKM</span>
+                <h3 className="mt-5 text-xl font-black text-[var(--primary)]">
+                  {name}
+                </h3>
+                <p className="mt-3 text-sm font-bold text-[var(--ink)]">
+                  Pelaksanaan: 10 Desember 2026
+                </p>
+                <p className="mt-4 text-sm leading-6 text-[var(--muted)]">
+                  Gunakan hak pilihmu untuk menentukan masa depan {name} periode
+                  2026/2027.
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
+
         <section id="panduan" className="page-container py-20">
           <div className="mx-auto max-w-xl text-center">
             <h2 className="text-3xl font-black text-[var(--ink)]">
-              Bagaimana Cara Memilih?
+              Tata Cara Pemilihan
             </h2>
             <p className="mt-4 text-[var(--muted)]">
-              Ikuti langkah mudah berikut untuk menggunakan hak suaramu.
+              Pelajari langkah-langkah untuk menggunakan sistem PEMIRA 2026
+              dengan mudah dan aman.
             </p>
           </div>
 
@@ -139,17 +194,17 @@ export default async function LandingPage() {
               [
                 "1",
                 "Verifikasi",
-                "Login menggunakan NIM dan Password Portal Mahasiswa Anda.",
+                "Login menggunakan akun pribadi yang telah terdaftar sebagai pemilih.",
               ],
               [
                 "2",
-                "Kenali",
-                "Baca visi, misi, dan program kerja dari setiap pasangan calon.",
+                "Pilih LKM",
+                "Pilih organisasi kemahasiswaan sesuai jurusan dan hak pilihmu.",
               ],
               [
                 "3",
-                "Pilih",
-                "Klik tombol pilih pada kandidat favoritmu dan konfirmasi pilihan.",
+                "Konfirmasi",
+                "Baca informasi kandidat, tentukan pilihan, lalu kirim suaramu.",
               ],
             ].map(([step, title, body]) => (
               <div
@@ -169,6 +224,31 @@ export default async function LandingPage() {
             ))}
           </div>
 
+          <div className="mt-16">
+            <div className="mx-auto max-w-2xl text-center">
+              <h2 className="text-3xl font-black text-[var(--ink)]">
+                Tata Tertib Pemilihan Umum
+              </h2>
+              <p className="mt-4 text-[var(--muted)]">
+                Pahami aturan main untuk mewujudkan demokrasi kampus yang
+                jujur dan adil.
+              </p>
+            </div>
+
+            <div className="mt-10 grid gap-4 md:grid-cols-3">
+              {electionRules.map((rule, index) => (
+                <div key={rule} className="panel p-5">
+                  <span className="icon-tile text-sm">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <h3 className="mt-5 text-base font-black text-[var(--ink)]">
+                    {rule}
+                  </h3>
+                </div>
+              ))}
+            </div>
+          </div>
+
           <div className="mt-16 rounded-lg border-2 border-[var(--shadow-hard)] bg-[var(--secondary)] px-6 py-12 text-center shadow-[8px_8px_0_var(--shadow-hard)]">
             <h2 className="text-4xl font-black text-[var(--primary-dark)]">
               Siap Memilih Sekarang?
@@ -182,47 +262,48 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        <section aria-labelledby="org-heading" className="hidden">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <h2
-                id="org-heading"
-                className="text-2xl font-extrabold text-[var(--primary)]"
-              >
-                Daftar Organisasi
-              </h2>
-              <p className="mt-1 text-sm text-[var(--muted)]">
-                Organisasi yang berpartisipasi dalam Pemira.
+        <section id="kontak-panitia" className="page-container pb-20">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-3xl font-black text-[var(--ink)]">
+              Kontak Panitia
+            </h2>
+            <p className="mt-4 text-[var(--muted)]">
+              Hubungi panitia jika Anda memiliki pertanyaan atau membutuhkan
+              bantuan terkait Pemilihan Raya 2026.
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-6 md:grid-cols-3">
+            <div className="panel p-6">
+              <span className="badge badge-teal">Instagram</span>
+              <h3 className="mt-5 text-lg font-black text-[var(--ink)]">
+                Kirim pertanyaan via IG
+              </h3>
+              <p className="mt-3 text-[var(--primary)] font-extrabold">
+                @mpmpoltekkesjakarta1
+              </p>
+            </div>
+
+            <div className="panel p-6">
+              <span className="badge badge-gold">Telepon</span>
+              <h3 className="mt-5 text-lg font-black text-[var(--ink)]">
+                Hubungi kami langsung
+              </h3>
+              <p className="mt-3 text-[var(--primary)] font-extrabold">
+                (+62)857-8275-6279
+              </p>
+            </div>
+
+            <div className="panel p-6">
+              <span className="badge badge-muted">Alamat</span>
+              <h3 className="mt-5 text-lg font-black text-[var(--ink)]">
+                Kunjungi kantor panitia
+              </h3>
+              <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
+                Politeknik Kesehatan Kementerian Kesehatan Jakarta 1
               </p>
             </div>
           </div>
-
-          <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {organizations.map((org) => {
-              const status = getElectionStatus(org);
-              return (
-                <li key={org.id} className="panel p-5">
-                  <div className="flex items-start justify-between gap-2">
-                    <h3 className="text-base font-extrabold text-[var(--primary)]">
-                      {org.name}
-                    </h3>
-                    <span className={`badge shrink-0 ${status.color}`}>
-                      {status.label}
-                    </span>
-                  </div>
-                  <p className="mt-3 text-sm text-[var(--muted)]">
-                    {org.candidateCount} pasangan calon terdaftar
-                  </p>
-                </li>
-              );
-            })}
-          </ul>
-
-          {organizations.length === 0 && (
-            <p className="panel mt-4 py-8 text-center text-[var(--muted)]">
-              Belum ada organisasi yang terdaftar.
-            </p>
-          )}
         </section>
       </main>
 
