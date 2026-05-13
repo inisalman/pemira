@@ -1,8 +1,12 @@
 import { prisma } from './prisma';
 
 export async function getSiteSetting(key: string): Promise<string> {
-  const setting = await prisma.siteSetting.findUnique({ where: { key } });
-  return setting?.value ?? '';
+  try {
+    const setting = await prisma.siteSetting.findUnique({ where: { key } });
+    return setting?.value ?? '';
+  } catch {
+    return '';
+  }
 }
 
 export async function setSiteSetting(key: string, value: string): Promise<void> {

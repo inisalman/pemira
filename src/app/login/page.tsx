@@ -2,6 +2,8 @@ import { getSiteSetting } from '@/lib/site-settings';
 import { BrandLogo } from '@/components/BrandLogo';
 import { LoginForm } from './LoginForm';
 
+export const dynamic = 'force-dynamic';
+
 export default async function LoginPage() {
   const siteLogo = await getSiteSetting('site_logo');
 
