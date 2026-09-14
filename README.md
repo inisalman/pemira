@@ -6,7 +6,7 @@ Campus e-voting application. Single full-stack Nuxt 4 project (Vue pages in `app
 
 | Requirement | Version |
 | --- | --- |
-| Node.js | >= 22.9.0 (local dev uses 22.9.0; production targets Node.js LTS supported by the Nitro `node-server` preset) |
+| Node.js | ^22.19.0 \|\| ^24.11.0 \|\| >=26.0.0 (local dev uses 24.19.0 via nvm) |
 | PostgreSQL | 17 target for production; 16.13 for local testing |
 | Package manager | npm (>= 11). Do not use yarn/pnpm; corepack is not used for this project |
 
@@ -31,4 +31,13 @@ npm run dev
 
 ## Configuration
 
-Secrets (database URL, session secret) are provided via environment variables and mapped into the private `runtimeConfig` in `nuxt.config.ts`. `runtimeConfig.public` only carries browser-safe values.
+Copy `.env.example` to `.env` and fill in values. Secrets (database URL, session secret) are provided via environment variables and mapped into the private `runtimeConfig` in `nuxt.config.ts`. `runtimeConfig.public` only carries browser-safe values.
+
+| Variable | Scope | Purpose |
+| --- | --- | --- |
+| `NUXT_DATABASE_URL` | private (server-only) | PostgreSQL connection string |
+| `NUXT_SESSION_SECRET` | private (server-only) | Session token signing secret |
+| `NUXT_PUBLIC_APP_NAME` | public | Browser-safe app name |
+| `DATABASE_URL` | tooling only | Used by `npm run db:migrate` / `db:seed` |
+
+MVP renders in the browser (`ssr: false`); Nitro still serves `/api` in production builds.
