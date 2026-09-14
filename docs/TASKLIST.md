@@ -8,13 +8,13 @@ Semua task di bawah belum dikerjakan. Centang setelah hasil dibuat dan verifikas
 
 ## PH-0 · Fondasi project
 
-- [ ] P0-01 Scaffold satu project Nuxt 4 + TypeScript dengan struktur `app/`, `server/`, dan `shared/`. Periksa ulang folder awal `frontend/`/`backend/` sebelum penataan agar tidak menimpa pekerjaan baru.
-- [ ] P0-02 Pilih versi patch dan dependensi terpelihara yang kompatibel; kunci melalui manifest/lockfile dan catat kebutuhan runtime.
-- [ ] P0-03 Siapkan konfigurasi environment, contoh variabel tanpa secret, rendering sisi browser, serta pemisahan konfigurasi publik dan privat.
-- [ ] P0-04 Siapkan PostgreSQL lokal/uji, driver dengan pool maksimum awal lima koneksi, serta migrasi tabel, FK gabungan, unique constraint, dan indeks sesuai SDD.
-- [ ] P0-05 Buat seed empat jurusan, dua kontes PAIR dan delapan SINGLE, serta akun/data sintetis; seed tidak mengandung akun produksi atau password bersama.
-- [ ] P0-06 Bangun kerangka validasi request, respons error, audit admin append-only melalui aplikasi, dan penyamaran data sensitif pada log.
-- [ ] P0-07 Siapkan pemeriksaan tipe, build production, serta kerangka uji API dengan database terisolasi; buktikan migrasi berjalan pada database kosong.
+- [x] P0-01 Scaffold satu project Nuxt 4 + TypeScript dengan struktur `app/`, `server/`, dan `shared/`. Periksa ulang folder awal `frontend/`/`backend/` sebelum penataan agar tidak menimpa pekerjaan baru.
+- [x] P0-02 Pilih versi patch dan dependensi terpelihara yang kompatibel; kunci melalui manifest/lockfile dan catat kebutuhan runtime.
+- [x] P0-03 Siapkan konfigurasi environment, contoh variabel tanpa secret, rendering sisi browser, serta pemisahan konfigurasi publik dan privat.
+- [x] P0-04 Siapkan PostgreSQL lokal/uji, driver dengan pool maksimum awal lima koneksi, serta migrasi tabel, FK gabungan, unique constraint, dan indeks sesuai SDD.
+- [x] P0-05 Buat seed empat jurusan, dua kontes PAIR dan delapan SINGLE, serta akun/data sintetis; seed tidak mengandung akun produksi atau password bersama.
+- [x] P0-06 Bangun kerangka validasi request, respons error, audit admin append-only melalui aplikasi, dan penyamaran data sensitif pada log.
+- [x] P0-07 Siapkan pemeriksaan tipe, build production, serta kerangka uji API dengan database terisolasi; buktikan migrasi berjalan pada database kosong.
 
 Acuan penerimaan: FR-01, FR-12; SDD bagian 2, 3, dan 13.
 
@@ -122,5 +122,12 @@ Tambahkan baris saat task selesai atau terhambat; tabel kosong ini bukan laporan
 
 | Task | Status | Bukti atau hasil pemeriksaan | Tindak lanjut |
 | --- | --- | --- | --- |
+| P0-01 | selesai | Commit 687b33d: project Nuxt 4 + TS di root dengan `app/`, `server/`, `shared/`; folder `frontend/`/`backend/` kosong dihapus sebelum penataan | — |
+| P0-02 | selesai | package.json + package-lock.json terkunci: nuxt 4.5.2, vue 3.5.42, zod 3.25.76, pg 8.23.0, @node-rs/argon2 2.2.1, vitest 5.0.0; Node `^22.19.0 \|\| ^24.11.0 \|\| >=26.0.0` (nuxt 4.5.2 requirement), lokal 24.19.0; README mencatat kebutuhan runtime | Node lokal 22.9.0 tidak memenuhi engine nuxt 4.5.2 — gunakan 24.x |
+| P0-03 | selesai | Commit bc13429: `.env.example` tanpa secret, `ssr: false`, `runtimeConfig` privat (databaseUrl, sessionSecret) vs public (appName); `server/utils/config.ts` fail-fast | — |
+| P0-04 | selesai | Commit 6c461ec: `database/db.ts` pool max 5; `database/migrations/0001_core_tables.sql` 18 tabel dengan FK gabungan, unique, check constraint. Uji langsung SQL: voting_right lintas periode ditolak, ballot opsi lintas kontes ditolak, NIM/NIP mismatch ditolak, self-approval ditolak, identifier duplikat ditolak | — |
+| P0-05 | selesai | Commit 6c461ec: `database/seed.ts` — 4 jurusan, 10 kontes (2 PAIR + 8 SINGLE), 600 pemilih sintetis → 2.400 hak, akun admin password acak dicetak sekali; semua hash argon2id, tanpa password bersama | — |
+| P0-06 | selesai | Commit f12abd5: `server/utils/errors.ts` (envelope `{error:{code,message}}`, pemetaan status SDD bag. 6), `server/services/audit/audit.ts` append-only + redaksi, `server/utils/log-redaction.ts`, `server/utils/schemas.ts` | — |
+| P0-07 | selesai | Commit f12abd5: `npx nuxt typecheck` exit 0, `npm run build` sukses, vitest 9/9 lulus termasuk 2 uji integrasi membuktikan migrasi berjalan pada database kosong dan idempotent | — |
 
 Status yang digunakan: belum mulai, dikerjakan, terhambat, selesai. Ketika terhambat, catat informasi yang diperlukan dan lanjutkan task lain yang dependensinya sudah terpenuhi.
