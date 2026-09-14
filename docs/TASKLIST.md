@@ -20,12 +20,12 @@ Acuan penerimaan: FR-01, FR-12; SDD bagian 2, 3, dan 13.
 
 ## PH-1 · Antarmuka dasar
 
-- [ ] P1-01 Terapkan token modern light dengan hijau `#2A6B5C` dan putih hangat `#FFF9F2`; catat pemakaian warna untuk latar, teks, aksi, dan fokus.
-- [ ] P1-02 Sediakan font Inter sebagai aset lokal dengan fallback dan bobot seperlunya; periksa font termuat tanpa menghalangi pembacaan halaman.
-- [ ] P1-03 Buat layout publik, pemilih, dan admin, termasuk navigasi ponsel serta struktur judul yang konsisten.
-- [ ] P1-04 Buat komponen tombol, input, pilihan jenis akun, checkbox/radio, dialog konfirmasi, pesan form, tabel dan pagination yang dibutuhkan fitur.
-- [ ] P1-05 Sediakan keadaan memuat, kosong, gagal, berhasil, disabled, dan fokus; gunakan teks/ikon pendamping agar status tidak bergantung pada warna.
-- [ ] P1-06 Periksa tampilan 360 px dan desktop, kontras kombinasi warna aktual, label form, urutan tab, serta fokus dialog; simpan catatan tinjauan visual.
+- [x] P1-01 Terapkan token modern light dengan hijau `#2A6B5C` dan putih hangat `#FFF9F2`; catat pemakaian warna untuk latar, teks, aksi, dan fokus.
+- [x] P1-02 Sediakan font Inter sebagai aset lokal dengan fallback dan bobot seperlunya; periksa font termuat tanpa menghalangi pembacaan halaman.
+- [x] P1-03 Buat layout publik, pemilih, dan admin, termasuk navigasi ponsel serta struktur judul yang konsisten.
+- [x] P1-04 Buat komponen tombol, input, pilihan jenis akun, checkbox/radio, dialog konfirmasi, pesan form, tabel dan pagination yang dibutuhkan fitur.
+- [x] P1-05 Sediakan keadaan memuat, kosong, gagal, berhasil, disabled, dan fokus; gunakan teks/ikon pendamping agar status tidak bergantung pada warna.
+- [x] P1-06 Periksa tampilan 360 px dan desktop, kontras kombinasi warna aktual, label form, urutan tab, serta fokus dialog; simpan catatan tinjauan visual.
 
 Acuan penerimaan: NFR-05; DESIGN.md. Halaman fitur disambungkan ke data nyata pada fase berikutnya; preview sintetis harus ditandai.
 
@@ -129,5 +129,11 @@ Tambahkan baris saat task selesai atau terhambat; tabel kosong ini bukan laporan
 | P0-05 | selesai | Commit 6c461ec: `database/seed.ts` — 4 jurusan, 10 kontes (2 PAIR + 8 SINGLE), 600 pemilih sintetis → 2.400 hak, akun admin password acak dicetak sekali; semua hash argon2id, tanpa password bersama | — |
 | P0-06 | selesai | Commit f12abd5: `server/utils/errors.ts` (envelope `{error:{code,message}}`, pemetaan status SDD bag. 6), `server/services/audit/audit.ts` append-only + redaksi, `server/utils/log-redaction.ts`, `server/utils/schemas.ts` | — |
 | P0-07 | selesai | Commit f12abd5: `npx nuxt typecheck` exit 0, `npm run build` sukses, vitest 9/9 lulus termasuk 2 uji integrasi membuktikan migrasi berjalan pada database kosong dan idempotent | — |
+| P1-01 | selesai | Commit 926d75d: token di `app/assets/css/main.css` dengan peta pemakaian warna (latar/teks/aksi/fokus) dalam komentar | — |
+| P1-02 | selesai | Commit 926d75d: `@fontsource-variable/inter` 5.3.0 lokal, `font-display: swap`, fallback system-ui; diverifikasi CSS terlayani dari aset lokal tanpa CDN eksternal | — |
+| P1-03 | selesai | Commit 926d75d: layouts default/voter/admin, nav admin responsif (breakpoint 48rem) | — |
+| P1-04 | selesai | Commit 926d75d: AppButton, AppInput, AppRadioGroup, AppCheckbox, AppDialog, AppAlert, AppTable, AppPagination | — |
+| P1-05 | selesai | Commit 926d75d: keadaan memuat/kosong (AppTable), gagal/berhasil (AppAlert + ikon), disabled + aria-busy (AppButton), fokus (`:focus-visible` global) | — |
+| P1-06 | selesai | Commit PH-1: [VISUAL_REVIEW](VISUAL_REVIEW.md) — kontras 11 kombinasi token dihitung, semua ≥ 4.5:1; struktur a11y (label, aria, dialog, tab) dicatat; pemeriksaan piksel 360 px/dispositif nyata ditunda ke titik tinjau dengan pemilik proyek | Pemeriksaan pembaca layar menyeluruh pada PH-7 |
 
 Status yang digunakan: belum mulai, dikerjakan, terhambat, selesai. Ketika terhambat, catat informasi yang diperlukan dan lanjutkan task lain yang dependensinya sudah terpenuhi.

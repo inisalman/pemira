@@ -5,6 +5,8 @@ export default defineNuxtConfig({
   // MVP renders in the browser; Nitro still serves the API in production builds.
   ssr: false,
 
+  css: ['~/assets/css/main.css'],
+
   devtools: { enabled: true },
 
   // Secrets live in private runtimeConfig (override via .env / environment).

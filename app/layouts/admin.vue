@@ -1,0 +1,63 @@
+<script setup lang="ts">
+const config = useRuntimeConfig()
+
+const links = [
+  { to: '/admin/elections', label: 'Periode' },
+  { to: '/admin/voters', label: 'Pemilih' },
+  { to: '/admin/voting-rights', label: 'Hak Pilih' },
+  { to: '/admin/candidates', label: 'Calon' },
+  { to: '/admin/audit', label: 'Audit' },
+]
+</script>
+
+<template>
+  <div :class="$style.shell">
+    <header :class="$style.header">
+      <NuxtLink to="/admin" :class="$style.brand">{{ config.public.appName }} Admin</NuxtLink>
+      <button :class="$style.toggle" aria-label="Buka menu" aria-expanded="false">☰</button>
+      <nav :class="$style.nav" aria-label="Navigasi admin">
+        <NuxtLink v-for="link in links" :key="link.to" :to="link.to">{{ link.label }}</NuxtLink>
+      </nav>
+    </header>
+    <main :class="$style.main">
+      <slot />
+    </main>
+  </div>
+</template>
+
+<style module>
+.shell { min-height: 100vh; display: flex; flex-direction: column; }
+.header {
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+.brand { font-weight: 700; font-size: var(--text-lg); color: var(--color-primary); text-decoration: none; }
+.toggle {
+  display: none;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: var(--text-lg);
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+}
+.nav { display: flex; gap: var(--space-4); flex-wrap: wrap; }
+.nav a { color: var(--color-text); text-decoration: none; font-weight: 500; }
+.nav a:hover, .nav a.router-link-active { color: var(--color-primary); text-decoration: underline; }
+.main { flex: 1; width: 100%; max-width: 72rem; margin: 0 auto; padding: var(--space-4); }
+
+@media (max-width: 48rem) {
+  .toggle { display: block; }
+  .nav {
+    flex-direction: column;
+    width: 100%;
+    order: 3;
+  }
+}
+</style>
