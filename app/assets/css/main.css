@@ -1,0 +1,105 @@
+/* PEMIRA design tokens — modern light, per DESIGN.md.
+   Primary green #2A6B5C, warm white #FFF9F2, font Inter (local, variable). */
+
+@import '@fontsource-variable/inter';
+
+:root {
+  /* Brand */
+  --color-primary: #2a6b5c;          /* primary actions, links, focus */
+  --color-primary-strong: #1f5145;   /* hover / pressed */
+  --color-primary-soft: #e3efeb;     /* subtle backgrounds, selected rows */
+  --color-primary-contrast: #ffffff; /* text on primary */
+
+  /* Surfaces */
+  --color-bg: #fff9f2;               /* warm white page background */
+  --color-surface: #ffffff;          /* cards, tables, dialogs */
+  --color-border: #e5ddd1;           /* hairlines, input borders */
+
+  /* Text */
+  --color-text: #24312d;             /* body text */
+  --color-text-muted: #5d6b66;       /* secondary text, captions */
+
+  /* Status (supporting only — never the sole indicator; paired with text/icon) */
+  --color-success: #1e7a3f;
+  --color-success-bg: #e2f3e7;
+  --color-danger: #b3372c;
+  --color-danger-bg: #fbe9e6;
+  --color-warning: #8a6116;
+  --color-warning-bg: #fdf3dd;
+  --color-info: #275e8a;
+  --color-info-bg: #e4eef7;
+
+  /* Focus ring */
+  --focus-ring: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-primary);
+
+  /* Type */
+  --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+
+  /* Spacing & shape */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --radius: 0.5rem;
+  --radius-lg: 0.75rem;
+}
+
+/* Color usage map (P1-01):
+   - background: --color-bg (warm white)
+   - text: --color-text / --color-text-muted
+   - actions (buttons, links, active nav): --color-primary (+ strong on hover)
+   - focus: --focus-ring (2px offset ring in primary green)
+   - status: paired bg+fg tokens, always with text/icon, not color alone */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+h1, h2, h3, h4 {
+  line-height: 1.25;
+  margin: 0 0 var(--space-4);
+}
+
+a {
+  color: var(--color-primary);
+}
+
+a:hover {
+  color: var(--color-primary-strong);
+}
+
+/* Visible focus for keyboard users on every interactive element */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
