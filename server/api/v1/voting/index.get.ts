@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { requireSession } from '#server/utils/session'
 import { sendApiError, apiError } from '#server/utils/errors'
 import { myParticipations } from '#server/services/voting/ballots'
-import { getPool } from '../../../database/db'
+import { getPool } from '#server/../database/db'
 
 const querySchema = z.object({ electionId: z.string().min(1).max(64) })
 
@@ -12,9 +12,9 @@ export default defineEventHandler(async (event: H3Event) => {
   try {
     const session = await requireSession(event)
     const q = querySchema.parse(getQuery(event))
-    let voterId: string | undefined
+    let voterId: string | undefined = undefined
     if (session.loginKind === 'STUDENT' || session.loginKind === 'LECTURER') {
-      voterId = session.voterId
+      voterId = session.voterId ?? undefined
     }
     if (!voterId) apiError('FORBIDDEN', 'Dashboard hanya untuk pemilih.')
     const parts = await myParticipations(voterId, q.electionId)
