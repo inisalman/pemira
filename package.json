@@ -26,7 +26,9 @@
     "zod": "3.25.76"
   },
   "devDependencies": {
+    "@oxc-parser/binding-darwin-arm64": "^0.150.0",
     "@types/pg": "8.23.1",
+    "oxc-parser": "0.40.0",
     "typescript": "5.9.3",
     "vitest": "5.0.0",
     "vue-tsc": "3.3.11"
