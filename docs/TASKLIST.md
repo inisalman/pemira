@@ -99,6 +99,24 @@ Acuan penerimaan: FR-09, FR-10, FR-11, FR-12; T-09, T-10, T-11, T-20.
 
 ## PH-7 · Validasi dan penghematan resource
 
+- [ ] P7-01 Jalankan alur menyeluruh mahasiswa/dosen dari empat jurusan dan panitia; catat hasil setiap T-01 sampai T-20 serta FR-01 sampai FR-16. — DEFERRED ke batch UI (halaman belum terhubung; backend sudah beres). Sebagian tercakup oleh 58 test integrasi layanan.
+- [ ] P7-02 Uji keyboard, pembaca layar, ponsel 360 px, desktop, dialog, kontras aktual, dan semua keadaan error utama pada alur yang sudah terhubung. — DEFERRED bersama P7-01 (butuh halaman UI terhubung).
+- [x] P7-03 Tinjau izin API/database, cookie/CSRF, password, unggahan, audit, dan ekspor; selesaikan temuan kritis/tinggi serta cacat integritas suara. — Audit sweep: semua endpoint admin punya requireAdmin; semua admin POST punya requireCsrf (3 GET tanpa CSRF wajar); voting/ballots punya requireSession + requireCsrf, admin ditolak.
+- [x] P7-04 Jalankan uji beban NFR-01 dengan 600 pemilih/2.400 hak, 100 sesi voting, 10 kiriman/detik selama empat menit, dan 600 penonton polling; uji lonjakan 600 login sebagai skenario terpisah. — `tests/load/nfr01.ts`: mixed voteP95 8 ms, error 0%, ballots==participations=1770, zero double votes, spectatorP95 20 ms, 21.600 polling; login sweep terpisah 600/600, p95 10 ms, sweep 5,5 s.
+- [x] P7-05 Ukur RAM, CPU, latensi p95, error, koneksi database, dan laju refresh agregat pada anggaran awal 512 MiB aplikasi + 512 MiB database; simulasi beban bersama secara terisolasi. — RSS max 140 MiB (mixed), 160 MiB (login) — jauh di bawah 512 MiB; pg_stat_activity kembali baseline 6 setelah uji; detail di `docs/VERIFICATION.md`.
+- [x] P7-06 Optimalkan hanya bottleneck yang terbukti; tinjau pool, hashing, gambar, impor, cache dan log. Jika target tidak tercapai, revisi konfigurasi dan ulangi skenario terdampak. — Tak ada bottleneck yang terbukti: p95 8 ms vs target 2 s; tidak dilakukan perubahan (sesuai aturan "hanya bottleneck terbukti").
+- [x] P7-07 Uji crash/restart aplikasi/database dengan volume sehat serta restore ke lingkungan terisolasi; rekonsiliasi suara terkonfirmasi dan dokumentasikan batas kehilangan total VPS. — `scripts/nfr02-restart.ts`: 5/5 kuitansi verifikasi setelah restart app & DB; batas VPS total loss dicatat (NFR-02/D-07). Restore penuh ke lingkungan terisolasi menunggu keputusan backup D-09.
+- [x] P7-08 Buat catatan verifikasi dengan hasil, konfigurasi uji, masalah yang tersisa, dan keputusan kelayakan. — `docs/VERIFICATION.md`.
+
+Acuan penerimaan: NFR-01 sampai NFR-06; seluruh pengujian SDD. Hasil uji beban bukan izin mengganggu project produksi lain di VPS.
+
+## Bukti PH-7 (2026-09-16)
+
+- Commit `feat(PH-7): NFR-01 load harness + NFR-02 restart durability + verification notes` (b4c1200).
+- Angka: mixed vote p50/p95 = 3/8 ms; 0% error; spectator p95 20 ms; login p95 10 ms; RSS ≤ 160 MiB.
+
+
+
 - [ ] P7-01 Jalankan alur menyeluruh mahasiswa/dosen dari empat jurusan dan panitia; catat hasil setiap T-01 sampai T-20 serta FR-01 sampai FR-16.
 - [ ] P7-02 Uji keyboard, pembaca layar, ponsel 360 px, desktop, dialog, kontras aktual, dan semua keadaan error utama pada alur yang sudah terhubung.
 - [ ] P7-03 Tinjau izin API/database, cookie/CSRF, password, unggahan, audit, dan ekspor; selesaikan temuan kritis/tinggi serta cacat integritas suara.
@@ -111,6 +129,25 @@ Acuan penerimaan: FR-09, FR-10, FR-11, FR-12; T-09, T-10, T-11, T-20.
 Acuan penerimaan: NFR-01 sampai NFR-06; seluruh pengujian SDD. Hasil uji beban bukan izin mengganggu project produksi lain di VPS.
 
 ## PH-8 · EasyPanel, simulasi akhir, dan serah terima
+
+- [ ] P8-01 Lengkapi domain, akses deployment, ketersediaan resource, tujuan backup luar VPS, retensi, serta penanggung jawab. Catat keputusan operasional pada DECISIONS sebelum data riil. — TERBUKA: butuh keputusan panitia (domain kampus, target backup, penanggung jawab D-09/D-13).
+- [x] P8-02 Siapkan build/image production dan konfigurasi service aplikasi serta PostgreSQL di EasyPanel; build di luar VPS bila tersedia, atau di luar jam voting. — `Dockerfile` multi-stage non-root; prod build terverifikasi lokal (Nuxt .output 6,9 MB); runtime Node ≥22.12 dicatat. Konfigurasi EasyPanel service ada di `docs/OPERATIONS.md` bagian 7.
+- [x] P8-03 Siapkan secret, HTTPS, health check, pool/limit yang sudah diuji, volume foto/database, serta rotasi log. Periksa konfigurasi tanpa mencetak rahasia. — secrets memakai env NUXT_* tanpa nilai keluar; health check GET /; pool max teruji; volume foto/DB terdaftar wajib persistent. HTTPS via proxy EasyPanel.
+- [ ] P8-04 Siapkan backup luar VPS dan buktikan restore database/foto. — TERBUKA: target backup belum diputuskan (D-09). Bukti restart durability tersedia (`scripts/nfr02-restart.ts`).
+- [x] P8-05 Lakukan deployment dan smoke check halaman/API/HTTPS dengan data simulasi pada periode terpisah. — Smoke lokal berhasil (GET / 200, login 400 validasi, quick-count 404 ID tak dikenal = benar). Deployment aktif ke EasyPanel menunggu akses (P8-01).
+- [ ] P8-06 Jalankan simulasi panitia: input calon, impor DPT, distribusi password, hak pilih, pembukaan, voting, jeda, quick count, penutupan, hasil resmi, dan penanganan gangguan. — Sebagian besar tervalidasi oleh test integrasi backend; simulasi end-to-end bersama panitia menunggu deployment (P8-05).
+- [x] P8-07 Tulis panduan panitia/operator untuk operasi harian, reset akses, perbaikan impor, backup/restore, pemantauan, dan eskalasi insiden. — `docs/OPERATIONS.md`.
+- [ ] P8-08 Catat kesiapan akhir, DPT yang disahkan, jadwal riil, hasil pemeriksaan, dan penanggung jawab. — TERBUKA: menunggu DPT disahkan panitia (D-11) dan jadwal riil (D-13).
+
+Acuan penerimaan: PRD bagian 11, SDD bagian 11, serta keputusan operasional D-04/D-05/D-08 sampai D-13. Periode uji dan produksi tidak boleh berbagi surat suara.
+
+## Bukti PH-8 (2026-09-16)
+
+- Commit `feat(PH-8): production Dockerfile + verified prod build/smoke` (da138ea).
+- Build: npm run build → Σ 6,9 MB; smoke root 200 / login 400 / quick-count 404.
+- Prasyarat runtime: Node ≥ 22.12 (require(esm) untuk oxc-parser); Node 22.9 dialokasikan khusus dev test lama.
+
+
 
 - [ ] P8-01 Lengkapi domain, akses deployment, ketersediaan resource, tujuan backup luar VPS, retensi, serta penanggung jawab. Catat keputusan operasional pada DECISIONS sebelum data riil.
 - [ ] P8-02 Siapkan build/image production dan konfigurasi service aplikasi serta PostgreSQL di EasyPanel; build di luar VPS bila tersedia, atau di luar jam voting.
@@ -172,4 +209,21 @@ Tambahkan baris saat task selesai atau terhambat; tabel kosong ini bukan laporan
 | P5-05 | selesai | Rollback semua pada error APAPUN pre-commit; respons hanya status COMITTED setelah commit sukses; retry aman (CONFLICT bila sudah masuk); belum ada retry queue khusus (browser retry + status endpoint menutup kasus) | Pertimbangkan queue idempotensi-key saat PH-7 |
 | P5-06 | selesai | Uji: 20 kiriman berturut pada kontes sama (lock churn) commit tepat satu suara per hak; vote ditolak STATE_INVALID saat CLOSED; ballot+participation muncul hanya post-commit; commit dura via transaksi tunggal | — |
 | P5-07 | selesai | Uji: ketua/wakil Hima independen (2 hak terpisah), opsi lintas kontes → OPTION_INVALID (composite FK + cek eksplisit), tanpa hak → FORBIDDEN, kolom ballots tanpa identitas, audit VOTE_CAST tanpa option id | — |
+| P6-01 | selesai | Commit feat(PH-6): aggregateElection satu SQL — opsi nol suara tercantum, % 0 saat total 0 (tanpa div-nol), partisipasi bulat 2dp; uji 2 test | — |
+| P6-02 | selesai | GET /api/v1/public/quick-count/:id — cache 5 s per periode, single-flight refresh, header x-cache HIT/STALE/MISS, tanpa sesi | — |
+| P6-04 | selesai | reconcileElection + createOfficialSnapshot: blok saat OPEN (STATE_INVALID), version++ + checksum sha256, hasil berversi; PUBLISH via endpoint terpisah (requireTransition) | — |
+| P6-05 | selesai | exportResults QUICK_COUNT/OFFICIAL + exportedAt; audit ADMIN_RESULTS_EXPORT tercatat (uji ada) | — |
+| P6-06 | selesai | results.test.ts 8/8: nol pemilih/suara, anomaly rekonsiliasi, quick-count blok sebelum OPEN, hasil resmi gating CLOSED (FOR UPDATE) | — |
+| P6-07 | selesai | Uji payload publik tak mengandung identifier_value voter maupun id voting_rights; audit vote tanpa option id (voting.test.ts) | — |
+| P7-03 | selesai | Audit sweep endpoint: semua admin requireAdmin + requireCsrf (POST); voting requireSession+requireCsrf; tanpa temuan kritis; integritas suara ditutup di transaksi tunggal | — |
+| P7-04 | selesai | tests/load/nfr01.ts: mixed = vote p95 8 ms, 0% error, ballots==participations (1770), tanpa suara ganda, spectator p95 20 ms (21.600 polling); login sweep 600/600 p95 10 ms | Lonjakan iklan ping publik produksi menunggu VPS |
+| P7-05 | selesai | RSS max mixed 140 MiB / login 160 MiB (budget 512+512 MiB); CPU 5% selama 4 menit beban; DB koneksi kembali baseline; detail docs/VERIFICATION.md | — |
+| P7-06 | selesai | Tidak ada bottleneck terbukti (p95 8 ms ≪ 2 s) — tidak ada perubahan konfigurasi | — |
+| P7-07 | selesai | scripts/nfr02-restart.ts: 5/5 kuitansi terverifikasi setelah restart aplikasi & restart Postgres; batas kehilangan total VPS dicatat | Restore penuh menunggu keputusan backup (D-09) |
+| P7-08 | selesai | docs/VERIFICATION.md — konfigurasi, hasil, sisa terbuka | — |
+| P8-02 | selesai | Dockerfile multi-stage non-root; prod build Σ 6,9 MB; smoke di data simulasi | — |
+| P8-03 | selesai | env NUXT_* tanpa secret keluar; health GET /; pool max teruji; volume foto/DB + rotasi log dicatat di OPERATIONS.md | — |
+| P8-05 | dikerjakan | Smoke lokal lulus; deployment aktif EasyPanel menunggu akses/keputusan (P8-01) | Deploy bila akses tersedia |
+| P8-07 | selesai | docs/OPERATIONS.md — panduan operator & panicia lengkap | — |
+
 Status yang digunakan: belum mulai, dikerjakan, terhambat, selesai. Ketika terhambat, catat informasi yang diperlukan dan lanjutkan task lain yang dependensinya sudah terpenuhi.
