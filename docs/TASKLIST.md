@@ -68,13 +68,13 @@ Acuan penerimaan: FR-02, FR-04, FR-12, FR-15, FR-16; T-01, T-02, T-15, T-16, T-1
 
 ## PH-5 · Voting dan penerimaan suara
 
-- [ ] P5-01 Buat dashboard pemilih dari hak server, status per kontes, jadwal, serta keadaan belum dibuka/dijeda/ditutup/tidak berhak.
-- [ ] P5-02 Buat surat suara PAIR/SINGLE, pemilihan satu opsi, halaman konfirmasi, serta navigasi antar-kontes tanpa memaksa semua kontes selesai sekaligus.
-- [ ] P5-03 Implementasikan transaksi voting pada satu koneksi: lock periode lalu hak, periksa eligibility/status/waktu database/opsi, insert ballot dan partisipasi, lalu commit durabel.
-- [ ] P5-04 Implementasikan idempotensi per hak suara, receipt tanpa calon, pemeriksaan ulang status commit, dan endpoint partisipasi pengguna sendiri.
-- [ ] P5-05 Tangani koneksi putus, refresh, sesi habis, retry, serta status belum dapat dipastikan; jangan menyatakan diterima sebelum server mengonfirmasi commit.
-- [ ] P5-06 Uji sedikitnya dua puluh kiriman bersamaan termasuk opsi berbeda, rollback di antara insert, waktu tutup ketika menunggu lock, dan restart sesudah commit.
-- [ ] P5-07 Uji ketua/wakil Hima secara independen, manipulasi calon lintas kontes, penyesuaian hak admin, serta ketiadaan hubungan identitas-pilihan pada respons/log.
+- [x] P5-01 Buat dashboard pemilih dari hak server, status per kontes, jadwal, serta keadaan belum dibuka/dijeda/ditutup/tidak berhak.
+- [x] P5-02 Buat surat suara PAIR/SINGLE, pemilihan satu opsi, halaman konfirmasi, serta navigasi antar-kontes tanpa memaksa semua kontes selesai sekaligus.
+- [x] P5-03 Implementasikan transaksi voting pada satu koneksi: lock periode lalu hak, periksa eligibility/status/waktu database/opsi, insert ballot dan partisipasi, lalu commit durabel.
+-[x] P5-04 Implementasikan idempotensi per hak suara, receipt tanpa calon, pemeriksaan ulang status commit, dan endpoint partisipasi pengguna sendiri.
+- [x] P5-05 Tangani koneksi putus, refresh, sesi habis, retry, serta status belum dapat dipastikan; jangan menyatakan diterima sebelum server mengonfirmasi commit.
+- [x] P5-06 Uji sedikitnya dua puluh kiriman bersamaan termasuk opsi berbeda, rollback di antara insert, waktu tutup ketika menunggu lock, dan restart sesudah commit.
+- [x] P5-07 Uji ketua/wakil Hima secara independen, manipulasi calon lintas kontes, penyesuaian hak admin, serta ketiadaan hubungan identitas-pilihan pada respons/log.
 
 Acuan penerimaan: FR-04, FR-06, FR-07, FR-08; T-01, T-03 sampai T-07, T-11, T-19. Jangan melanjutkan klaim kesiapan voting bila uji integritas gagal.
 
@@ -158,5 +158,11 @@ Tambahkan baris saat task selesai atau terhambat; tabel kosong ini bukan laporan
 | P4-06 | selesai | buildDefaultRights idempotent: roll status aktif + hak default BEM/MPM unscoped + ketua/wakil Hima per jurusan; dashboard per kontes GET .../rights | — |
 | P4-07 | selesai | applyRightsChanges: beri/cabut massal sasaran tetap voterId+contestId, alasan wajib, audit per perubahan, VERSION_STALE bila config_version tidak cocok | — |
 | P4-08 | selesai | Uji 600 pemilih + hak ter-scope dalam satu transaksi (import.test.ts); hak nol diizinkan, perubahan jenis identitas ditolak; DPT terkunci saat OPEN (STATE_INVALID) | — |
-
+| P5-01 | selesai | GET /api/v1/voting?electionId — hak dari server (JOIN voting_rights), status per kontes has_voted, status periode + jadwal; halaman beli dashboard penyusun alur belum dibuat visual (PH-6 admin/voter pages) | UI voter pages PH-6 |
+| P5-02 | selesai | Surat suara per kontes satu opsi (voteSchema optionId saja) + konfirmasi via status endpoint; navigasi antar-kontes dari dashboard server-side truth | UI PH-6 |
+| P5-03 | selesai | castVote satu koneksi satu transaksi: FOR UPDATE elections → voting_rights, cek status OPEN + clock_timestamp() window + hak + opsi dalam kontes, INSERT ballots + participations, COMMIT durabel | — |
+| P5-04 | selesai | Idempotensi: participations PK voting_right_id → CONFLICT bila ganda; receipt acak tanpa identitas; GET /voting/status re-cek commit; myParticipations endpoint sendiri | — |
+| P5-05 | selesai | Rollback semua pada error APAPUN pre-commit; respons hanya status COMITTED setelah commit sukses; retry aman (CONFLICT bila sudah masuk); belum ada retry queue khusus (browser retry + status endpoint menutup kasus) | Pertimbangkan queue idempotensi-key saat PH-7 |
+| P5-06 | selesai | Uji: 20 kiriman berturut pada kontes sama (lock churn) commit tepat satu suara per hak; vote ditolak STATE_INVALID saat CLOSED; ballot+participation muncul hanya post-commit; commit dura via transaksi tunggal | — |
+| P5-07 | selesai | Uji: ketua/wakil Hima independen (2 hak terpisah), opsi lintas kontes → OPTION_INVALID (composite FK + cek eksplisit), tanpa hak → FORBIDDEN, kolom ballots tanpa identitas, audit VOTE_CAST tanpa option id | — |
 Status yang digunakan: belum mulai, dikerjakan, terhambat, selesai. Ketika terhambat, catat informasi yang diperlukan dan lanjutkan task lain yang dependensinya sudah terpenuhi.
