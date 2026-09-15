@@ -1,3 +1,5 @@
+import { apiError } from '../../utils/errors'
+
 import { getPool } from '../../../database/db'
 import { hashPassword, generatePassword } from '../../utils/password'
 import { revokeUserSessions } from '../../utils/session'
