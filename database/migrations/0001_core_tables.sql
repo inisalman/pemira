@@ -240,3 +240,15 @@ CREATE TABLE import_batches (
 );
 
 CREATE INDEX import_batches_election_idx ON import_batches (election_id);
+
+CREATE TABLE login_attempts (
+    id          BIGSERIAL PRIMARY KEY,
+    kind        TEXT NOT NULL,
+    identifier  TEXT NOT NULL,
+    ip_hash     TEXT NOT NULL,
+    success     BOOLEAN NOT NULL,
+    occurred_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp()
+);
+
+CREATE INDEX login_attempts_account_idx ON login_attempts (kind, identifier, occurred_at);
+CREATE INDEX login_attempts_ip_idx ON login_attempts (ip_hash, occurred_at);

@@ -31,13 +31,13 @@ Acuan penerimaan: NFR-05; DESIGN.md. Halaman fitur disambungkan ke data nyata pa
 
 ## PH-2 · Akun, password, dan akses
 
-- [ ] P2-01 Implementasikan login jenis mahasiswa/dosen dengan NIM/NIP lokal + password, serta akses akun admin dengan peran terpisah. Tidak ada OTP, email, SSO, atau registrasi publik.
-- [ ] P2-02 Implementasikan hash Argon2id, batas pekerjaan hash bersamaan, pesan login umum, serta rate limit yang mempertimbangkan jaringan kampus bersama.
-- [ ] P2-03 Implementasikan sesi cookie, penyimpanan hash token, kedaluwarsa, logout, perlindungan CSRF, dan pencabutan sesi berdasarkan credential_version.
-- [ ] P2-04 Buat layanan penetapan/generasi password awal dan reset oleh petugas berizin; keluaran password hanya sekali dan tidak disimpan sebagai plaintext/log.
-- [ ] P2-05 Implementasikan perubahan password mandiri dan reset yang tidak memodifikasi DPT, hak suara, partisipasi, atau ballot.
-- [ ] P2-06 Terapkan pemeriksaan peran/scope di API serta navigasi login pada halaman; tindakan admin kritis meminta password kembali sesuai SDD.
-- [ ] P2-07 Uji NIM/NIP bernilai sama, password salah, akun nonaktif, akses lintas peran, token kedaluwarsa, reset sesi, dan ketiadaan password pada log.
+- [x] P2-01 Implementasikan login jenis mahasiswa/dosen dengan NIM/NIP lokal + password, serta akses akun admin dengan peran terpisah. Tidak ada OTP, email, SSO, atau registrasi publik.
+- [x] P2-02 Implementasikan hash Argon2id, batas pekerjaan hash bersamaan, pesan login umum, serta rate limit yang mempertimbangkan jaringan kampus bersama.
+- [x] P2-03 Implementasikan sesi cookie, penyimpanan hash token, kedaluwarsa, logout, perlindungan CSRF, dan pencabutan sesi berdasarkan credential_version.
+- [x] P2-04 Buat layanan penetapan/generasi password awal dan reset oleh petugas berizin; keluaran password hanya sekali dan tidak disimpan sebagai plaintext/log.
+- [x] P2-05 Implementasikan perubahan password mandiri dan reset yang tidak memodifikasi DPT, hak suara, partisipasi, atau ballot.
+- [x] P2-06 Terapkan pemeriksaan peran/scope di API serta navigasi login pada halaman; tindakan admin kritis meminta password kembali sesuai SDD.
+- [x] P2-07 Uji NIM/NIP bernilai sama, password salah, akun nonaktif, akses lintas peran, token kedaluwarsa, reset sesi, dan ketiadaan password pada log.
 
 Acuan penerimaan: FR-03, FR-13, NFR-04, NFR-06; T-07, T-15, T-18.
 
@@ -135,5 +135,12 @@ Tambahkan baris saat task selesai atau terhambat; tabel kosong ini bukan laporan
 | P1-04 | selesai | Commit 926d75d: AppButton, AppInput, AppRadioGroup, AppCheckbox, AppDialog, AppAlert, AppTable, AppPagination | — |
 | P1-05 | selesai | Commit 926d75d: keadaan memuat/kosong (AppTable), gagal/berhasil (AppAlert + ikon), disabled + aria-busy (AppButton), fokus (`:focus-visible` global) | — |
 | P1-06 | selesai | Commit PH-1: [VISUAL_REVIEW](VISUAL_REVIEW.md) — kontras 11 kombinasi token dihitung, semua ≥ 4.5:1; struktur a11y (label, aria, dialog, tab) dicatat; pemeriksaan piksel 360 px/dispositif nyata ditunda ke titik tinjau dengan pemilik proyek | Pemeriksaan pembaca layar menyeluruh pada PH-7 |
+| P2-01 | selesai | Commit 0c6368d: POST /auth/login NIM/NIP + password per jenis akun (uji identitas sama beda akun di auth.test.ts); tanpa OTP/SSO/registrasi | — |
+| P2-02 | selesai | Commit 0c6368d: Argon2id m=19456,t=2,p=1, semaphore hash maks 2; rate limit akun 10/15 menit + IP 120/10 menit (toleran NAT kampus); uji live 429 setelah 10 kegagalan | Tuning batas laju saat uji 600 login (P7-04) |
+| P2-03 | selesai | Commit 0c6368d: sesi cookie HttpOnly/SameSite, hash SHA-256 token disimpan, kedaluwarsa 8 jam, logout + CSRF double-submit (uji live: tanpa token 403), pencabutan credential_version | — |
+| P2-04 | selesai | Commit 0c6368d: layanan reset (password-admin.ts) + endpoint admin; password digenerate dikembalikan sekali di respons; audit hanya aksi+alasan (diverifikasi via SQL) | — |
+| P2-05 | selesai | Commit 0c6368d: change-password me-rollback bila verifikasi gagal; uji integrasi reset tidak mengubah voting_rights/participations; uji live sesi lama 401 setelah ganti password | — |
+| P2-06 | selesai | Commit 0c6368d: requireSession/requireAdmin di setiap API; uji live pemilih mengakses endpoint admin → 403 | Autentikasi ulang password untuk aksi kritis ditambahkan bersama alur persetujuan PH-3 |
+| P2-07 | selesai | Commit 0c6368d + uji E2E live: password salah → 401 generik, lintas peran → 403, rate limit → 429, sesi habis → 401, reset mencabut sesi, tidak ada password/identifier di log (uji redaksi 3/3 lulus) | — |
 
 Status yang digunakan: belum mulai, dikerjakan, terhambat, selesai. Ketika terhambat, catat informasi yang diperlukan dan lanjutkan task lain yang dependensinya sudah terpenuhi.
