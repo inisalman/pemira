@@ -30,7 +30,8 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await pool?.end()
-  execSync(`psql "${ADMIN_DB}" -c "DROP DATABASE ${TEST_DB}"`, { stdio: 'pipe' })
+  // best effort: parallel suites may still hold connections past closePool
+  try { execSync(`psql "${ADMIN_DB}" -c "DROP DATABASE ${TEST_DB}"`, { stdio: 'pipe' }) } catch { /* lagging pool */ }
 })
 
 describe('password hashing', () => {
