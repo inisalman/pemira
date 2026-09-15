@@ -27,8 +27,9 @@
   },
   "devDependencies": {
     "@oxc-parser/binding-darwin-arm64": "^0.150.0",
+    "@rolldown/binding-darwin-arm64": "^1.2.8",
     "@types/pg": "8.23.1",
-    "oxc-parser": "0.40.0",
+    "oxc-parser": "0.98.0",
     "typescript": "5.9.3",
     "vitest": "5.0.0",
     "vue-tsc": "3.3.11"
