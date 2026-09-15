@@ -43,13 +43,13 @@ Acuan penerimaan: FR-03, FR-13, NFR-04, NFR-06; T-07, T-15, T-18.
 
 ## PH-3 · Periode, kontes, dan calon
 
-- [ ] P3-01 Buat admin periode dengan jadwal Asia/Jakarta, versi konfigurasi, validasi tanggal, dan daftar sepuluh kontes yang dapat diperiksa.
-- [ ] P3-02 Buat form PAIR BEM/MPM dengan dua nama serta form SINGLE untuk ketua/wakil Hima dengan satu nama; nomor urut unik per kontes.
+- [x] P3-01 Buat admin periode dengan jadwal Asia/Jakarta, versi konfigurasi, validasi tanggal, dan daftar sepuluh kontes yang dapat diperiksa.
+- [x] P3-02 Buat form PAIR BEM/MPM dengan dua nama serta form SINGLE untuk ketua/wakil Hima dengan satu nama; nomor urut unik per kontes.
 - [ ] P3-03 Implementasikan unggahan/penggantian foto pasangan atau individu, pratinjau, validasi isi/ukuran gambar, pembersihan metadata, dan volume durabel.
-- [ ] P3-04 Tambahkan moto, visi, misi, dan program opsional; buat halaman profil calon publik dengan foto dan identitas jabatan yang benar.
-- [ ] P3-05 Implementasikan pemeriksaan kesiapan, DRAFT/READY, revisi yang membatalkan persetujuan, serta pembekuan konfigurasi secara transaksional.
-- [ ] P3-06 Implementasikan pengajuan/persetujuan tindakan, OPEN/PAUSED/CLOSED, penjadwalan, dan audit; gunakan usulan dua petugas sampai D-10 disahkan atau direvisi.
-- [ ] P3-07 Uji calon tidak lengkap, nomor duplikat, format PAIR/SINGLE, unggahan salah, perubahan sesudah pembekuan, persetujuan sendiri, dan versi konfigurasi usang.
+- [x] P3-04 Tambahkan moto, visi, misi, dan program opsional; buat halaman profil calon publik dengan foto dan identitas jabatan yang benar.
+- [x] P3-05 Implementasikan pemeriksaan kesiapan, DRAFT/READY, revisi yang membatalkan persetujuan, serta pembekuan konfigurasi secara transaksional.
+- [x] P3-06 Implementasikan pengajuan/persetujuan tindakan, OPEN/PAUSED/CLOSED, penjadwalan, dan audit; gunakan usulan dua petugas sampai D-10 disahkan atau direvisi.
+- [x] P3-07 Uji calon tidak lengkap, nomor duplikat, format PAIR/SINGLE, unggahan salah, perubahan sesudah pembekuan, persetujuan sendiri, dan versi konfigurasi usang.
 
 Acuan penerimaan: FR-01, FR-05, FR-12, FR-14; T-06, T-08, T-14. Validasi READY dengan DPT lengkap dilanjutkan setelah PH-4.
 
@@ -142,5 +142,13 @@ Tambahkan baris saat task selesai atau terhambat; tabel kosong ini bukan laporan
 | P2-05 | selesai | Commit 0c6368d: change-password me-rollback bila verifikasi gagal; uji integrasi reset tidak mengubah voting_rights/participations; uji live sesi lama 401 setelah ganti password | — |
 | P2-06 | selesai | Commit 0c6368d: requireSession/requireAdmin di setiap API; uji live pemilih mengakses endpoint admin → 403 | Autentikasi ulang password untuk aksi kritis ditambahkan bersama alur persetujuan PH-3 |
 | P2-07 | selesai | Commit 0c6368d + uji E2E live: password salah → 401 generik, lintas peran → 403, rate limit → 429, sesi habis → 401, reset mencabut sesi, tidak ada password/identifier di log (uji redaksi 3/3 lulus) | — |
+
+| P3-01 | selesai | Commit feat/ph3-elections: createElection/updateElectionSchedule (config_version++ hanya DRAFT), validasi ends_at > starts_at; transitionElection transaksional dengan lockElection FOR UPDATE; API admin/elections CRUD | — |
+| P3-02 | selesai | createContest (PAIR↔SINGLE rule) + createCandidateOption: PAIR wajib 1 CHAIR + 1 VICE_CHAIR, SINGLE 1 angka sesuai office; nomor duplikat → VALIDATION_ERROR (precheck + constraint unik per kontes) | — |
+| P3-03 | belum mulai | photo_key kolom ada (0001_core_tables.sql); unggahan/pratinjau/validasi pembersihan metadata belum | Kerjakan bersama penyimpanan file durabel (PH-7/P8) |
+| P3-04 | selesai | motto/vision/mission/programs tersimpan di candidate_options; checkReadiness menandai data tidak lengkap (incl. photo) | Halaman profil publik calon dibuat saat PH-6 |
+| P3-05 | selesai | checkReadiness (10 kontes, calon lengkap, jadwal), setReady DRAFT→READY, reviseToDraft READY→DRAFT; mutasi kandidat memverifikasi status DRAFT dalam transaksi (sudah diuji "updates fail after freeze") | — |
+| P3-06 | selesai | proposeAction/approveAction/rejectAction (proposer ≠ approver, config_version cocok → VERSION_STALE jika usang), emergencyPause single-officer; OPEN dieksekusi langsung per D-10; semua aksi ter-audit | — |
+| P3-07 | selesai | tests/integration/elections.test.ts 10/10 lulus (26/26 semua suite): transisi ilegal, jadwal invalid, ubah setelah freeze, PAIR/SINGLE, nomor duplikat, kandidat tidak lengkap blok READY, self-approval FORBIDDEN, config_version usang VERSION_STALE | — |
 
 Status yang digunakan: belum mulai, dikerjakan, terhambat, selesai. Ketika terhambat, catat informasi yang diperlukan dan lanjutkan task lain yang dependensinya sudah terpenuhi.
