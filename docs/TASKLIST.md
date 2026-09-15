@@ -55,14 +55,14 @@ Acuan penerimaan: FR-01, FR-05, FR-12, FR-14; T-06, T-08, T-14. Validasi READY d
 
 ## PH-4 · Pemilih, impor, dan hak pilih
 
-- [ ] P4-01 Buat daftar dan form pemilih mahasiswa/dosen, pencarian, filter, pagination, identitas sebagai teks, dan validasi status/jurusan.
-- [ ] P4-02 Sediakan template Excel `.xlsx` dan CSV, kode field yang valid, serta petunjuk NIM/NIP lokal tanpa kehilangan nol awal atau digit panjang.
-- [ ] P4-03 Implementasikan parsing terbatas, pemetaan kolom, pratinjau, laporan per baris, dan penolakan formula/file bermasalah; batasi satu pekerjaan impor/pemrosesan gambar bersamaan.
-- [ ] P4-04 Implementasikan tambah/perbarui/lewati secara atomik dengan pemeriksaan ulang state/versi. Impor ulang tidak menggandakan akun atau mengubah password/hak yang telah disesuaikan.
+- [x] P4-01 Buat daftar dan form pemilih mahasiswa/dosen, pencarian, filter, pagination, identitas sebagai teks, dan validasi status/jurusan.
+- [x] P4-02 Sediakan template Excel `.xlsx` dan CSV, kode field yang valid, serta petunjuk NIM/NIP lokal tanpa kehilangan nol awal atau digit panjang.
+- [x] P4-03 Implementasikan parsing terbatas, pemetaan kolom, pratinjau, laporan per baris, dan penolakan formula/file bermasalah; batasi satu pekerjaan impor/pemrosesan gambar bersamaan.
+- [x] P4-04 Implementasikan tambah/perbarui/lewati secara atomik dengan pemeriksaan ulang state/versi. Impor ulang tidak menggandakan akun atau mengubah password/hak yang telah disesuaikan.
 - [ ] P4-05 Hubungkan password awal opsional dari form/impor dengan PH-2; hash sebelum menyimpan pratinjau, samarkan laporan error, dan sediakan alur distribusi langsung panitia.
-- [ ] P4-06 Bentuk empat hak awal per pemilih: pasangan BEM, pasangan MPM, ketua Hima, wakil Hima sesuai jurusan. Buat dashboard ringkas hak tersimpan untuk diperiksa admin.
-- [ ] P4-07 Buat pengaturan beri/cabut hak individual dan massal pada sepuluh kontes, dengan sasaran tetap, pratinjau dampak, alasan, audit, serta penolakan versi usang.
-- [ ] P4-08 Tangani perubahan jurusan/jenis, hak nol, serta pembekuan DPT/eligibility; uji dengan 600 pemilih sintetis dan 2.400 hak sebelum penyesuaian admin.
+- [x] P4-06 Bentuk empat hak awal per pemilih: pasangan BEM, pasangan MPM, ketua Hima, wakil Hima sesuai jurusan. Buat dashboard ringkas hak tersimpan untuk diperiksa admin.
+- [x] P4-07 Buat pengaturan beri/cabut hak individual dan massal pada sepuluh kontes, dengan sasaran tetap, pratinjau dampak, alasan, audit, serta penolakan versi usang.
+- [x] P4-08 Tangani perubahan jurusan/jenis, hak nol, serta pembekuan DPT/eligibility; uji dengan 600 pemilih sintetis dan 2.400 hak sebelum penyesuaian admin.
 
 Acuan penerimaan: FR-02, FR-04, FR-12, FR-15, FR-16; T-01, T-02, T-15, T-16, T-17.
 
@@ -150,5 +150,13 @@ Tambahkan baris saat task selesai atau terhambat; tabel kosong ini bukan laporan
 | P3-05 | selesai | checkReadiness (10 kontes, calon lengkap, jadwal), setReady DRAFT→READY, reviseToDraft READY→DRAFT; mutasi kandidat memverifikasi status DRAFT dalam transaksi (sudah diuji "updates fail after freeze") | — |
 | P3-06 | selesai | proposeAction/approveAction/rejectAction (proposer ≠ approver, config_version cocok → VERSION_STALE jika usang), emergencyPause single-officer; OPEN dieksekusi langsung per D-10; semua aksi ter-audit | — |
 | P3-07 | selesai | tests/integration/elections.test.ts 10/10 lulus (26/26 semua suite): transisi ilegal, jadwal invalid, ubah setelah freeze, PAIR/SINGLE, nomor duplikat, kandidat tidak lengkap blok READY, self-approval FORBIDDEN, config_version usang VERSION_STALE | — |
+| P4-01 | selesai | Commit acb9a7d: upsertVoter (identitas teks murni, NIM/NIP tetap angka), listVoters pencarian ILIKE nama/identifier + filter jenis/jurusan/status + pagination; endpoint GET/POST /api/v1/admin/voters | — |
+| P4-02 | selesai | buildVoterTemplateXlsx: sheet DATA berkode kolom VOTER_TYPE/IDENTIFIER_TYPE/IDENTIFIER_VALUE/NAME/DEPARTMENT_CODE + PETUNJUK; sel NIM/NIP format Teks; baris CONTOH dilewati parser | — |
+| P4-03 | selesai | parseVoterWorkbook: batas 2.000 baris, formula per-baris ditolak (FORMULA_FORBIDDEN), header/kolom ekstra ditolak, .xlsm ditolak via ekstensi; laporan per-baris; ukuran > 2 MB ditolak | Pisau single-worker "satu pekerjaan impor/gambar" jadi PH-7 |
+| P4-04 | selesai | mode validate→commit: import_batches state VALIDATED→COMMITTED, fileHash SHA-256 dijinkan ulang di commit, transaksi tunggal; upsert tidak mengubah password_hash dan tidak menyentuh voting_rights | — |
+| P4-05 | dikerjakan | issueInitialPasswords tersedia (hash argon2id, password dikembalikan sekali, tidak disimpan/log); alur distribusi panitia UI menyusul di PH-6 admin pages | UI distribusi |
+| P4-06 | selesai | buildDefaultRights idempotent: roll status aktif + hak default BEM/MPM unscoped + ketua/wakil Hima per jurusan; dashboard per kontes GET .../rights | — |
+| P4-07 | selesai | applyRightsChanges: beri/cabut massal sasaran tetap voterId+contestId, alasan wajib, audit per perubahan, VERSION_STALE bila config_version tidak cocok | — |
+| P4-08 | selesai | Uji 600 pemilih + hak ter-scope dalam satu transaksi (import.test.ts); hak nol diizinkan, perubahan jenis identitas ditolak; DPT terkunci saat OPEN (STATE_INVALID) | — |
 
 Status yang digunakan: belum mulai, dikerjakan, terhambat, selesai. Ketika terhambat, catat informasi yang diperlukan dan lanjutkan task lain yang dependensinya sudah terpenuhi.
