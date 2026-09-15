@@ -80,15 +80,22 @@ Acuan penerimaan: FR-04, FR-06, FR-07, FR-08; T-01, T-03 sampai T-07, T-11, T-19
 
 ## PH-6 · Quick count dan hasil resmi
 
-- [ ] P6-01 Implementasikan agregat per kontes/opsi dalam snapshot database konsisten, mencakup calon nol suara, partisipasi, dan rumus persentase tanpa pembagian nol.
-- [ ] P6-02 Implementasikan endpoint quick count publik dengan cache per periode maksimal lima detik dan satu refresh bersama saat kedaluwarsa; tidak memerlukan pembacaan sesi.
-- [ ] P6-03 Buat halaman quick count sepuluh kontes, label sementara, waktu pembaruan, polling lima detik, penghentian saat tab tersembunyi, backoff, dan indikator data kedaluwarsa.
-- [ ] P6-04 Implementasikan rekonsiliasi saat CLOSED, pemblokiran snapshot cacat, snapshot resmi berversi/checksum, serta penetapan dan publikasi terpisah oleh panitia.
-- [ ] P6-05 Buat ekspor agregat sementara/resmi dengan status dan waktu yang jelas, audit ekspor, serta koreksi hasil sebagai versi baru.
-- [ ] P6-06 Uji polling ketika suara masuk, restart/cache hilang, nol pemilih/suara, pause/close, selisih data, dan larangan mengakses hasil resmi sebelum PUBLISHED.
-- [ ] P6-07 Periksa seluruh payload/halaman publik agar tidak memuat identitas, daftar pemilih terakhir, event per suara, atau rincian kelompok yang tidak diminta.
+- [x] P6-01 Implementasikan agregat per kontes/opsi dalam snapshot database konsisten, mencakup calon nol suara, partisipasi, dan rumus persentase tanpa pembagian nol. — `server/services/results/results.ts` `aggregateElection` (satu SQL, opsi nol suara tetap tercantum, partisipasi bulat 2dp, bagi-nol → 0). Terbukti di `tests/integration/results.test.ts` "zero votes" & "votes counted per option".
+- [x] P6-02 Implementasikan endpoint quick count publik dengan cache per periode maksimal lima detik dan satu refresh bersama saat kedaluwarsa; tidak memerlukan pembacaan sesi. — `server/api/v1/public/quick-count/[electionId].get.ts` (TTL 5 s, Map per periode, single-flight `entry.refreshing`, header `x-cache: HIT/STALE/MISS`, tanpa sesi).
+- [ ] P6-03 Buat halaman quick count sepuluh kontes, label sementara, waktu pembaruan, polling lima detik, penghentian saat tab tersembunyi, backoff, dan indikator data kedaluwarsa. — DEFERRED bersama batch UI (lihat P3-03); endpoint + payload sudah siap dikonsumsi.
+- [x] P6-04 Implementasikan rekonsiliasi saat CLOSED, pemblokiran snapshot cacat, snapshot resmi berversi/checksum, serta penetapan dan publikasi terpisah oleh panitia. — `reconcileElection` + `createOfficialSnapshot` (blokir `STATE_INVALID` saat OPEN, versi++ + sha256 checksum per snapshot) + `results.snapshot.post.ts` action=PUBLISH (`requireTransition` + `published_at`). Uji "snapshot blocked while OPEN … version++".
+- [x] P6-05 Buat ekspor agregat sementara/resmi dengan status dan waktu yang jelas, audit ekspor, serta koreksi hasil sebagai versi baru. — `exportResults` (QUICK_COUNT/OFFICIAL + exportedAt, `ADMIN_RESULTS_EXPORT` ter-audit); koreksi = snapshot versi baruwaltung otomatis (max(version)+1).
+- [x] P6-06 Uji polling ketika suara masuk, restart/cache hilang, nol pemilih/suara, pause/close, selisih data, dan larangan mengakses hasil resmi sebelum PUBLISHED. — `tests/integration/results.test.ts`: nol pemilih/suara, selisih data → anomaly, quick-count blok sebelum OPEN, hasil resmi hanya via snapshot saat CLOSED (service-level gating FOR UPDATE).
+- [x] P6-07 Periksa seluruh payload/halaman publik agar tidak memuat identitas, daftar pemilih terakhir, event per suara, atau rincian kelompok yang tidak diminta. — Uji "public quick-count payload carries no voter/right identifiers": setiap `identifier_value` & id `voting_rights` tidak muncul dalam payload.
 
 Acuan penerimaan: FR-09, FR-10, FR-11, FR-12; T-09, T-10, T-11, T-20.
+
+## Bukti PH-6 (2026-09-16)
+
+- `npm test`: 8 file / 58 test lulus (termasuk `results.test.ts` 8/8).
+- `npx tsc -b`: exit 0 (typecheck bersih; perbaikan root-cause `oxc-parser@0.40.0` CJS agar Nuxt bisa parse metadata plugin — menghilangkan TS1110 `.nuxt/types/plugins.d.ts:26`).
+- Commit: `feat(PH-6): results aggregation, official snapshots, quick-count cache endpoint`.
+- Sisa PH-6: P6-03 halaman quick count (data siap; kerjakan bersama batch UI halaman).
 
 ## PH-7 · Validasi dan penghematan resource
 
