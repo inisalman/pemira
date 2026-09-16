@@ -39,7 +39,7 @@ withDefaults(defineProps<{
   font-weight: 600;
   cursor: pointer;
   min-height: 2.75rem;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 .button:disabled {
   opacity: 0.55;
@@ -50,13 +50,13 @@ withDefaults(defineProps<{
 .primary { background: var(--color-primary); color: var(--color-primary-contrast); }
 .primary:hover:not(:disabled) { background: var(--color-primary-strong); }
 
-.secondary { background: var(--color-surface); color: var(--color-primary); border-color: var(--color-primary); }
+.secondary { background: var(--color-primary-soft); color: var(--color-primary-strong); border-color: transparent; }
 .secondary:hover:not(:disabled) { background: var(--color-primary-soft); }
 
 .danger { background: var(--color-danger); color: #fff; }
 .danger:hover:not(:disabled) { background: #93291f; }
 
-.ghost { background: transparent; color: var(--color-text); border-color: var(--color-border); }
+.ghost { background: transparent; color: var(--color-primary-strong); border-color: var(--color-border); }
 .ghost:hover:not(:disabled) { background: var(--color-primary-soft); }
 
 .spinner {

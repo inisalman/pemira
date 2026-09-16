@@ -38,5 +38,5 @@ async function login() {
 </template>
 
 <style module>
-.wrap { max-width: 24rem; margin: 0 auto; }.kicker { color: var(--color-primary); font-weight: 700; margin-bottom: var(--space-1); }.wrap > p:not(.kicker) { color: var(--color-text-muted); }
+.wrap { max-width: 28rem; margin: clamp(2rem, 8vw, 5rem) auto; padding: clamp(1.5rem, 5vw, 2.5rem); border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: white; box-shadow: var(--shadow-md); }.kicker { color: var(--color-primary); font-size: .7rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; margin-bottom: var(--space-2); }.wrap > p:not(.kicker) { color: var(--color-text-muted); }.wrap h1 { font-size: clamp(1.75rem, 5vw, 2.25rem); }
 </style>

@@ -220,7 +220,7 @@ onMounted(load)
 </script>
 
 <template>
-  <section class="admin-voters">
+  <section class="admin-page admin-voters">
     <header class="page-header">
       <div>
         <p class="eyebrow">DATA PEMILIH</p>

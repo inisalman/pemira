@@ -23,8 +23,7 @@ async function save() {
 
 <template>
   <section class="account-page">
-    <h1>Ganti password</h1>
-    <p>Setelah password diganti, semua sesi akan berakhir. Hak pilih dan suara yang sudah masuk tetap tersimpan.</p>
+    <header><p class="eyebrow">Keamanan akun</p><h1>Ganti password</h1><p>Setelah password diganti, semua sesi akan berakhir. Hak pilih dan suara yang sudah masuk tetap tersimpan.</p></header>
     <AppAlert v-if="error" kind="error" :message="error" />
     <form @submit.prevent="save">
       <fieldset class="form-fields" :disabled="busy">
@@ -38,5 +37,5 @@ async function save() {
 </template>
 
 <style scoped>
-.account-page { max-width: 32rem; margin-inline: auto; }
+.account-page { max-width: 32rem; margin-inline: auto; padding: clamp(1.5rem, 5vw, 2.5rem); border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: white; box-shadow: var(--shadow-sm); }.account-page header > p:not(.eyebrow) { color: var(--color-text-muted); }.eyebrow { margin: 0 0 .5rem; color: var(--color-primary); font-size: .7rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
 </style>

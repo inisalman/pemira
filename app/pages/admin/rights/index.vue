@@ -53,7 +53,7 @@ onMounted(loadElections)
 </script>
 
 <template>
-  <section class="admin-rights">
+  <section class="admin-page admin-rights">
     <header class="page-header"><div><p class="eyebrow">HAK PILIH</p><h1>DPT dan kesiapan</h1><p class="intro">Periksa cakupan hak pilih sebelum periode dibuka.</p></div><label class="period-select">Periode<select v-model="electionId"><option value="" disabled>Pilih periode</option><option v-for="election in elections" :key="election.id" :value="election.id">{{ election.name }} · {{ election.status }}</option></select></label></header>
     <AppAlert v-if="error" kind="error" :message="error" /><AppAlert v-if="notice" kind="success" :message="notice" />
     <div v-if="loading" class="state" role="status">Memuat ringkasan…</div>

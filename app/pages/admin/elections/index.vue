@@ -35,8 +35,8 @@ onMounted(load)
 </script>
 
 <template>
-  <section class="admin-elections">
-    <header><h1>Periode pemilihan</h1><p>Buat periode lalu lengkapi kontes dan calon sebelum mengajukan pemeriksaan kesiapan.</p></header>
+  <section class="admin-page admin-elections">
+    <header class="page-header"><div><p class="eyebrow">PERSIAPAN PEMILIHAN</p><h1>Periode pemilihan</h1><p class="intro">Buat periode lalu lengkapi kontes dan calon sebelum mengajukan pemeriksaan kesiapan.</p></div></header>
     <AppAlert v-if="error" kind="error" :message="error" />
     <AppAlert v-if="notice" kind="success" :message="notice" />
     <form class="create-form" @submit.prevent="create">
@@ -55,7 +55,7 @@ onMounted(load)
 <style scoped>
 .admin-elections { display: grid; gap: var(--space-6); }
 .admin-elections header p { color: var(--color-text-muted); }
-.create-form { max-width: 44rem; border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-4); background: var(--color-surface); }
+.create-form { max-width: 44rem; border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-6); background: var(--color-surface); box-shadow: var(--shadow-sm); }
 .create-form h2 { font-size: var(--text-lg); }
 .dates { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
 .dates label { display: grid; gap: var(--space-1); font-size: var(--text-sm); font-weight: 600; }

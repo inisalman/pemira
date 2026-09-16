@@ -1,23 +1,24 @@
 /* PEMIRA design tokens — modern light, per DESIGN.md.
    Primary green #2A6B5C, warm white #FFF9F2, font Inter (local, variable). */
 
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 @import '@fontsource-variable/inter';
 
 :root {
   /* Brand */
-  --color-primary: #2a6b5c;          /* primary actions, links, focus */
-  --color-primary-strong: #1f5145;   /* hover / pressed */
-  --color-primary-soft: #e3efeb;     /* subtle backgrounds, selected rows */
+  --color-primary: #005d42;          /* primary actions, links, focus */
+  --color-primary-strong: #004832;   /* hover / pressed */
+  --color-primary-soft: #e2f3ec;     /* subtle backgrounds, selected rows */
   --color-primary-contrast: #ffffff; /* text on primary */
 
   /* Surfaces */
-  --color-bg: #fff9f2;               /* warm white page background */
+  --color-bg: #faf8ff;               /* light lavender page background */
   --color-surface: #ffffff;          /* cards, tables, dialogs */
-  --color-border: #e5ddd1;           /* hairlines, input borders */
+  --color-border: #dce4df;           /* hairlines, input borders */
 
   /* Text */
-  --color-text: #24312d;             /* body text */
-  --color-text-muted: #5d6b66;       /* secondary text, captions */
+  --color-text: #131b2e;             /* body text */
+  --color-text-muted: #4c5852;       /* secondary text, captions */
 
   /* Status (supporting only — never the sole indicator; paired with text/icon) */
   --color-success: #1e7a3f;
@@ -33,7 +34,7 @@
   --focus-ring: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-primary);
 
   /* Type */
-  --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-sans: 'Plus Jakarta Sans', 'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --text-sm: 0.875rem;
   --text-base: 1rem;
   --text-lg: 1.125rem;
@@ -49,8 +50,8 @@
   --space-8: 2rem;
   --radius: 0.5rem;
   --radius-lg: 0.75rem;
-  --shadow-sm: 0 1px 2px rgba(36, 49, 45, 0.06);
-  --shadow-md: 0 8px 24px rgba(36, 49, 45, 0.08);
+  --shadow-sm: 0 1px 2px rgba(19, 27, 46, 0.08);
+  --shadow-md: 0 10px 26px rgba(19, 27, 46, 0.10);
 }
 
 /* Color usage map (P1-01):
@@ -79,6 +80,9 @@ body {
   color: var(--color-text);
 }
 
+input, select, textarea { accent-color: var(--color-primary); }
+textarea { resize: vertical; }
+
 ::selection { background: var(--color-primary-soft); color: var(--color-primary-strong); }
 button, input, select, textarea { font: inherit; }
 
@@ -87,8 +91,8 @@ button, input, select, textarea { font: inherit; }
 .session-actions a, nav a { display: inline-flex; align-items: center; min-height: 2.75rem; }
 .skip-link { position: absolute; top: 0; left: 1rem; transform: translateY(-150%); padding: 0.75rem; background: white; z-index: 100; }
 .skip-link:focus { transform: translateY(0); }
-.action-link { display: inline-flex; align-items: center; justify-content: center; min-height: 2.75rem; padding: 0.5rem 1rem; border: 1px solid var(--color-primary); border-radius: var(--radius); font-weight: 600; }
-.action-link:hover { background: var(--color-primary-soft); }
+.action-link { display: inline-flex; align-items: center; justify-content: center; min-height: 2.75rem; padding: 0.5rem 1rem; border: 1px solid var(--color-primary); border-radius: var(--radius); color: var(--color-primary); font-weight: 700; text-decoration: none; }
+.action-link:hover { background: var(--color-primary-soft); color: var(--color-primary-strong); }
 .receipt { overflow-wrap: anywhere; }
 
 .page-intro { max-width: 44rem; margin-bottom: var(--space-6); }
@@ -98,6 +102,19 @@ h1, h2, h3, h4 {
   line-height: 1.25;
   margin: 0 0 var(--space-4);
 }
+
+h1 { letter-spacing: -0.04em; }
+
+.admin-page { display: grid; gap: var(--space-6); }
+.admin-page .page-header { display: flex; align-items: end; justify-content: space-between; gap: var(--space-6); flex-wrap: wrap; }
+.admin-page .page-header h1 { margin-bottom: var(--space-2); font-size: clamp(1.85rem, 3vw, 2.6rem); }
+.admin-page .eyebrow { margin: 0 0 var(--space-2); color: var(--color-primary); font-size: .7rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
+.admin-page .intro { max-width: 44rem; margin: 0; color: var(--color-text-muted); }
+.admin-page .period-select, .admin-page .select-field { display: grid; gap: var(--space-1); color: var(--color-text); font-size: var(--text-sm); font-weight: 700; }
+.admin-page select, .admin-page input:not([type='checkbox']):not([type='radio']), .admin-page textarea { min-height: 2.75rem; border: 1px solid var(--color-border); border-radius: var(--radius); color: var(--color-text); background: var(--color-surface); padding: var(--space-2) var(--space-3); }
+.admin-page select:focus-visible, .admin-page input:focus-visible, .admin-page textarea:focus-visible { border-color: var(--color-primary); }
+.admin-page .state { padding: 2.5rem var(--space-4); color: var(--color-text-muted); text-align: center; border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); }
+@media (max-width: 42rem) { .admin-page .period-select, .admin-page .period-select select { width: 100%; min-width: 0; } }
 
 a {
   color: var(--color-primary);

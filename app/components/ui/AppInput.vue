@@ -58,7 +58,7 @@ const hintId = `${id}-hint`
 .label { font-weight: 600; font-size: var(--text-sm); }
 .input {
   padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--color-text-muted);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius);
   background: var(--color-surface);
   color: var(--color-text);
@@ -66,6 +66,7 @@ const hintId = `${id}-hint`
   min-height: 2.75rem;
 }
 .input:focus-visible { box-shadow: var(--focus-ring); outline: none; }
+.input:hover:not(:disabled) { border-color: var(--color-primary); }
 .input:disabled { opacity: 0.55; background: var(--color-primary-soft); }
 .error { color: var(--color-danger); font-size: var(--text-sm); margin: 0; }
 .hint { color: var(--color-text-muted); font-size: var(--text-sm); margin: 0; }

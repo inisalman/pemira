@@ -74,20 +74,22 @@ onMounted(() => load())
     <AppAlert v-if="notice" :kind="ballot?.contest.hasVoted ? 'success' : 'info'" :message="notice" />
     <AppAlert v-if="uncertain" kind="warning" message="Status suara belum diketahui. Periksa status terlebih dahulu sebelum mengirim lagi." />
     <template v-if="ballot">
-      <header>
+      <header class="ballot-heading">
         <p class="period-name">{{ ballot.election.name }}</p>
         <h1>{{ ballot.contest.title }}</h1>
-        <p>{{ electionStatus(ballot.election.status) }}</p>
+        <p class="election-status">{{ electionStatus(ballot.election.status) }}</p>
       </header>
       <div v-if="ballot.contest.hasVoted" class="receipt-panel" role="status">
+        <span class="receipt-check" aria-hidden="true">✓</span>
         <h2>Suara sudah tercatat</h2>
         <p>Kode tanda terima:</p>
         <p class="receipt">{{ ballot.contest.receiptCode }}</p>
         <p>Anda tidak dapat mengubah atau mengirim suara lagi untuk kontes ini.</p>
+        <NuxtLink to="/voter" class="action-link">Kembali ke hak pilih</NuxtLink>
       </div>
       <template v-else>
         <AppAlert v-if="!ballot.canVote" kind="warning" message="Surat suara belum menerima kiriman. Pemilihan mungkin belum dimulai, dijeda, atau telah berakhir." />
-        <p>Jadwal: {{ electionDate(ballot.election.startsAt) }} sampai {{ electionDate(ballot.election.endsAt) }}.</p>
+        <div class="ballot-schedule"><div><span>Mulai pemilihan</span><strong>{{ electionDate(ballot.election.startsAt) }}</strong></div><div><span>Selesai pemilihan</span><strong>{{ electionDate(ballot.election.endsAt) }}</strong></div></div>
         <AppAlert v-if="!ballot.options.length" message="Belum ada calon yang tersedia. Hubungi panitia untuk pemeriksaan." />
         <form v-else @submit.prevent="confirming = true">
           <fieldset class="candidates" :disabled="locked">
@@ -95,7 +97,7 @@ onMounted(() => load())
             <article v-for="option in ballot.options" :key="option.id" class="candidate" :class="{ selected: selected === option.id }">
               <label class="candidate-choice">
                 <input v-model="selected" type="radio" name="candidate" :value="option.id" required>
-                <strong>Nomor urut {{ option.number }}</strong>
+                <strong class="candidate-number"><small>Nomor urut</small>{{ String(option.number).padStart(2, '0') }}</strong>
                 <span v-if="selected === option.id">Dipilih</span>
               </label>
               <ul class="members">
@@ -110,8 +112,10 @@ onMounted(() => load())
               </details>
             </article>
           </fieldset>
-          <p>Pilihan yang sudah tercatat tidak dapat diubah.</p>
-          <AppButton type="submit" :disabled="locked || !chosen">Tinjau pilihan</AppButton>
+          <div class="review-bar">
+            <div aria-live="polite"><strong>{{ chosen ? `Pilihan Anda: nomor ${chosen.number}` : 'Belum ada calon yang dipilih' }}</strong><p>{{ chosen ? chosen.members.map(member => member.name).join(' & ') : 'Pilih satu calon atau pasangan di atas.' }}</p><small>Pilihan yang sudah tercatat tidak dapat diubah.</small></div>
+            <AppButton type="submit" :disabled="locked || !chosen">Tinjau pilihan</AppButton>
+          </div>
         </form>
       </template>
     </template>
@@ -128,13 +132,26 @@ onMounted(() => load())
 </template>
 
 <style scoped>
-.ballot-page { display: grid; gap: 1.5rem; max-width: 44rem; margin: auto; }
+.ballot-page { display: grid; gap: 1.5rem; max-width: 62rem; margin: auto; }
+.ballot-heading h1 { font-size: clamp(1.8rem, 5vw, 3rem); letter-spacing: -0.04em; overflow-wrap: anywhere; }
+.election-status { display: inline-block; margin: 0; padding: 0.35rem 0.75rem; border-radius: 0.4rem; background: var(--color-primary-soft); color: var(--color-primary-strong); font-size: 0.875rem; }
+.ballot-schedule { display: flex; flex-wrap: wrap; gap: 1rem 3rem; padding: 1.25rem 1.5rem; border-radius: var(--radius-lg); background: #f0f1fa; }
+.ballot-schedule div { display: grid; gap: 0.3rem; font-size: 0.875rem; }
+.ballot-schedule span { color: var(--color-text-muted); }
+.review-bar { display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; margin-top: 1.5rem; padding: 1.5rem; border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: white; }
+.review-bar > div { min-width: 0; overflow-wrap: anywhere; }
+.review-bar p { margin: 0.3rem 0; }
+.review-bar small { color: var(--color-text-muted); }
+.review-bar button { flex-shrink: 0; }
 .ballot-page > .action-link { justify-self: start; }
 .period-name { color: var(--color-primary-strong); font-weight: 600; margin-bottom: 0.5rem; }
-.candidates { display: grid; gap: 1rem; border: 0; padding: 0; margin: 0; min-width: 0; }
+.candidates { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; border: 0; padding: 0; margin: 0; min-width: 0; align-items: start; }
 .candidates legend { font-weight: 600; margin-bottom: 1rem; }
-.candidate { border: 1px solid var(--color-text-muted); border-radius: var(--radius); background: white; padding: 1rem; min-width: 0; overflow-wrap: anywhere; }
-.candidate.selected { border: 2px solid var(--color-primary); padding: calc(1rem - 1px); }
+.candidate { border: 2px solid var(--color-border); border-radius: var(--radius-lg); background: white; padding: 1.5rem; min-width: 0; overflow-wrap: anywhere; }
+.candidate.selected { border-color: var(--color-primary); background: #f3faf6; }
+.candidate-number { display: grid; gap: 0.2rem; margin-right: auto; font-size: 2rem; line-height: 1.2; }
+.candidate-number small { font-size: 0.875rem; font-weight: 500; color: var(--color-text-muted); }
+.candidate-choice:has(input:disabled) { cursor: default; }
 .candidate-choice { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; min-height: 2.75rem; cursor: pointer; color: var(--color-primary-strong); }
 .candidate-choice input { width: 1.25rem; height: 1.25rem; accent-color: var(--color-primary); }
 .members { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: 1rem; padding: 0; list-style: none; }
@@ -145,5 +162,8 @@ onMounted(() => load())
 summary { cursor: pointer; min-height: 2.75rem; padding-block: 0.5rem; color: var(--color-primary-strong); }
 details h2 { font-size: 1rem; margin: 1rem 0 0; }
 .profile-text { white-space: pre-wrap; }
-.receipt-panel { padding: 1.5rem; background: var(--color-success-bg); border: 1px solid var(--color-success); border-radius: var(--radius); }
+.receipt-panel { padding: clamp(1.5rem, 5vw, 3rem); text-align: center; background: white; border: 1px solid var(--color-border); border-radius: var(--radius-lg); }
+.receipt-check { display: grid; place-items: center; margin: 0 auto 1.25rem; width: 3rem; height: 3rem; border-radius: 50%; background: var(--color-success-bg); color: var(--color-success); font-size: 1.5rem; }
+.receipt { padding: 1rem; background: #f0f1fa; border-radius: var(--radius); font-family: monospace; }
+@media (max-width: 42rem) { .candidates { grid-template-columns: 1fr; } .review-bar { align-items: stretch; flex-direction: column; } .candidate { padding: 1rem; } }
 </style>

@@ -1,5 +1,13 @@
 # Arahan desain PEMIRA
 
+## Referensi portal publik, 16 September 2026
+
+Pemilik proyek memilih desain `stitch_pemira_modern_portal_redesign/code.html` dan `screen.png` sebagai referensi landing page. Portal mengikuti susunan section, foto hero, font Plus Jakarta Sans, hijau `#005D42`, latar terang `#FAF8FF`, section lavender `#F2F3FF`, dan aksen amber dari referensi tersebut.
+
+Landing page memakai layout penuh dengan container 1216 px, header navigasi, pengumuman, hero dua kolom, pengenalan MPM/BEM/HIMA, enam kategori organisasi, tata tertib, panduan, bantuan, dan footer. Hijau menandai aksi utama; amber membedakan BEM dan bantuan. Foto memakai aset dari referensi. Jadwal berasal dari API; langkah panduan mengikuti alur akun dan konfirmasi suara yang tersedia di aplikasi.
+
+Perubahan ini khusus portal publik; arahan sebelumnya di bawah tetap menjadi dasar halaman lain.
+
 Versi 1.0 · 14 September 2026
 
 Sumber arahan: pemilik proyek. Dokumen ini mencatat pilihan visual yang diberikan pengguna; belum ada implementasi antarmuka.

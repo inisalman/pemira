@@ -92,7 +92,7 @@ onMounted(loadElections)
 </script>
 
 <template>
-  <section class="admin-candidates">
+  <section class="admin-page admin-candidates">
     <header class="page-header"><div><p class="eyebrow">DATA CALON</p><h1>Kandidat pemilihan</h1><p class="intro">Masukkan pasangan dan calon individu sebelum periode dikunci.</p></div><label class="period-select">Periode<select v-model="electionId"><option value="" disabled>Pilih periode DRAFT</option><option v-for="election in elections" :key="election.id" :value="election.id">{{ election.name }}</option></select></label></header>
     <AppAlert v-if="error" kind="error" :message="error" /><AppAlert v-if="notice" kind="success" :message="notice" />
     <div v-if="loading" role="status" class="state">Memuat kontes…</div>
