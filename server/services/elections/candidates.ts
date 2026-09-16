@@ -36,10 +36,18 @@ export async function createContest(opts: {
     await client.query('BEGIN')
     const election = await lockElection(client, opts.electionId)
     assertDraft(election.status)
+    // Resolve department by UUID or code so callers can pass either.
+    let scopeDepartmentId = opts.scopeDepartmentId ?? null
+    if (scopeDepartmentId) {
+      const dept = await client.query<{ id: string }>(
+        'SELECT id FROM departments WHERE id = $1 OR code = $1', [scopeDepartmentId])
+      if (dept.rowCount === 0) apiError('VALIDATION_ERROR', 'Departemen tidak ditemukan.')
+      scopeDepartmentId = dept.rows[0]!.id
+    }
     const id = randomUUID()
     await client.query(
       'INSERT INTO contests (id, election_id, code, title, scope_department_id, office, option_type) VALUES ($1,$2,$3,$4,$5,$6,$7)',
-      [id, opts.electionId, opts.code, opts.title, opts.scopeDepartmentId ?? null, opts.office, opts.optionType],
+      [id, opts.electionId, opts.code, opts.title, scopeDepartmentId, opts.office, opts.optionType],
     )
     await recordAuditEvent(client, {
       actorId: opts.actorId,
