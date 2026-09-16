@@ -8,6 +8,12 @@ const config = useRuntimeConfig()
     <header :class="$style.header">
       <div :class="$style.headerInner">
         <NuxtLink to="/" :class="$style.brand"><span :class="$style.brandMark">P</span><span>{{ config.public.appName }}</span></NuxtLink>
+        <nav :class="$style.nav" aria-label="Navigasi informasi">
+          <a href="/#tentang-pemira">Tentang PEMIRA</a>
+          <a href="/#jadwal-voting">Jadwal voting</a>
+          <a href="/#tata-tertib">Tata tertib</a>
+          <a href="/#panduan-video">Panduan</a>
+        </nav>
         <NuxtLink to="/admin/login" :class="$style.adminLink">Panel panitia</NuxtLink>
       </div>
     </header>
@@ -38,6 +44,9 @@ const config = useRuntimeConfig()
   text-decoration: none;
 }
 .brandMark { display: grid; place-items: center; width: 1.75rem; height: 1.75rem; border-radius: 0.35rem; background: var(--color-primary); color: white; font-size: var(--text-sm); }
+.nav { display: flex; gap: var(--space-1); margin-inline: auto; }
+.nav a { min-height: 2.5rem; padding: 0.5rem 0.65rem; border-radius: var(--radius); color: var(--color-text-muted); font-size: var(--text-sm); font-weight: 600; text-decoration: none; }
+.nav a:hover { color: var(--color-primary); background: var(--color-primary-soft); }
 .adminLink { margin-left: auto; font-size: var(--text-sm); }
 .main {
   flex: 1;
@@ -53,4 +62,5 @@ const config = useRuntimeConfig()
   border-top: 1px solid var(--color-border);
   background: var(--color-surface);
 }
+@media (max-width: 58rem) { .nav { display: none; } }
 </style>

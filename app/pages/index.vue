@@ -4,6 +4,8 @@ type Election = { id: string; name: string; status: string; startsAt: string | n
 const elections = ref<Election[]>([])
 const loading = ref(true)
 const error = ref('')
+const activeElections = computed(() => elections.value.filter((election) => ['OPEN', 'PAUSED'].includes(election.status)))
+
 onMounted(async () => {
   try { elections.value = (await $fetch<{ elections: Election[] }>('/api/v1/public/elections')).elections }
   catch (cause) { error.value = apiErrorMessage(cause) }
@@ -12,40 +14,37 @@ onMounted(async () => {
 </script>
 
 <template>
-  <section :class="$style.hero">
-    <p :class="$style.eyebrow">PEMILIHAN KAMPUS</p>
-    <h1>{{ config.public.appName }}</h1>
-    <p :class="$style.lede">Pilih dengan tenang. Periksa calon, kirim satu suara, lalu simpan bukti pilihanmu.</p>
-    <nav :class="$style.actions" aria-label="Navigasi utama">
-      <NuxtLink to="/login" class="action-link">Masuk untuk memilih</NuxtLink>
-      <NuxtLink to="/results" class="action-link">Lihat hasil</NuxtLink>
-    </nav>
-    <section :class="$style.periods" aria-labelledby="period-title">
-      <h2 id="period-title">Periode yang tersedia</h2>
-      <p v-if="loading" role="status">Memuat periode…</p>
-      <AppAlert v-else-if="error" kind="error" :message="error" />
-      <AppAlert v-else-if="!elections.length" message="Belum ada periode publik yang tersedia." />
-      <ul v-else :class="$style.periodList">
-        <li v-for="election in elections" :key="election.id" :class="$style.periodItem">
-          <div><h3>{{ election.name }}</h3><p>{{ electionStatus(election.status) }}</p></div>
-          <NuxtLink class="action-link" :to="`/quick-count/${election.id}`">Buka hasil</NuxtLink>
-        </li>
-      </ul>
+  <div :class="$style.page">
+    <div :class="$style.notice"><span :class="$style.noticeLabel">PEMBERITAHUAN</span><span>Pantau periode voting dan hasil resmi di halaman ini.</span></div>
+    <section id="tentang-pemira" :class="$style.hero">
+      <div :class="$style.heroGrid">
+        <div :class="$style.heroCopy">
+          <span :class="$style.kicker">PEMILIHAN RAYA MAHASISWA</span>
+          <h1>Pilih pemimpin kampus dengan <em>suara kamu.</em></h1>
+          <p :class="$style.lede">{{ config.public.appName }} menjadi ruang resmi untuk memeriksa hak pilih, mengenal pilihan, dan memberikan suara secara tertib.</p>
+          <div :class="$style.heroActions"><NuxtLink to="/login" class="action-link">Mulai voting <span aria-hidden="true">→</span></NuxtLink><a href="#jadwal-voting" :class="$style.textAction">Lihat jadwal <span aria-hidden="true">↓</span></a></div>
+          <div :class="$style.trustLine"><span aria-hidden="true">✓</span> Satu akun, satu suara untuk setiap kontes yang tersedia</div>
+        </div>
+        <div :class="$style.heroVisual" aria-label="Ringkasan status PEMIRA">
+          <div :class="$style.visualTop"><span :class="$style.liveDot" /><span>Sistem PEMIRA</span><strong>TERSEDIA</strong></div>
+          <div :class="$style.ballot"><div :class="$style.ballotHeader"><span>SUARA MAHASISWA</span><span :class="$style.ballotStamp">RESMI</span></div><div :class="$style.ballotLine" /><div :class="$style.ballotRow"><span :class="$style.check">✓</span><span>Hak pilih terverifikasi</span></div><div :class="$style.ballotRow"><span :class="$style.check">✓</span><span>Kontes sesuai periode</span></div><div :class="$style.ballotRow"><span :class="$style.check">✓</span><span>Bukti suara tersimpan</span></div><div :class="$style.ballotFooter">Gunakan akun kampusmu untuk melanjutkan</div></div>
+        </div>
+      </div>
+      <div :class="$style.metrics" aria-label="Ringkasan periode"><div><strong>{{ elections.length }}</strong><span>Periode tersedia</span></div><div><strong>{{ activeElections.length }}</strong><span>Sedang berlangsung</span></div><div><strong>Resmi</strong><span>Portal pemilih</span></div><div><strong>Terbuka</strong><span>Informasi publik</span></div></div>
     </section>
-  </section>
+
+    <section :class="$style.about"><div :class="$style.sectionHead"><span :class="$style.kicker">MENGENAL PEMIRA</span><h2>Apa yang bisa kamu lakukan di sini?</h2><p>Semua informasi penting pemilihan disusun dalam satu portal yang mudah dipahami.</p></div><div :class="$style.pillars"><article><span :class="$style.pillarIcon">01</span><h3>Periksa hak pilih</h3><p>Masuk dengan NIM atau NIP lokal untuk melihat periode dan kontes yang tersedia untuk akunmu.</p></article><article><span :class="$style.pillarIcon">02</span><h3>Kenali kandidat</h3><p>Baca pilihan yang tersedia sebelum membuka surat suara dan menentukan pilihan.</p></article><article><span :class="$style.pillarIcon">03</span><h3>Ikuti hasil resmi</h3><p>Lihat quick count dan hasil yang sudah dipublikasikan oleh panitia.</p></article></div></section>
+
+    <section id="jadwal-voting" :class="$style.schedule"><div :class="$style.sectionHead"><span :class="$style.kicker">JADWAL &amp; BILIK SUARA</span><h2>Periode pemilihan</h2><p>Periksa status dan waktu setiap periode sebelum masuk ke surat suara.</p></div><p v-if="loading" role="status" :class="$style.state">Memuat periode pemilihan…</p><AppAlert v-else-if="error" kind="error" :message="error" /><AppAlert v-else-if="!elections.length" message="Belum ada periode publik yang tersedia." /><div v-else :class="$style.scheduleGrid"><article v-for="(election, index) in elections" :key="election.id" :class="$style.scheduleCard"><div :class="$style.cardMeta"><span :class="$style.session">PERIODE {{ String(index + 1).padStart(2, '0') }}</span><span :class="$style.status">{{ electionStatus(election.status) }}</span></div><h3>{{ election.name }}</h3><p :class="$style.cardDate">{{ electionDate(election.startsAt) }}<br><span>Sampai {{ electionDate(election.endsAt) }}</span></p><NuxtLink class="action-link" :to="`/quick-count/${election.id}`">Lihat status periode <span aria-hidden="true">→</span></NuxtLink></article></div></section>
+
+    <section id="tata-tertib" :class="$style.rules"><div :class="$style.rulesCopy"><span :class="$style.kicker">TATA TERTIB PEMILIHAN</span><h2>Suara yang baik dimulai dari proses yang tertib.</h2><p>Ikuti petunjuk di surat suara, periksa kembali pilihanmu, dan jangan membagikan kredensial akun kepada siapa pun.</p></div><div :class="$style.ruleList"><div><strong>01</strong><span>Gunakan akun sendiri</span></div><div><strong>02</strong><span>Pilih sesuai hati nurani</span></div><div><strong>03</strong><span>Simpan bukti suara</span></div></div></section>
+
+    <section id="panduan-video" :class="$style.guide"><span :class="$style.kicker">PANDUAN CARA VOTING</span><h2>Tiga langkah sampai selesai</h2><div :class="$style.steps"><div><strong>1</strong><h3>Masuk</h3><p>Gunakan NIM atau NIP lokal dan password panitia.</p></div><div><strong>2</strong><h3>Periksa pilihan</h3><p>Buka kontes yang tersedia untuk akunmu.</p></div><div><strong>3</strong><h3>Konfirmasi</h3><p>Kirim suara setelah memastikan pilihanmu benar.</p></div></div></section>
+  </div>
 </template>
 
 <style module>
-.hero {
-  text-align: center;
-  padding: clamp(3rem, 10vw, 7rem) var(--space-4) var(--space-8);
-  max-width: 60rem;
-  margin: 0 auto;
-}
-.eyebrow { color: var(--color-primary); font-size: var(--text-sm); font-weight: 700; letter-spacing: 0.12em; margin: 0 0 var(--space-3); }
-.hero h1 { font-size: clamp(2.5rem, 7vw, 4.5rem); letter-spacing: -0.04em; color: var(--color-text); margin-bottom: var(--space-4); }
-.lede { max-width: 34rem; margin: 0 auto var(--space-6); color: var(--color-text-muted); font-size: var(--text-lg); }
-.actions { display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap; }
-.periods { max-width: 42rem; margin: clamp(3rem, 8vw, 6rem) auto 0; text-align: left; }.periods h2 { font-size: var(--text-xl); }.periodList { display: grid; gap: var(--space-3); list-style: none; padding: 0; }.periodItem { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); box-shadow: var(--shadow-sm); }.periodItem h3 { margin: 0; font-size: var(--text-base); }.periodItem p { margin: var(--space-1) 0 0; color: var(--color-text-muted); font-size: var(--text-sm); }
-@media (max-width: 42rem) { .periodItem { align-items: start; flex-direction: column; } }
+.page { overflow: hidden; }.notice { display: flex; justify-content: center; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-4); background: var(--color-primary-soft); color: var(--color-primary-strong); font-size: var(--text-sm); text-align: center; }.noticeLabel, .kicker { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.12em; }.noticeLabel { padding: 0.2rem 0.5rem; border-radius: 999px; background: var(--color-primary); color: white; }.hero { max-width: 72rem; margin: 0 auto; padding: clamp(3rem, 8vw, 7rem) var(--space-4) var(--space-8); }.heroGrid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(20rem, 0.85fr); align-items: center; gap: clamp(2rem, 6vw, 6rem); }.heroCopy { max-width: 42rem; }.kicker { display: inline-block; color: var(--color-primary); margin-bottom: var(--space-3); }.hero h1 { max-width: 38rem; margin-bottom: var(--space-4); font-size: clamp(2.5rem, 6vw, 4.75rem); line-height: 1.03; letter-spacing: -0.055em; }.hero h1 em { color: var(--color-primary); font-style: normal; }.lede { max-width: 36rem; color: var(--color-text-muted); font-size: var(--text-lg); line-height: 1.7; }.heroActions { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-4); margin-top: var(--space-6); }.textAction { display: inline-flex; align-items: center; gap: var(--space-2); min-height: 2.75rem; font-weight: 600; text-decoration: none; }.trustLine { display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-6); color: var(--color-text-muted); font-size: var(--text-sm); }.trustLine span { color: var(--color-success); font-weight: 800; }.heroVisual { padding: var(--space-4); border: 1px solid var(--color-border); border-radius: 1.25rem; background: linear-gradient(145deg, var(--color-primary-soft), #fff 62%); box-shadow: var(--shadow-md); transform: rotate(1deg); }.visualTop, .cardMeta { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); color: var(--color-text-muted); font-size: var(--text-sm); }.visualTop strong { color: var(--color-success); font-size: 0.7rem; letter-spacing: 0.08em; }.liveDot { width: 0.55rem; height: 0.55rem; margin-right: auto; border-radius: 50%; background: var(--color-success); box-shadow: 0 0 0 0.25rem var(--color-success-bg); }.ballot { margin-top: var(--space-6); padding: clamp(1.25rem, 4vw, 2rem); border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: white; box-shadow: var(--shadow-sm); transform: rotate(-2deg); }.ballotHeader { display: flex; justify-content: space-between; color: var(--color-primary); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.1em; }.ballotStamp { color: var(--color-success); }.ballotLine { height: 0.35rem; margin: var(--space-6) 0; border-radius: 99px; background: var(--color-primary); }.ballotRow { display: flex; align-items: center; gap: var(--space-3); padding-block: var(--space-3); border-bottom: 1px solid var(--color-border); font-weight: 600; }.check { display: grid; place-items: center; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: var(--color-primary-soft); color: var(--color-primary); }.ballotFooter { margin-top: var(--space-5); color: var(--color-text-muted); font-size: var(--text-sm); }.metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-3); margin-top: clamp(3rem, 7vw, 6rem); }.metrics div { display: grid; gap: var(--space-1); padding: var(--space-4); border-top: 1px solid var(--color-border); }.metrics strong { color: var(--color-primary); font-size: var(--text-2xl); }.metrics span { color: var(--color-text-muted); font-size: var(--text-sm); }.about, .schedule, .guide { padding: clamp(4rem, 9vw, 7rem) max(var(--space-4), calc((100vw - 72rem) / 2)); }.about { background: white; }.schedule { background: #f4f5f2; }.sectionHead { max-width: 42rem; margin-bottom: var(--space-6); }.sectionHead h2, .rules h2, .guide h2 { margin-bottom: var(--space-3); font-size: clamp(1.75rem, 4vw, 2.75rem); letter-spacing: -0.04em; }.sectionHead p, .rules p, .guide p { margin: 0; color: var(--color-text-muted); }.pillars, .scheduleGrid, .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); }.pillars article, .steps div { padding: var(--space-5); border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-bg); }.pillarIcon { display: inline-grid; place-items: center; width: 2rem; height: 2rem; margin-bottom: var(--space-5); border-radius: 50%; background: var(--color-primary-soft); color: var(--color-primary); font-size: var(--text-sm); font-weight: 800; }.pillars h3, .steps h3 { margin-bottom: var(--space-2); font-size: var(--text-lg); }.pillars p, .steps p { color: var(--color-text-muted); font-size: var(--text-sm); }.scheduleCard { display: flex; flex-direction: column; min-height: 14rem; padding: var(--space-5); border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: white; box-shadow: var(--shadow-sm); }.scheduleCard h3 { margin: var(--space-6) 0 var(--space-3); font-size: var(--text-lg); }.session { color: var(--color-primary); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.1em; }.status { color: var(--color-success); font-size: var(--text-sm); }.cardDate { flex: 1; color: var(--color-text); font-size: var(--text-sm); }.cardDate span { color: var(--color-text-muted); }.state { padding: var(--space-8); color: var(--color-text-muted); text-align: center; }.rules { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: clamp(2rem, 8vw, 8rem); padding: clamp(4rem, 9vw, 7rem) max(var(--space-4), calc((100vw - 72rem) / 2)); background: var(--color-primary); color: white; }.rules .kicker { color: #b3f4d5; }.rules p { color: #d1e8df; }.ruleList { display: grid; gap: var(--space-3); align-content: center; }.ruleList div { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-4); border-bottom: 1px solid rgba(255,255,255,0.25); }.ruleList strong { color: #a6eacb; font-size: var(--text-sm); }.ruleList span { font-weight: 600; }.guide { background: #f0f1fa; }.steps div { background: white; }.steps strong { display: grid; place-items: center; width: 2rem; height: 2rem; margin-bottom: var(--space-5); border-radius: 0.4rem; background: var(--color-primary); color: white; }
+@media (max-width: 48rem) { .heroGrid, .rules { grid-template-columns: 1fr; }.heroVisual { max-width: 34rem; margin: 0 auto; width: 100%; }.metrics, .pillars, .scheduleGrid, .steps { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 34rem) { .notice { align-items: flex-start; flex-direction: column; }.hero { padding-top: 3rem; }.heroActions { align-items: stretch; flex-direction: column; }.heroActions .action-link { width: 100%; }.metrics, .pillars, .scheduleGrid, .steps { grid-template-columns: 1fr; }.rules { gap: var(--space-6); } }
 </style>
