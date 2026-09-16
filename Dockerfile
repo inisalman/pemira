@@ -1,13 +1,13 @@
 # docker build = image produksi untuk EasyPanel (P8-02).
 # Build di mesin luar VPS bila tersedia; docker push ke registry EasyPanel.
-FROM oven/node:22-alpine AS build
+FROM node:22-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci --no-audit --no-fund
+RUN npm ci --force --no-audit --no-fund
 COPY . .
 RUN npm run build
 
-FROM oven/node:22-alpine
+FROM node:22-alpine
 WORKDIR /app
 ENV NODE_ENV=production \
     NITRO_PORT=3000 \
