@@ -13,8 +13,9 @@ onMounted(async () => {
 
 <template>
   <section :class="$style.hero">
+    <p :class="$style.eyebrow">PEMILIHAN KAMPUS</p>
     <h1>{{ config.public.appName }}</h1>
-    <p>Pemilihan umum mahasiswa. Periksa periode dan hasil yang sudah dibuka panitia.</p>
+    <p :class="$style.lede">Pilih dengan tenang. Periksa calon, kirim satu suara, lalu simpan bukti pilihanmu.</p>
     <nav :class="$style.actions" aria-label="Navigasi utama">
       <NuxtLink to="/login" class="action-link">Masuk untuk memilih</NuxtLink>
       <NuxtLink to="/results" class="action-link">Lihat hasil</NuxtLink>
@@ -37,11 +38,14 @@ onMounted(async () => {
 <style module>
 .hero {
   text-align: center;
-  padding: var(--space-8) var(--space-4);
+  padding: clamp(3rem, 10vw, 7rem) var(--space-4) var(--space-8);
+  max-width: 60rem;
+  margin: 0 auto;
 }
-.hero h1 { font-size: 2rem; color: var(--color-primary); }
-.hero p { color: var(--color-text-muted); margin-bottom: var(--space-6); }
+.eyebrow { color: var(--color-primary); font-size: var(--text-sm); font-weight: 700; letter-spacing: 0.12em; margin: 0 0 var(--space-3); }
+.hero h1 { font-size: clamp(2.5rem, 7vw, 4.5rem); letter-spacing: -0.04em; color: var(--color-text); margin-bottom: var(--space-4); }
+.lede { max-width: 34rem; margin: 0 auto var(--space-6); color: var(--color-text-muted); font-size: var(--text-lg); }
 .actions { display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap; }
-.periods { max-width: 42rem; margin: var(--space-8) auto 0; text-align: left; }.periods h2 { font-size: var(--text-xl); }.periodList { display: grid; gap: var(--space-3); list-style: none; padding: 0; }.periodItem { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius); background: var(--color-surface); }.periodItem h3 { margin: 0; font-size: var(--text-base); }.periodItem p { margin: var(--space-1) 0 0; color: var(--color-text-muted); font-size: var(--text-sm); }
+.periods { max-width: 42rem; margin: clamp(3rem, 8vw, 6rem) auto 0; text-align: left; }.periods h2 { font-size: var(--text-xl); }.periodList { display: grid; gap: var(--space-3); list-style: none; padding: 0; }.periodItem { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); box-shadow: var(--shadow-sm); }.periodItem h3 { margin: 0; font-size: var(--text-base); }.periodItem p { margin: var(--space-1) 0 0; color: var(--color-text-muted); font-size: var(--text-sm); }
 @media (max-width: 42rem) { .periodItem { align-items: start; flex-direction: column; } }
 </style>

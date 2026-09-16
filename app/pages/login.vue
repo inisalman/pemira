@@ -27,9 +27,12 @@ async function login() {
 </script>
 
 <template>
-  <section :class="$style.wrap">
-    <h1>Masuk</h1>
-    <p>Gunakan akun dan password yang dibagikan panitia.</p>
+  <section :class="$style.wrap" aria-labelledby="login-title">
+    <div :class="$style.heading">
+      <p :class="$style.eyebrow">AKSES PEMILIH</p>
+      <h1 id="login-title">Masuk untuk memilih</h1>
+      <p>Gunakan NIM atau NIP lokal dan password yang dibagikan panitia.</p>
+    </div>
     <AppAlert v-if="notice" kind="info" :message="notice" />
     <AppAlert v-if="error" kind="error" :message="error" />
     <form :class="$style.form" @submit.prevent="login">
@@ -43,6 +46,11 @@ async function login() {
 </template>
 
 <style module>
-.wrap { max-width: 24rem; margin: 0 auto; }
+.wrap { max-width: 28rem; margin: clamp(2rem, 8vw, 5rem) auto; padding: var(--space-6); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); }
+.heading { margin-bottom: var(--space-6); }
+.heading h1 { margin-bottom: var(--space-2); font-size: clamp(1.75rem, 5vw, 2.25rem); }
+.heading p:last-child { margin: 0; color: var(--color-text-muted); }
+.eyebrow { margin: 0 0 var(--space-2); color: var(--color-primary); font-size: var(--text-sm); font-weight: 700; letter-spacing: 0.1em; }
 .form { display: flex; flex-direction: column; gap: var(--space-4); margin-top: var(--space-4); }
+@media (max-width: 30rem) { .wrap { padding: var(--space-4); border-inline: 0; border-radius: 0; margin-inline: calc(var(--space-4) * -1); } }
 </style>

@@ -49,6 +49,8 @@
   --space-8: 2rem;
   --radius: 0.5rem;
   --radius-lg: 0.75rem;
+  --shadow-sm: 0 1px 2px rgba(36, 49, 45, 0.06);
+  --shadow-md: 0 8px 24px rgba(36, 49, 45, 0.08);
 }
 
 /* Color usage map (P1-01):
@@ -77,6 +79,9 @@ body {
   color: var(--color-text);
 }
 
+::selection { background: var(--color-primary-soft); color: var(--color-primary-strong); }
+button, input, select, textarea { font: inherit; }
+
 .form-fields { display: grid; gap: var(--space-4); border: 0; padding: 0; margin: var(--space-4) 0; min-width: 0; }
 .session-actions { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-3); }
 .session-actions a, nav a { display: inline-flex; align-items: center; min-height: 2.75rem; }
@@ -85,6 +90,9 @@ body {
 .action-link { display: inline-flex; align-items: center; justify-content: center; min-height: 2.75rem; padding: 0.5rem 1rem; border: 1px solid var(--color-primary); border-radius: var(--radius); font-weight: 600; }
 .action-link:hover { background: var(--color-primary-soft); }
 .receipt { overflow-wrap: anywhere; }
+
+.page-intro { max-width: 44rem; margin-bottom: var(--space-6); }
+.page-intro p { color: var(--color-text-muted); margin: 0; }
 
 h1, h2, h3, h4 {
   line-height: 1.25;
