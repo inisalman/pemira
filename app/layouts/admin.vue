@@ -4,22 +4,24 @@ const config = useRuntimeConfig()
 const links = [
   { to: '/admin/elections', label: 'Periode' },
   { to: '/admin/voters', label: 'Pemilih' },
-  { to: '/admin/voting-rights', label: 'Hak Pilih' },
-  { to: '/admin/candidates', label: 'Calon' },
-  { to: '/admin/audit', label: 'Audit' },
+  { to: '/admin/candidates', label: 'Kandidat' },
+  { to: '/admin/rights', label: 'Hak pilih' },
+  { to: '/admin/operations', label: 'Operasional' },
+  { to: '/admin/reports', label: 'Laporan' },
 ]
 </script>
 
 <template>
   <div :class="$style.shell">
+    <a class="skip-link" href="#main-content">Lewati navigasi</a>
     <header :class="$style.header">
       <NuxtLink to="/admin" :class="$style.brand">{{ config.public.appName }} Admin</NuxtLink>
-      <button :class="$style.toggle" aria-label="Buka menu" aria-expanded="false">☰</button>
       <nav :class="$style.nav" aria-label="Navigasi admin">
         <NuxtLink v-for="link in links" :key="link.to" :to="link.to">{{ link.label }}</NuxtLink>
       </nav>
+      <SessionActions />
     </header>
-    <main :class="$style.main">
+    <main id="main-content" :class="$style.main" tabindex="-1">
       <slot />
     </main>
   </div>

@@ -8,13 +8,15 @@ const links = [
 
 <template>
   <div :class="$style.shell">
+    <a class="skip-link" href="#main-content">Lewati navigasi</a>
     <header :class="$style.header">
       <NuxtLink to="/voter" :class="$style.brand">{{ config.public.appName }}</NuxtLink>
       <nav :class="$style.nav" aria-label="Navigasi pemilih">
         <NuxtLink v-for="link in links" :key="link.to" :to="link.to">{{ link.label }}</NuxtLink>
       </nav>
+      <SessionActions />
     </header>
-    <main :class="$style.main">
+    <main id="main-content" :class="$style.main" tabindex="-1">
       <slot />
     </main>
   </div>

@@ -4,14 +4,16 @@ const config = useRuntimeConfig()
 
 <template>
   <div :class="$style.shell">
+    <a class="skip-link" href="#main-content">Lewati navigasi</a>
     <header :class="$style.header">
       <NuxtLink to="/" :class="$style.brand">{{ config.public.appName }}</NuxtLink>
+      <NuxtLink to="/admin/login" :class="$style.adminLink">Panel panitia</NuxtLink>
     </header>
-    <main :class="$style.main">
+    <main id="main-content" :class="$style.main" tabindex="-1">
       <slot />
     </main>
     <footer :class="$style.footer">
-      <p>Pemilihan umum mahasiswa — hasil sementara bukan penetapan pemenang.</p>
+      <p>Pemilihan umum mahasiswa. Hasil sementara bukan penetapan pemenang.</p>
     </footer>
   </div>
 </template>
@@ -29,6 +31,7 @@ const config = useRuntimeConfig()
   color: var(--color-primary);
   text-decoration: none;
 }
+.adminLink { margin-left: auto; font-size: var(--text-sm); }
 .main {
   flex: 1;
   width: 100%;

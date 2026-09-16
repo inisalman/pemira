@@ -27,11 +27,10 @@ const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
       v-for="opt in options"
       :key="opt.value"
       :class="$style.option"
-      :aria-checked="modelValue === opt.value"
-      role="radio"
     >
       <input
         type="radio"
+        :required="required"
         :name="name"
         :value="opt.value"
         :checked="modelValue === opt.value"
@@ -63,7 +62,8 @@ const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
   align-items: flex-start;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-text-muted);
+  min-height: 2.75rem;
   border-radius: var(--radius);
   cursor: pointer;
   background: var(--color-surface);

@@ -18,52 +18,52 @@ const emit = defineEmits<{
   cancel: []
 }>()
 
+const dialog = ref<HTMLDialogElement | null>(null)
+const titleId = useId()
+watch(() => props.open, async (open) => {
+  await nextTick()
+  if (open && !dialog.value?.open) dialog.value?.showModal()
+  if (!open && dialog.value?.open) dialog.value.close()
+}, { immediate: true })
+
 function onCancel() {
   if (!props.loading) emit('cancel')
 }
 </script>
 
 <template>
-  <div v-if="open" :class="$style.overlay" @click.self="onCancel" @keydown.esc="onCancel">
-    <div
+    <dialog
+      ref="dialog"
       :class="$style.dialog"
-      role="alertdialog"
-      aria-modal="true"
-      :aria-labelledby="`${title}-title`"
-      tabindex="-1"
+      :aria-labelledby="titleId"
+      @cancel.prevent="onCancel"
     >
-      <h2 :id="`${title}-title`" :class="$style.title">{{ title }}</h2>
+      <h2 :id="titleId" :class="$style.title">{{ title }}</h2>
       <div :class="$style.body"><slot /></div>
       <div :class="$style.actions">
-        <AppButton variant="ghost" :disabled="loading" @click="onCancel">{{ cancelLabel }}</AppButton>
+        <AppButton variant="secondary" :disabled="loading" autofocus @click="onCancel">{{ cancelLabel }}</AppButton>
         <AppButton :variant="danger ? 'danger' : 'primary'" :loading="loading" @click="emit('confirm')">
           {{ confirmLabel }}
         </AppButton>
       </div>
-    </div>
-  </div>
+    </dialog>
 </template>
 
 <style module>
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgb(36 49 45 / 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-4);
-  z-index: 50;
-}
+.dialog::backdrop { background: rgb(36 49 45 / 0.45); }
 .dialog {
+  border: 0;
+  color: var(--color-text);
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
   background: var(--color-surface);
   border-radius: var(--radius-lg);
   max-width: 28rem;
-  width: 100%;
+  width: calc(100% - 2rem);
   padding: var(--space-6);
   box-shadow: 0 8px 30px rgb(36 49 45 / 0.18);
 }
 .title { font-size: var(--text-xl); margin-bottom: var(--space-2); }
 .body { color: var(--color-text); margin-bottom: var(--space-6); }
-.actions { display: flex; justify-content: flex-end; gap: var(--space-2); }
+.actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-2); }
 </style>

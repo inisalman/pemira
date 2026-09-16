@@ -37,3 +37,22 @@ Struktur CSS menggunakan grid/flex dengan breakpoint 48rem untuk nav admin; max-
 
 - Pemeriksaan pembaca layar (VoiceOver/NVDA) menyeluruh menunggu halaman terhubung data nyata (PH-5/PH-7).
 - Preview sintetis ditandai eksplisit di halaman login/voter/quick-count/results/admin.
+
+## Quick Count · P6-03 (16 September 2026)
+
+Design read: modern light dengan hijau utama `#2A6B5C`, putih hangat `#FFF9F2`, dan Inter. Dials: ENERGY 1 / RHYTHM 2 / MOTION 1.
+
+- Garis hijau pada kepala halaman membedakan konteks hasil dari isi per kontes; hijau tidak dipakai sebagai dekorasi pada setiap elemen.
+- Kartu kontes mempertahankan pengelompokan satu kontes, sementara bar perolehan membuat perbandingan opsi dapat dipindai tanpa mengubah angka sebagai sumber kebenaran.
+- Tidak ada ilustrasi, grafik dekoratif, gradien, glow, atau animasi berulang. Satu-satunya pembaruan adalah polling data lima detik saat tab terlihat.
+- Status sementara/resmi selalu memakai teks. Label sementara `#674400` pada `#FDF3DD` berkontras 7,92:1; label resmi `#155C2E` pada `#E2F3E7` berkontras 7,00:1.
+- Layout berpindah dari kepala/kartu dua kolom ke susunan vertikal pada lebar 42rem agar metadata dan partisipasi tidak bertabrakan. Teks nama opsi membungkus di dalam grid dan tidak memaksa overflow horizontal.
+- State loading, kosong, kegagalan, dan pembaruan basi memiliki teks yang dapat dibaca pembaca layar. Tombol Perbarui hasil memicu request nyata dan dapat diakses lewat keyboard.
+
+## Admin periode · 16 September 2026
+
+Layar periode disusun berdasarkan keputusan panitia berikutnya: membuat DRAFT atau memeriksa periode yang sudah ada. Formulir mendapat ruang utama, sedangkan tabel dibuat lebih padat agar daftar tetap mudah dipindai. State kosong, memuat, error API, dan berhasil membuat periode ditampilkan eksplisit. Verifikasi browser membuat periode simulasi berstatus DRAFT dan menampilkannya di tabel.
+
+## Dua pintu akses · 16 September 2026
+
+`/login` hanya menampilkan satu form pemilih dengan label NIM atau NIP lokal, sehingga pengguna tidak perlu memahami tipe akun internal. `/admin/login` memakai form terpisah dengan bahasa panitia dan tautan kembali ke login pemilih. Kedua halaman mempertahankan target sentuh, fokus keyboard, dan pesan error yang tidak membocorkan status akun.

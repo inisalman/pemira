@@ -9,6 +9,7 @@ import { createContest, createCandidateOption } from '../../server/services/elec
 import { buildDefaultRights } from '../../server/services/elections/rights'
 import { seedFresh } from './seed-support'
 import { departments } from './fixture-data'
+import { voterBallot, voterContests, voterElections } from '../../server/services/voting/dashboard'
 
 /**
  * PH-5 integration tests (TASKLIST P5-03..P5-07): atomic vote transaction,
@@ -91,6 +92,32 @@ beforeEach(async () => {
 })
 
 describe('voting transaction (P5-03/P5-06)', () => {
+  it('shows only eligible contests and keeps receipts separate from choices', async () => {
+    const contests = await voterContests('v-1', electionId)
+    expect(contests.some(contest => contest.id === contestId)).toBe(true)
+    expect(contests.some(contest => contest.id === kepContest)).toBe(false)
+    await expect(voterBallot('v-1', kepContest)).rejects.toMatchObject({ code: 'FORBIDDEN' })
+    const before = await voterBallot('v-1', contestId)
+    expect(before.canVote).toBe(true)
+    expect(before.options[0]?.members).toHaveLength(2)
+    expect(before.contest.receiptCode).toBeNull()
+    const receipt = await castVote({ voterId: 'v-1', contestId, optionId: optionA })
+    const after = await voterBallot('v-1', contestId)
+    expect(after.canVote).toBe(false)
+    expect(after.contest).toEqual({ id: contestId, title: 'BEM', hasVoted: true, receiptCode: receipt.receiptCode })
+  })
+
+  it('hides drafts and disables voting outside the database schedule or during pause', async () => {
+    expect((await voterElections('v-1')).some(e => e.id === electionId)).toBe(true)
+    await pool.query("UPDATE elections SET starts_at = now() + interval '1 day' WHERE id = $1", [electionId])
+    expect((await voterBallot('v-1', contestId)).canVote).toBe(false)
+    await pool.query("UPDATE elections SET status = 'PAUSED', starts_at = NULL WHERE id = $1", [electionId])
+    expect((await voterBallot('v-1', contestId)).canVote).toBe(false)
+    await pool.query("UPDATE elections SET status = 'DRAFT' WHERE id = $1", [electionId])
+    expect((await voterElections('v-1')).some(e => e.id === electionId)).toBe(false)
+    await expect(voterBallot('v-1', contestId)).rejects.toMatchObject({ code: 'FORBIDDEN' })
+  })
+
   it('commits a vote: ballot + participation appear after castVote', async () => {
     const r = await castVote({ voterId: 'v-1', contestId, optionId: optionA })
     expect(r.receiptCode).toHaveLength(32)

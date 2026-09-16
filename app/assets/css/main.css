@@ -77,6 +77,15 @@ body {
   color: var(--color-text);
 }
 
+.form-fields { display: grid; gap: var(--space-4); border: 0; padding: 0; margin: var(--space-4) 0; min-width: 0; }
+.session-actions { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-3); }
+.session-actions a, nav a { display: inline-flex; align-items: center; min-height: 2.75rem; }
+.skip-link { position: absolute; top: 0; left: 1rem; transform: translateY(-150%); padding: 0.75rem; background: white; z-index: 100; }
+.skip-link:focus { transform: translateY(0); }
+.action-link { display: inline-flex; align-items: center; justify-content: center; min-height: 2.75rem; padding: 0.5rem 1rem; border: 1px solid var(--color-primary); border-radius: var(--radius); font-weight: 600; }
+.action-link:hover { background: var(--color-primary-soft); }
+.receipt { overflow-wrap: anywhere; }
+
 h1, h2, h3, h4 {
   line-height: 1.25;
   margin: 0 0 var(--space-4);

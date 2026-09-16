@@ -7,6 +7,8 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  components: [{ path: '~/components', pathPrefix: false }],
+
   devtools: { enabled: true },
 
   // Secrets live in private runtimeConfig (override via .env / environment).

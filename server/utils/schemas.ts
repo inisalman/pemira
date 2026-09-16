@@ -14,6 +14,11 @@ export const loginSchema = z.object({
   password: z.string().min(1).max(256),
 })
 
+export const voterLoginSchema = z.object({
+  identifier: z.string().min(1).max(64),
+  password: z.string().min(1).max(256),
+})
+
 export const changePasswordSchema = z.object({
   currentPassword: z.string().min(1).max(256),
   newPassword: z.string().min(12).max(256),

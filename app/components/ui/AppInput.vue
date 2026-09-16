@@ -22,7 +22,7 @@ const props = withDefaults(defineProps<{
 
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
 
-const id = `input-${Math.random().toString(36).slice(2, 10)}`
+const id = useId()
 const errorId = `${id}-error`
 const hintId = `${id}-hint`
 </script>
@@ -58,12 +58,12 @@ const hintId = `${id}-hint`
 .label { font-weight: 600; font-size: var(--text-sm); }
 .input {
   padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-text-muted);
   border-radius: var(--radius);
   background: var(--color-surface);
   color: var(--color-text);
   font: inherit;
-  min-height: 2.5rem;
+  min-height: 2.75rem;
 }
 .input:focus-visible { box-shadow: var(--focus-ring); outline: none; }
 .input:disabled { opacity: 0.55; background: var(--color-primary-soft); }

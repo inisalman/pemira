@@ -38,7 +38,7 @@ withDefaults(defineProps<{
   font: inherit;
   font-weight: 600;
   cursor: pointer;
-  min-height: 2.5rem;
+  min-height: 2.75rem;
   transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 .button:disabled {

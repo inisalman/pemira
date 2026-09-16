@@ -31,11 +31,11 @@ Acuan penerimaan: NFR-05; DESIGN.md. Halaman fitur disambungkan ke data nyata pa
 
 ## PH-2 · Akun, password, dan akses
 
-- [x] P2-01 Implementasikan login jenis mahasiswa/dosen dengan NIM/NIP lokal + password, serta akses akun admin dengan peran terpisah. Tidak ada OTP, email, SSO, atau registrasi publik.
+- [x] P2-01 Implementasikan login pemilih tunggal untuk NIM/NIP lokal + password, serta pintu `/admin` terpisah untuk akun panitia/admin. Tidak ada OTP, email, SSO, atau registrasi publik.
 - [x] P2-02 Implementasikan hash Argon2id, batas pekerjaan hash bersamaan, pesan login umum, serta rate limit yang mempertimbangkan jaringan kampus bersama.
 - [x] P2-03 Implementasikan sesi cookie, penyimpanan hash token, kedaluwarsa, logout, perlindungan CSRF, dan pencabutan sesi berdasarkan credential_version.
 - [x] P2-04 Buat layanan penetapan/generasi password awal dan reset oleh petugas berizin; keluaran password hanya sekali dan tidak disimpan sebagai plaintext/log.
-- [x] P2-05 Implementasikan perubahan password mandiri dan reset yang tidak memodifikasi DPT, hak suara, partisipasi, atau ballot.
+- [x] P2-05 Implementasikan perubahan password mandiri dan reset yang tidak memodifikasi DPT, hak suara, partisipasi, atau ballot. UI akun dan smoke test rotasi password sudah terhubung.
 - [x] P2-06 Terapkan pemeriksaan peran/scope di API serta navigasi login pada halaman; tindakan admin kritis meminta password kembali sesuai SDD.
 - [x] P2-07 Uji NIM/NIP bernilai sama, password salah, akun nonaktif, akses lintas peran, token kedaluwarsa, reset sesi, dan ketiadaan password pada log.
 
@@ -43,9 +43,9 @@ Acuan penerimaan: FR-03, FR-13, NFR-04, NFR-06; T-07, T-15, T-18.
 
 ## PH-3 · Periode, kontes, dan calon
 
-- [x] P3-01 Buat admin periode dengan jadwal Asia/Jakarta, versi konfigurasi, validasi tanggal, dan daftar sepuluh kontes yang dapat diperiksa.
+- [x] P3-01 Buat admin periode dengan jadwal Asia/Jakarta, versi konfigurasi, validasi tanggal, dan daftar sepuluh kontes yang dapat diperiksa. UI daftar dan formulir pembuatan terhubung ke API.
 - [x] P3-02 Buat form PAIR BEM/MPM dengan dua nama serta form SINGLE untuk ketua/wakil Hima dengan satu nama; nomor urut unik per kontes.
-- [ ] P3-03 Implementasikan unggahan/penggantian foto pasangan atau individu, pratinjau, validasi isi/ukuran gambar, pembersihan metadata, dan volume durabel.
+- [x] P3-03 Implementasikan unggahan/penggantian foto pasangan atau individu, pratinjau, validasi isi/ukuran gambar, pembersihan metadata, dan volume durabel. — `server/services/elections/photos.ts` memakai Sharp untuk re-encode WebP maksimal 1.400px dan menghapus metadata; endpoint admin photo + endpoint publik read-only; UI kandidat terhubung.
 - [x] P3-04 Tambahkan moto, visi, misi, dan program opsional; buat halaman profil calon publik dengan foto dan identitas jabatan yang benar.
 - [x] P3-05 Implementasikan pemeriksaan kesiapan, DRAFT/READY, revisi yang membatalkan persetujuan, serta pembekuan konfigurasi secara transaksional.
 - [x] P3-06 Implementasikan pengajuan/persetujuan tindakan, OPEN/PAUSED/CLOSED, penjadwalan, dan audit; gunakan usulan dua petugas sampai D-10 disahkan atau direvisi.
@@ -68,8 +68,8 @@ Acuan penerimaan: FR-02, FR-04, FR-12, FR-15, FR-16; T-01, T-02, T-15, T-16, T-1
 
 ## PH-5 · Voting dan penerimaan suara
 
-- [x] P5-01 Buat dashboard pemilih dari hak server, status per kontes, jadwal, serta keadaan belum dibuka/dijeda/ditutup/tidak berhak.
-- [x] P5-02 Buat surat suara PAIR/SINGLE, pemilihan satu opsi, halaman konfirmasi, serta navigasi antar-kontes tanpa memaksa semua kontes selesai sekaligus.
+- [x] P5-01 Buat dashboard pemilih dari hak server, status per kontes, jadwal, serta keadaan belum dibuka/dijeda/ditutup/tidak berhak. UI dashboard memuat periode dan kontes dari API pemilih dengan route guard sesi.
+- [x] P5-02 Buat surat suara PAIR/SINGLE, pemilihan satu opsi, halaman konfirmasi, serta navigasi antar-kontes tanpa memaksa semua kontes selesai sekaligus. UI menampilkan anggota, profil teks, dialog konfirmasi native, dan tanda terima.
 - [x] P5-03 Implementasikan transaksi voting pada satu koneksi: lock periode lalu hak, periksa eligibility/status/waktu database/opsi, insert ballot dan partisipasi, lalu commit durabel.
 -[x] P5-04 Implementasikan idempotensi per hak suara, receipt tanpa calon, pemeriksaan ulang status commit, dan endpoint partisipasi pengguna sendiri.
 - [x] P5-05 Tangani koneksi putus, refresh, sesi habis, retry, serta status belum dapat dipastikan; jangan menyatakan diterima sebelum server mengonfirmasi commit.
@@ -82,7 +82,7 @@ Acuan penerimaan: FR-04, FR-06, FR-07, FR-08; T-01, T-03 sampai T-07, T-11, T-19
 
 - [x] P6-01 Implementasikan agregat per kontes/opsi dalam snapshot database konsisten, mencakup calon nol suara, partisipasi, dan rumus persentase tanpa pembagian nol. — `server/services/results/results.ts` `aggregateElection` (satu SQL, opsi nol suara tetap tercantum, partisipasi bulat 2dp, bagi-nol → 0). Terbukti di `tests/integration/results.test.ts` "zero votes" & "votes counted per option".
 - [x] P6-02 Implementasikan endpoint quick count publik dengan cache per periode maksimal lima detik dan satu refresh bersama saat kedaluwarsa; tidak memerlukan pembacaan sesi. — `server/api/v1/public/quick-count/[electionId].get.ts` (TTL 5 s, Map per periode, single-flight `entry.refreshing`, header `x-cache: HIT/STALE/MISS`, tanpa sesi).
-- [ ] P6-03 Buat halaman quick count sepuluh kontes, label sementara, waktu pembaruan, polling lima detik, penghentian saat tab tersembunyi, backoff, dan indikator data kedaluwarsa. — DEFERRED bersama batch UI (lihat P3-03); endpoint + payload sudah siap dikonsumsi.
+- [x] P6-03 Buat halaman quick count sepuluh kontes, label sementara, waktu pembaruan, polling lima detik, penghentian saat tab tersembunyi, backoff, dan indikator data kedaluwarsa. — Halaman `quick-count/:electionId` membaca endpoint publik, membedakan hasil sementara/resmi, menghentikan polling saat tab tersembunyi, dan melakukan retry dengan backoff sampai 60 detik.
 - [x] P6-04 Implementasikan rekonsiliasi saat CLOSED, pemblokiran snapshot cacat, snapshot resmi berversi/checksum, serta penetapan dan publikasi terpisah oleh panitia. — `reconcileElection` + `createOfficialSnapshot` (blokir `STATE_INVALID` saat OPEN, versi++ + sha256 checksum per snapshot) + `results.snapshot.post.ts` action=PUBLISH (`requireTransition` + `published_at`). Uji "snapshot blocked while OPEN … version++".
 - [x] P6-05 Buat ekspor agregat sementara/resmi dengan status dan waktu yang jelas, audit ekspor, serta koreksi hasil sebagai versi baru. — `exportResults` (QUICK_COUNT/OFFICIAL + exportedAt, `ADMIN_RESULTS_EXPORT` ter-audit); koreksi = snapshot versi baruwaltung otomatis (max(version)+1).
 - [x] P6-06 Uji polling ketika suara masuk, restart/cache hilang, nol pemilih/suara, pause/close, selisih data, dan larangan mengakses hasil resmi sebelum PUBLISHED. — `tests/integration/results.test.ts`: nol pemilih/suara, selisih data → anomaly, quick-count blok sebelum OPEN, hasil resmi hanya via snapshot saat CLOSED (service-level gating FOR UPDATE).
@@ -179,7 +179,7 @@ Tambahkan baris saat task selesai atau terhambat; tabel kosong ini bukan laporan
 | P1-04 | selesai | Commit 926d75d: AppButton, AppInput, AppRadioGroup, AppCheckbox, AppDialog, AppAlert, AppTable, AppPagination | — |
 | P1-05 | selesai | Commit 926d75d: keadaan memuat/kosong (AppTable), gagal/berhasil (AppAlert + ikon), disabled + aria-busy (AppButton), fokus (`:focus-visible` global) | — |
 | P1-06 | selesai | Commit PH-1: [VISUAL_REVIEW](VISUAL_REVIEW.md) — kontras 11 kombinasi token dihitung, semua ≥ 4.5:1; struktur a11y (label, aria, dialog, tab) dicatat; pemeriksaan piksel 360 px/dispositif nyata ditunda ke titik tinjau dengan pemilik proyek | Pemeriksaan pembaca layar menyeluruh pada PH-7 |
-| P2-01 | selesai | Commit 0c6368d: POST /auth/login NIM/NIP + password per jenis akun (uji identitas sama beda akun di auth.test.ts); tanpa OTP/SSO/registrasi | — |
+| P2-01 | selesai | POST /auth/login tetap mendukung jenis akun internal; POST /auth/login-voter menyediakan satu pintu NIM/NIP untuk STUDENT/LECTURER; `/login` dan `/admin/login` dipisah sesuai peran | — |
 | P2-02 | selesai | Commit 0c6368d: Argon2id m=19456,t=2,p=1, semaphore hash maks 2; rate limit akun 10/15 menit + IP 120/10 menit (toleran NAT kampus); uji live 429 setelah 10 kegagalan | Tuning batas laju saat uji 600 login (P7-04) |
 | P2-03 | selesai | Commit 0c6368d: sesi cookie HttpOnly/SameSite, hash SHA-256 token disimpan, kedaluwarsa 8 jam, logout + CSRF double-submit (uji live: tanpa token 403), pencabutan credential_version | — |
 | P2-04 | selesai | Commit 0c6368d: layanan reset (password-admin.ts) + endpoint admin; password digenerate dikembalikan sekali di respons; audit hanya aksi+alasan (diverifikasi via SQL) | — |
@@ -187,9 +187,9 @@ Tambahkan baris saat task selesai atau terhambat; tabel kosong ini bukan laporan
 | P2-06 | selesai | Commit 0c6368d: requireSession/requireAdmin di setiap API; uji live pemilih mengakses endpoint admin → 403 | Autentikasi ulang password untuk aksi kritis ditambahkan bersama alur persetujuan PH-3 |
 | P2-07 | selesai | Commit 0c6368d + uji E2E live: password salah → 401 generik, lintas peran → 403, rate limit → 429, sesi habis → 401, reset mencabut sesi, tidak ada password/identifier di log (uji redaksi 3/3 lulus) | — |
 
-| P3-01 | selesai | Commit feat/ph3-elections: createElection/updateElectionSchedule (config_version++ hanya DRAFT), validasi ends_at > starts_at; transitionElection transaksional dengan lockElection FOR UPDATE; API admin/elections CRUD | — |
+| P3-01 | selesai | Commit feat/ph3-elections: createElection/updateElectionSchedule (config_version++ hanya DRAFT), validasi ends_at > starts_at; transitionElection transaksional dengan lockElection FOR UPDATE; API admin/elections CRUD; UI daftar + formulir DRAFT | — |
 | P3-02 | selesai | createContest (PAIR↔SINGLE rule) + createCandidateOption: PAIR wajib 1 CHAIR + 1 VICE_CHAIR, SINGLE 1 angka sesuai office; nomor duplikat → VALIDATION_ERROR (precheck + constraint unik per kontes) | — |
-| P3-03 | belum mulai | photo_key kolom ada (0001_core_tables.sql); unggahan/pratinjau/validasi pembersihan metadata belum | Kerjakan bersama penyimpanan file durabel (PH-7/P8) |
+| P3-03 | selesai | Upload foto admin, validasi format/ukuran/dimensi, re-encode WebP tanpa metadata, volume `NUXT_UPLOAD_DIR`, preview UI, dan endpoint publik cache immutable | Pastikan volume persisten dikonfigurasi saat deployment |
 | P3-04 | selesai | motto/vision/mission/programs tersimpan di candidate_options; checkReadiness menandai data tidak lengkap (incl. photo) | Halaman profil publik calon dibuat saat PH-6 |
 | P3-05 | selesai | checkReadiness (10 kontes, calon lengkap, jadwal), setReady DRAFT→READY, reviseToDraft READY→DRAFT; mutasi kandidat memverifikasi status DRAFT dalam transaksi (sudah diuji "updates fail after freeze") | — |
 | P3-06 | selesai | proposeAction/approveAction/rejectAction (proposer ≠ approver, config_version cocok → VERSION_STALE jika usang), emergencyPause single-officer; OPEN dieksekusi langsung per D-10; semua aksi ter-audit | — |
@@ -202,8 +202,8 @@ Tambahkan baris saat task selesai atau terhambat; tabel kosong ini bukan laporan
 | P4-06 | selesai | buildDefaultRights idempotent: roll status aktif + hak default BEM/MPM unscoped + ketua/wakil Hima per jurusan; dashboard per kontes GET .../rights | — |
 | P4-07 | selesai | applyRightsChanges: beri/cabut massal sasaran tetap voterId+contestId, alasan wajib, audit per perubahan, VERSION_STALE bila config_version tidak cocok | — |
 | P4-08 | selesai | Uji 600 pemilih + hak ter-scope dalam satu transaksi (import.test.ts); hak nol diizinkan, perubahan jenis identitas ditolak; DPT terkunci saat OPEN (STATE_INVALID) | — |
-| P5-01 | selesai | GET /api/v1/voting?electionId — hak dari server (JOIN voting_rights), status per kontes has_voted, status periode + jadwal; halaman beli dashboard penyusun alur belum dibuat visual (PH-6 admin/voter pages) | UI voter pages PH-6 |
-| P5-02 | selesai | Surat suara per kontes satu opsi (voteSchema optionId saja) + konfirmasi via status endpoint; navigasi antar-kontes dari dashboard server-side truth | UI PH-6 |
+| P5-01 | selesai | GET /api/v1/voting?electionId + GET /api/v1/voting/elections; hak dari server, status per kontes, periode + jadwal; UI dashboard pemilih dan route guard sesi | — |
+| P5-02 | selesai | GET /api/v1/voting/contests/:id + POST /voting/ballots; surat suara PAIR/SINGLE, satu opsi, dialog konfirmasi, profil calon, dan tanda terima di UI | — |
 | P5-03 | selesai | castVote satu koneksi satu transaksi: FOR UPDATE elections → voting_rights, cek status OPEN + clock_timestamp() window + hak + opsi dalam kontes, INSERT ballots + participations, COMMIT durabel | — |
 | P5-04 | selesai | Idempotensi: participations PK voting_right_id → CONFLICT bila ganda; receipt acak tanpa identitas; GET /voting/status re-cek commit; myParticipations endpoint sendiri | — |
 | P5-05 | selesai | Rollback semua pada error APAPUN pre-commit; respons hanya status COMITTED setelah commit sukses; retry aman (CONFLICT bila sudah masuk); belum ada retry queue khusus (browser retry + status endpoint menutup kasus) | Pertimbangkan queue idempotensi-key saat PH-7 |
