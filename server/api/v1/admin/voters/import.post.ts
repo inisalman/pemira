@@ -8,8 +8,8 @@ import { importVotersPreview, commitVoterImport } from '#server/services/identit
  * validate-preview-then-commit flow (P4-02/P4-03/P4-04).
  * `mode=validate` (default) → preview with per-row report, nothing written.
  * `mode=commit&batchId=…` → reuse the validated batch only if data_file_hash
- * matches, atomic insert, per-row add/update/skip counts, never touches
- * passwords or rights already adjusted by admins.
+ * matches, atomic insert, per-row add/update/skip counts, and creates a
+ * login account when the voter does not have one. Existing passwords stay intact.
  */
 export default defineEventHandler(async (event: H3Event) => {
   try {

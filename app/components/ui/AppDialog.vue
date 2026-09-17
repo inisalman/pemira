@@ -57,13 +57,14 @@ function onCancel() {
   max-height: calc(100dvh - 2rem);
   overflow-y: auto;
   background: var(--color-surface);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   max-width: 28rem;
   width: calc(100% - 2rem);
-  padding: var(--space-6);
-  box-shadow: 0 8px 30px rgb(36 49 45 / 0.18);
+  padding: clamp(1.25rem, 4vw, 2rem);
+  box-shadow: var(--shadow-md);
 }
 .title { font-size: var(--text-xl); margin-bottom: var(--space-2); }
 .body { color: var(--color-text); margin-bottom: var(--space-6); }
 .actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-2); }
+@media (max-width: 30rem) { .actions > * { flex: 1 1 100%; } }
 </style>

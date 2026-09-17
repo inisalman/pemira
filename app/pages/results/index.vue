@@ -26,6 +26,6 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.results-page { display: grid; gap: var(--space-6); }.results-page header p, .period-item p { color: var(--color-text-muted); }.period-list { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-3); max-width: 54rem; }.period-item { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding: var(--space-4); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); }.period-item h2 { font-size: var(--text-lg); margin-bottom: var(--space-1); }.period-item p { margin: 0; font-size: var(--text-sm); }
-@media (max-width: 42rem) { .period-item { align-items: start; flex-direction: column; } }
+.results-page { display: grid; gap: var(--space-6); padding-block: clamp(1rem, 4vw, 2.5rem); }.results-page > header { max-width: 44rem; }.results-page header p, .period-item p { color: var(--color-text-muted); }.period-list { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-4); max-width: 54rem; }.period-item { display: flex; align-items: center; justify-content: space-between; gap: var(--space-6); padding: var(--card-padding); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); }.period-item > div { min-width: 0; }.period-item h2 { font-size: var(--text-lg); margin-bottom: var(--space-2); overflow-wrap: anywhere; }.period-item p { margin: 0; font-size: var(--text-sm); }.period-item .action-link { flex-shrink: 0; }
+@media (max-width: 42rem) { .period-item { align-items: stretch; flex-direction: column; gap: var(--space-4); }.period-item .action-link { width: 100%; } }
 </style>

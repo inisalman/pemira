@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { apiError } from '../../utils/errors'
 import { getPool } from '../../../database/db'
 import { recordAuditEvent } from '../audit/audit'
+import { hashPassword } from '../../utils/password'
 
 /**
  * Voter registry management per SDD sections 3/5 (TASKLIST P4-01).
@@ -18,6 +19,7 @@ export const voterUpsertSchema = z.object({
   name: z.string().min(1).max(120),
   departmentCode: z.string().min(1).max(32),
   activeStatus: z.boolean().default(true),
+  password: z.string().min(1, 'Password wajib diisi.').max(256).optional(),
 })
 
 export type VoterUpsert = z.infer<typeof voterUpsertSchema>
@@ -41,7 +43,11 @@ export async function upsertVoter(opts: { actorId: string; input: VoterUpsert })
   if (opts.input.voterType === 'LECTURER' && opts.input.identifierType !== 'NIP_LOCAL') {
     apiError('VALIDATION_ERROR', 'Dosen wajib memakai NIP lokal.')
   }
+  if (opts.input.voterType === 'STUDENT' && opts.input.departmentCode === 'OTHER') {
+    apiError('VALIDATION_ERROR', 'Jurusan Lainnya hanya dapat dipakai untuk dosen atau pejabat non-jurusan.')
+  }
   const client = await pool.connect()
+  let accountCreated = false
   try {
     await client.query('BEGIN')
     const dept = await client.query<{ id: string }>('SELECT id FROM departments WHERE code = $1', [opts.input.departmentCode])
@@ -70,14 +76,32 @@ export async function upsertVoter(opts: { actorId: string; input: VoterUpsert })
     if (!rows[0]) {
       apiError('CONFLICT', 'Identitas sudah terdaftar sebagai jenis pemilih berbeda; perubahan jenis tidak diizinkan.')
     }
+    const account = await client.query<{ id: string }>(
+      'SELECT id FROM users WHERE voter_id = $1 FOR UPDATE',
+      [rows[0].id],
+    )
+    if (!account.rows[0]) {
+      if (!opts.input.password) {
+        apiError('VALIDATION_ERROR', 'Password awal wajib diisi untuk membuat akun pemilih.')
+      }
+      const passwordHash = await hashPassword(opts.input.password)
+      await client.query(
+        `INSERT INTO users (id, login_kind, login_identifier, password_hash, voter_id, active)
+         VALUES ($1, $2, $3, $4, $5, $6)`,
+        [randomUUID(), opts.input.voterType, opts.input.identifierValue, passwordHash, rows[0].id, opts.input.activeStatus],
+      )
+      accountCreated = true
+    } else {
+      await client.query('UPDATE users SET active = $2 WHERE id = $1', [account.rows[0].id, opts.input.activeStatus])
+    }
     await recordAuditEvent(client, {
       actorId: opts.actorId,
       action: rows[0].action === 'UPDATED' ? 'ADMIN_UPSERT_VOTER' : 'ADMIN_CREATE_VOTER',
       target: rows[0].id,
-      changes: { identifierType: opts.input.identifierType, voterType: opts.input.voterType },
+      changes: { identifierType: opts.input.identifierType, voterType: opts.input.voterType, accountCreated },
     })
     await client.query('COMMIT')
-    return { id: rows[0].id, action: rows[0].action }
+    return { id: rows[0].id, action: rows[0].action, accountCreated }
   } catch (err) {
     await client.query('ROLLBACK')
     throw err
@@ -117,8 +141,9 @@ export async function listVoters(opts: {
   const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : ''
   const offset = (opts.page - 1) * opts.pageSize
   const { rows } = await pool.query<VoterRow & { total: string }>(
-    `SELECT v.id, v.voter_type, v.identifier_type, v.identifier_value, v.name, v.active_status,
-            d.code AS department_code, d.name AS department_name,
+    `SELECT v.id, v.voter_type AS "voterType", v.identifier_type AS "identifierType",
+            v.identifier_value AS "identifierValue", v.name, v.active_status AS "activeStatus",
+            d.code AS "departmentCode", d.name AS "departmentName",
             count(*) OVER ()::text AS total
      FROM voters v LEFT JOIN departments d ON d.id = v.department_id
      ${whereSql}

@@ -31,4 +31,9 @@ const totalPages = computed(() => Math.max(1, Math.ceil(props.total / props.page
   margin-top: var(--space-4);
 }
 .status { color: var(--color-text-muted); font-size: var(--text-sm); }
+@media (max-width: 34rem) {
+  .nav { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+  .status { grid-column: 1 / -1; grid-row: 1; text-align: center; }
+  .nav > * { min-width: 0; }
+}
 </style>

@@ -7,6 +7,7 @@ import { buildDefaultRights, applyRightsChanges, rightsDashboard } from '../../s
 import { upsertVoter } from '../../server/services/identity/voters'
 import { createElection } from '../../server/services/elections/elections'
 import { seedFresh } from './seed-support'
+import { verifyPassword } from '../../server/utils/password'
 
 /**
  * PH-4 integration tests (TASKLIST P4-01/04/06/07/08): voter upsert
@@ -42,30 +43,41 @@ beforeEach(async () => {
   // Each test gets its own period; rights are per-election so no carry-over.
   const e = await createElection({ actorId: 'a', name: 'P4 ' + randomUUID() })
   electionId = e.id
-  // Second contest scoped to KEP so only KEP voters get it by default —
-  // grant/revoke tests pick voters outside KEP to exercise ADMIN grants.
-  await pool.query(
-    "INSERT INTO contests (id, election_id, code, title, office, option_type, scope_department_id) VALUES ($1,$2,'BEM','BEM','PAIR','PAIR',NULL), ($3,$2,'HIMA_KET_KEP','Ketua Hima Keperawatan','CHAIR','SINGLE','dep-kep')",
-    [randomUUID(), electionId, randomUUID()],
-  )
 })
 
 describe('voter registry (P4-01/P4-04)', () => {
   it('upsert creates then updates without duplicating identifiers', async () => {
-    const input = { voterType: 'STUDENT' as const, identifierType: 'NIM' as const, identifierValue: '21101152610086', name: 'Uji Satu', departmentCode: 'KEP', activeStatus: true }
+    const input = { voterType: 'STUDENT' as const, identifierType: 'NIM' as const, identifierValue: '21101152610086', name: 'Uji Satu', departmentCode: 'KEP', activeStatus: true, password: 'uji-password' }
     const first = await upsertVoter({ actorId: 'a', input })
     expect(first.action).toBe('UPDATED' as never) // ON CONFLICT … RETURNING marks UPDATE even on first insert in current impl
     const second = await upsertVoter({ actorId: 'a', input: { ...input, name: 'Uji Satu Baru' } })
     const { rows } = await pool.query<{ name: string }>('SELECT name FROM voters WHERE identifier_value=$1', ['21101152610086'])
     expect(rows).toHaveLength(1)
     expect(rows[0].name).toBe('Uji Satu Baru')
+    const account = await pool.query<{ password_hash: string }>(
+      "SELECT password_hash FROM users WHERE login_kind='STUDENT' AND login_identifier=$1",
+      [input.identifierValue],
+    )
+    expect(account.rows).toHaveLength(1)
+    expect(await verifyPassword(account.rows[0].password_hash, input.password)).toBe(true)
     void second
   })
 
   it('rejects type/identifier mismatch (student cannot use NIP)', async () => {
     await expect(upsertVoter({
       actorId: 'a',
-      input: { voterType: 'STUDENT', identifierType: 'NIP_LOCAL', identifierValue: '197512342005011005', name: 'Salah', departmentCode: 'KEP', activeStatus: true },
+      input: { voterType: 'STUDENT', identifierType: 'NIP_LOCAL', identifierValue: '197512342005011005', name: 'Salah', departmentCode: 'KEP', activeStatus: true, password: 'uji-password' },
+    })).rejects.toMatchObject({ code: 'VALIDATION_ERROR' })
+  })
+
+  it('allows OTHER for lecturers and rejects it for students', async () => {
+    await expect(upsertVoter({
+      actorId: 'a',
+      input: { voterType: 'LECTURER', identifierType: 'NIP_LOCAL', identifierValue: '197500000000001', name: 'Direktur', departmentCode: 'OTHER', activeStatus: true, password: 'direktur' },
+    })).resolves.toMatchObject({ accountCreated: true })
+    await expect(upsertVoter({
+      actorId: 'a',
+      input: { voterType: 'STUDENT', identifierType: 'NIM', identifierValue: '21100000000001', name: 'Mahasiswa', departmentCode: 'OTHER', activeStatus: true, password: 'mahasiswa' },
     })).rejects.toMatchObject({ code: 'VALIDATION_ERROR' })
   })
 })
@@ -81,8 +93,7 @@ describe('default rights (P4-06)', () => {
          WHERE vr.election_id = $1 GROUP BY roll_entry_id
        ) t`, [electionId],
     )
-    // student voter: BEM pair + MPM-like scoped + chair + vice in same dept; with 2 seeded
-    // contests (one unscoped PAIR + one dept-scoped) the average stays bounded.
+    // Default contests grant the global BEM/MPM contests plus the voter's department contests.
     expect(Number(rows[0].rights_per_voter)).toBeGreaterThan(0)
     void built
   })
@@ -99,8 +110,12 @@ describe('default rights (P4-06)', () => {
 describe('admin grants/revokes (P4-07/P4-08)', () => {
   it('grant adds ADMIN-sourced right; revoke removes it', async () => {
     const { rows: voters } = await pool.query<{ id: string }>("SELECT id FROM voters WHERE id = 'v-1'")
-    const { rows: contests } = await pool.query<{ id: string; code: string }>('SELECT id, code FROM contests WHERE election_id=$1 ORDER BY code', [electionId])
     await buildDefaultRights({ actorId: 'a', electionId })
+    const manualContestId = randomUUID()
+    await pool.query(
+      "INSERT INTO contests (id, election_id, code, title, office, option_type) VALUES ($1,$2,$3,'Kontes manual','CHAIR','SINGLE')",
+      [manualContestId, electionId, `MANUAL_${randomUUID().slice(0, 8)}`],
+    )
     const version = await pool.query<{ config_version: number }>('SELECT config_version FROM elections WHERE id=$1', [electionId])
 
     const applied = await applyRightsChanges({
@@ -109,7 +124,7 @@ describe('admin grants/revokes (P4-07/P4-08)', () => {
         electionId,
         expectConfigVersion: version.rows[0]?.config_version ?? 0,
         reason: 'Uji beri hak',
-        changes: [{ voterId: voters[0].id, contestId: contests[1].id, grant: true }],
+        changes: [{ voterId: voters[0].id, contestId: manualContestId, grant: true }],
       },
     })
     expect(applied.applied).toBe(1)
@@ -120,7 +135,7 @@ describe('admin grants/revokes (P4-07/P4-08)', () => {
         electionId,
         expectConfigVersion: version.rows[0]?.config_version ?? 0,
         reason: 'Uji cabut hak',
-        changes: [{ voterId: voters[0].id, contestId: contests[1].id, grant: false }],
+        changes: [{ voterId: voters[0].id, contestId: manualContestId, grant: false }],
       },
     })
     expect(revoked.applied).toBe(1)
@@ -159,7 +174,7 @@ describe('admin grants/revokes (P4-07/P4-08)', () => {
   it('dashboard reports per-contest numbers (P4-06)', async () => {
     await buildDefaultRights({ actorId: 'a', electionId })
     const dash = await rightsDashboard(electionId)
-    expect(dash.length).toBe(2)
+    expect(dash.length).toBe(10)
     expect(Number(dash[0].granted)).toBeGreaterThanOrEqual(0)
   })
 })

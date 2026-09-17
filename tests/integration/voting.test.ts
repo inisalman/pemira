@@ -5,7 +5,7 @@ import { Pool } from 'pg'
 import { closePool } from '../../database/db'
 import { castVote, myParticipations, verifyReceipt } from '../../server/services/voting/ballots'
 import { createElection } from '../../server/services/elections/elections'
-import { createContest, createCandidateOption } from '../../server/services/elections/candidates'
+import { createCandidateOption } from '../../server/services/elections/candidates'
 import { buildDefaultRights } from '../../server/services/elections/rights'
 import { seedFresh } from './seed-support'
 import { departments } from './fixture-data'
@@ -54,8 +54,11 @@ let kebViceOption: string
 beforeEach(async () => {
   const e = await createElection({ actorId: 'a', name: 'P5 ' + randomUUID() })
   electionId = e.id
-  const c = await createContest({ actorId: 'a', electionId, code: 'BEM', title: 'BEM', office: 'PAIR', optionType: 'PAIR' })
-  contestId = c.id
+  const contestRows = await pool.query<{ id: string; code: string }>(
+    'SELECT id, code FROM contests WHERE election_id = $1', [electionId],
+  )
+  const contestIdFor = (code: string) => contestRows.rows.find(contest => contest.code === code)!.id
+  contestId = contestIdFor('BEM')
   const a = await createCandidateOption({
     actorId: 'a', contestId, number: 1,
     members: [{ name: 'Paslon 1', position: 'CHAIR' }, { name: 'Wakil 1', position: 'VICE_CHAIR' }],
@@ -69,21 +72,21 @@ beforeEach(async () => {
   })
   optionB = b.id
   // extra data must be created in DRAFT (services enforce freeze)
-  const mpm = await createContest({ actorId: 'a', electionId, code: 'MPM', title: 'MPM', office: 'PAIR', optionType: 'PAIR' })
+  const mpm = { id: contestIdFor('MPM') }
   const mpmOpt = await createCandidateOption({
     actorId: 'a', contestId: mpm.id, number: 1,
     members: [{ name: 'P', position: 'CHAIR' }, { name: 'W', position: 'VICE_CHAIR' }],
   })
   mpmOption = mpmOpt.id
-  const kc = await createContest({ actorId: 'a', electionId, code: 'HIMA_KEP_CHAIR', title: 'Ketua Hima KEP', office: 'CHAIR', optionType: 'SINGLE', scopeDepartmentId: 'dep-kep' })
+  const kc = { id: contestIdFor('HIMA_KEP_CHAIR') }
   kepContest = kc.id
   const ko = await createCandidateOption({ actorId: 'a', contestId: kc.id, number: 1, members: [{ name: 'A', position: 'CHAIR' }] })
   kepOption = ko.id
-  const ch = await createContest({ actorId: 'a', electionId, code: 'HIMA_KEB_CHAIR', title: 'K', office: 'CHAIR', optionType: 'SINGLE', scopeDepartmentId: 'dep-keb' })
+  const ch = { id: contestIdFor('HIMA_KEB_CHAIR') }
   kebChair = ch.id
   const cho = await createCandidateOption({ actorId: 'a', contestId: ch.id, number: 1, members: [{ name: 'K', position: 'CHAIR' }] })
   kebChairOption = cho.id
-  const vc = await createContest({ actorId: 'a', electionId, code: 'HIMA_KEB_VICE', title: 'W', office: 'VICE_CHAIR', optionType: 'SINGLE', scopeDepartmentId: 'dep-keb' })
+  const vc = { id: contestIdFor('HIMA_KEB_VICE') }
   kebVice = vc.id
   const vco = await createCandidateOption({ actorId: 'a', contestId: vc.id, number: 1, members: [{ name: 'W', position: 'VICE_CHAIR' }] })
   kebViceOption = vco.id
@@ -100,11 +103,12 @@ describe('voting transaction (P5-03/P5-06)', () => {
     const before = await voterBallot('v-1', contestId)
     expect(before.canVote).toBe(true)
     expect(before.options[0]?.members).toHaveLength(2)
+    expect(before.options[0]?.photoKey).toBeNull()
     expect(before.contest.receiptCode).toBeNull()
     const receipt = await castVote({ voterId: 'v-1', contestId, optionId: optionA })
     const after = await voterBallot('v-1', contestId)
     expect(after.canVote).toBe(false)
-    expect(after.contest).toEqual({ id: contestId, title: 'BEM', hasVoted: true, receiptCode: receipt.receiptCode })
+    expect(after.contest).toEqual({ id: contestId, title: 'Ketua dan wakil BEM', hasVoted: true, receiptCode: receipt.receiptCode })
   })
 
   it('hides drafts and disables voting outside the database schedule or during pause', async () => {

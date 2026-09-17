@@ -25,13 +25,15 @@ const emit = defineEmits<{ 'update:modelValue': [value: boolean] }>()
   display: flex;
   align-items: flex-start;
   gap: var(--space-2);
+  min-height: 2.75rem;
+  padding-block: .65rem;
   cursor: pointer;
 }
 .wrap input {
-  margin-top: 0.2rem;
+  margin: 0.1rem 0 0;
   accent-color: var(--color-primary);
-  width: 1rem;
-  height: 1rem;
+  width: 1.25rem;
+  height: 1.25rem;
 }
 .wrap input:disabled + span { opacity: 0.55; }
 </style>

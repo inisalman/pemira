@@ -44,7 +44,7 @@ export async function voterBallot(voterId: string, contestId: string): Promise<V
   const ballot = rows[0]
   if (!ballot) apiError('FORBIDDEN', 'Surat suara tidak tersedia untuk akun ini.')
   const { rows: options } = await getPool().query<CandidateOption>(
-    `SELECT o.id, o.number, o.motto, o.vision, o.mission, o.programs,
+    `SELECT o.id, o.number, o.photo_key AS "photoKey", o.motto, o.vision, o.mission, o.programs,
        COALESCE((SELECT json_agg(json_build_object('name', m.name, 'position', m.position)
          ORDER BY m.position) FROM candidate_members m WHERE m.option_id = o.id), '[]') AS members
      FROM candidate_options o WHERE o.contest_id = $1 AND o.active = TRUE ORDER BY o.number`, [contestId],

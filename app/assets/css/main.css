@@ -1,4 +1,4 @@
-/* PEMIRA design tokens — modern light, per DESIGN.md.
+/* PEMIRA design tokens: modern light, per DESIGN.md.
    Primary green #2A6B5C, warm white #FFF9F2, font Inter (local, variable). */
 
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -14,13 +14,15 @@
   /* Surfaces */
   --color-bg: #faf8ff;               /* light lavender page background */
   --color-surface: #ffffff;          /* cards, tables, dialogs */
+  --color-surface-muted: #f3f5f4;   /* grouped content inside cards */
   --color-border: #dce4df;           /* hairlines, input borders */
+  --color-border-strong: #b8c8c0;    /* interactive and emphasized edges */
 
   /* Text */
   --color-text: #131b2e;             /* body text */
   --color-text-muted: #4c5852;       /* secondary text, captions */
 
-  /* Status (supporting only — never the sole indicator; paired with text/icon) */
+  /* Status is supporting only, never the sole indicator; pair it with text/icon. */
   --color-success: #1e7a3f;
   --color-success-bg: #e2f3e7;
   --color-danger: #b3372c;
@@ -49,9 +51,11 @@
   --space-6: 1.5rem;
   --space-8: 2rem;
   --radius: 0.5rem;
-  --radius-lg: 0.75rem;
-  --shadow-sm: 0 1px 2px rgba(19, 27, 46, 0.08);
-  --shadow-md: 0 10px 26px rgba(19, 27, 46, 0.10);
+  --radius-lg: 0.875rem;
+  --radius-xl: 1.125rem;
+  --card-padding: clamp(1rem, 2vw, 1.5rem);
+  --shadow-sm: 0 1px 2px rgba(19, 27, 46, 0.06), 0 8px 24px rgba(19, 27, 46, 0.035);
+  --shadow-md: 0 18px 48px rgba(19, 27, 46, 0.12);
 }
 
 /* Color usage map (P1-01):
@@ -76,9 +80,12 @@ html {
 
 body {
   margin: 0;
+  min-width: 20rem;
   background: var(--color-bg);
   color: var(--color-text);
 }
+
+img, svg { max-width: 100%; }
 
 input, select, textarea { accent-color: var(--color-primary); }
 textarea { resize: vertical; }
@@ -91,7 +98,7 @@ button, input, select, textarea { font: inherit; }
 .session-actions a, nav a { display: inline-flex; align-items: center; min-height: 2.75rem; }
 .skip-link { position: absolute; top: 0; left: 1rem; transform: translateY(-150%); padding: 0.75rem; background: white; z-index: 100; }
 .skip-link:focus { transform: translateY(0); }
-.action-link { display: inline-flex; align-items: center; justify-content: center; min-height: 2.75rem; padding: 0.5rem 1rem; border: 1px solid var(--color-primary); border-radius: var(--radius); color: var(--color-primary); font-weight: 700; text-decoration: none; }
+.action-link { display: inline-flex; align-items: center; justify-content: center; min-height: 2.75rem; padding: 0.5rem 1rem; border: 1px solid var(--color-border-strong); border-radius: var(--radius); color: var(--color-primary); background: var(--color-surface); font-weight: 700; text-decoration: none; }
 .action-link:hover { background: var(--color-primary-soft); color: var(--color-primary-strong); }
 .receipt { overflow-wrap: anywhere; }
 
@@ -105,7 +112,7 @@ h1, h2, h3, h4 {
 
 h1 { letter-spacing: -0.04em; }
 
-.admin-page { display: grid; gap: var(--space-6); }
+.admin-page { display: grid; gap: clamp(1.25rem, 2.5vw, 2rem); }
 .admin-page .page-header { display: flex; align-items: end; justify-content: space-between; gap: var(--space-6); flex-wrap: wrap; }
 .admin-page .page-header h1 { margin-bottom: var(--space-2); font-size: clamp(1.85rem, 3vw, 2.6rem); }
 .admin-page .eyebrow { margin: 0 0 var(--space-2); color: var(--color-primary); font-size: .7rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
@@ -113,7 +120,7 @@ h1 { letter-spacing: -0.04em; }
 .admin-page .period-select, .admin-page .select-field { display: grid; gap: var(--space-1); color: var(--color-text); font-size: var(--text-sm); font-weight: 700; }
 .admin-page select, .admin-page input:not([type='checkbox']):not([type='radio']), .admin-page textarea { min-height: 2.75rem; border: 1px solid var(--color-border); border-radius: var(--radius); color: var(--color-text); background: var(--color-surface); padding: var(--space-2) var(--space-3); }
 .admin-page select:focus-visible, .admin-page input:focus-visible, .admin-page textarea:focus-visible { border-color: var(--color-primary); }
-.admin-page .state { padding: 2.5rem var(--space-4); color: var(--color-text-muted); text-align: center; border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); }
+.admin-page .state { padding: 2.5rem var(--space-4); color: var(--color-text-muted); text-align: center; border: 1px dashed var(--color-border-strong); border-radius: var(--radius-lg); background: var(--color-surface); }
 @media (max-width: 42rem) { .admin-page .period-select, .admin-page .period-select select { width: 100%; min-width: 0; } }
 
 a {

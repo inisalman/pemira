@@ -3,7 +3,7 @@ import { getPool } from '~~/database/db'
 import { verifyPassword } from '#server/utils/password'
 import { createSession } from '#server/utils/session'
 import { checkLoginRateLimit, recordLoginAttempt, clientIp } from '#server/utils/rate-limit'
-import { parseBody, sendApiError } from '#server/utils/errors'
+import { apiError, parseBody, sendApiError } from '#server/utils/errors'
 import { loginSchema } from '#server/utils/schemas'
 
 /**

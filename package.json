@@ -13,6 +13,7 @@
     "start": "node .output/server/index.mjs",
     "typecheck": "nuxt typecheck",
     "test": "vitest run",
+    "db:create-admin": "npx tsx database/create-admin.ts",
     "db:migrate": "echo 'Migrations not implemented yet (Task P0-04)' && exit 1"
   },
   "dependencies": {

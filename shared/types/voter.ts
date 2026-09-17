@@ -16,6 +16,7 @@ export interface VoterContest {
 export interface CandidateOption {
   id: string
   number: number
+  photoKey: string | null
   motto: string | null
   vision: string | null
   mission: string | null

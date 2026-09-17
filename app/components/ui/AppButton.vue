@@ -39,6 +39,8 @@ withDefaults(defineProps<{
   font-weight: 600;
   cursor: pointer;
   min-height: 2.75rem;
+  max-width: 100%;
+  line-height: 1.3;
   transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 .button:disabled {
@@ -50,14 +52,15 @@ withDefaults(defineProps<{
 .primary { background: var(--color-primary); color: var(--color-primary-contrast); }
 .primary:hover:not(:disabled) { background: var(--color-primary-strong); }
 
-.secondary { background: var(--color-primary-soft); color: var(--color-primary-strong); border-color: transparent; }
-.secondary:hover:not(:disabled) { background: var(--color-primary-soft); }
+.secondary { background: var(--color-primary-soft); color: var(--color-primary-strong); border-color: #b7d8cb; }
+.secondary:hover:not(:disabled) { background: #d4eae1; border-color: var(--color-primary); }
 
 .danger { background: var(--color-danger); color: #fff; }
 .danger:hover:not(:disabled) { background: #93291f; }
 
 .ghost { background: transparent; color: var(--color-primary-strong); border-color: var(--color-border); }
 .ghost:hover:not(:disabled) { background: var(--color-primary-soft); }
+.button:active:not(:disabled) { transform: translateY(1px); }
 
 .spinner {
   width: 1em;

@@ -7,6 +7,7 @@ export const departments = [
   { id: 'dep-keb', code: 'KEB', name: 'Kebidanan' },
   { id: 'dep-kg', code: 'KG', name: 'Kesehatan Gigi' },
   { id: 'dep-op', code: 'OP', name: 'Ortotik Prostetik' },
+  { id: 'dep-other', code: 'OTHER', name: 'Lainnya' },
 ]
 
 /** 600-voter-scale synthetic population (fast: no argon2 in this path). */

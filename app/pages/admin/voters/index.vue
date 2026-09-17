@@ -17,6 +17,7 @@ type ImportPreview = {
   errorRows: { row: number; code: string; message: string }[]
   preview: { row: number; voterType: string; identifierType: string; identifierValue: string; name: string; departmentCode: string }[]
 }
+type ImportResult = { added: number; updated: number; skipped: number; accountsCreated: number }
 
 const { request } = useApi()
 const voters = ref<Voter[]>([])
@@ -41,6 +42,7 @@ const importError = ref('')
 const form = reactive({
   voterType: 'STUDENT' as 'STUDENT' | 'LECTURER',
   identifierValue: '',
+  password: '',
   name: '',
   departmentCode: 'KEP',
   activeStatus: true,
@@ -51,13 +53,18 @@ const departments = [
   { code: 'KEB', name: 'Kebidanan' },
   { code: 'KG', name: 'Kesehatan Gigi' },
   { code: 'OP', name: 'Ortotik Prostetik' },
+  { code: 'OTHER', name: 'Lainnya (direktur/staf non-jurusan)' },
 ]
+
+const formDepartments = computed(() => form.voterType === 'LECTURER'
+  ? departments
+  : departments.filter(department => department.code !== 'OTHER'))
 
 const rows = computed(() => voters.value.map(voter => ({
   ...voter,
   typeLabel: voter.voterType === 'STUDENT' ? 'Mahasiswa' : 'Dosen',
   identifierLabel: voter.identifierType === 'NIM' ? 'NIM' : 'NIP lokal',
-  departmentLabel: voter.departmentName ? `${voter.departmentCode} · ${voter.departmentName}` : voter.departmentCode ?? '—',
+  departmentLabel: voter.departmentName ? `${voter.departmentCode} · ${voter.departmentName}` : voter.departmentCode ?? 'Tidak terikat',
   statusLabel: voter.activeStatus ? 'Aktif' : 'Nonaktif',
 })))
 
@@ -100,7 +107,7 @@ function resetPageAndLoad() {
 
 function openForm() {
   editing.value = false
-  Object.assign(form, { voterType: 'STUDENT', identifierValue: '', name: '', departmentCode: 'KEP', activeStatus: true })
+  Object.assign(form, { voterType: 'STUDENT', identifierValue: '', password: '', name: '', departmentCode: 'KEP', activeStatus: true })
   formOpen.value = true
 }
 
@@ -109,6 +116,7 @@ function openEdit(voter: Voter) {
   Object.assign(form, {
     voterType: voter.voterType,
     identifierValue: voter.identifierValue,
+    password: '',
     name: voter.name,
     departmentCode: voter.departmentCode ?? 'KEP',
     activeStatus: voter.activeStatus,
@@ -127,18 +135,23 @@ async function saveVoter() {
     error.value = 'Nama pemilih wajib diisi.'
     return
   }
+  if (!editing.value && !form.password) {
+    error.value = 'Password awal wajib diisi.'
+    return
+  }
   saving.value = true
   try {
     await request('/api/v1/admin/voters', {
       voterType: form.voterType,
       identifierType: form.voterType === 'STUDENT' ? 'NIM' : 'NIP_LOCAL',
       identifierValue: form.identifierValue.trim(),
+      password: editing.value ? undefined : form.password,
       name: form.name.trim(),
       departmentCode: form.departmentCode,
       activeStatus: form.activeStatus,
     })
     formOpen.value = false
-    notice.value = 'Data pemilih disimpan.'
+    notice.value = editing.value ? 'Data pemilih diperbarui.' : 'Pemilih dan akun login berhasil dibuat.'
     await load()
   } catch (cause) {
     error.value = apiErrorMessage(cause)
@@ -186,13 +199,13 @@ async function commitImport() {
   try {
     const body = new FormData()
     body.append('file', selectedFile.value)
-    const result = await $fetch<{ added: number; updated: number; skipped: number }>(`/api/v1/admin/voters/import?mode=commit&batchId=${encodeURIComponent(importPreview.value.batchId)}`, {
+    const result = await $fetch<ImportResult>(`/api/v1/admin/voters/import?mode=commit&batchId=${encodeURIComponent(importPreview.value.batchId)}`, {
       method: 'POST', body, headers: { 'x-csrf-token': csrfToken() }, retry: 0, timeout: 30_000,
     })
     importOpen.value = false
     importPreview.value = null
     selectedFile.value = null
-    notice.value = `Impor selesai: ${result.added} ditambahkan, ${result.updated} diperbarui, ${result.skipped} dilewati.`
+    notice.value = `Impor selesai: ${result.added} ditambahkan, ${result.updated} diperbarui, ${result.accountsCreated} akun dibuat, ${result.skipped} dilewati.`
     await load()
   } catch (cause) {
     importError.value = apiErrorMessage(cause)
@@ -216,6 +229,9 @@ async function downloadTemplate() {
 }
 
 watch([search, voterType, departmentCode, activeStatus], resetPageAndLoad)
+watch(() => form.voterType, (type) => {
+  if (type === 'STUDENT' && form.departmentCode === 'OTHER') form.departmentCode = 'KEP'
+})
 onMounted(load)
 </script>
 
@@ -262,21 +278,23 @@ onMounted(load)
       <form class="dialog-form" @submit.prevent="saveVoter">
         <p class="dialog-copy">Data dengan identitas yang sama akan diperbarui, bukan digandakan.</p>
         <AppInput v-model="form.identifierValue" :label="form.voterType === 'STUDENT' ? 'NIM' : 'NIP lokal'" required inputmode="numeric" autocomplete="off" :disabled="editing" />
+        <AppInput v-if="!editing" v-model="form.password" label="Password awal" type="password" required autocomplete="new-password" hint="Berikan password ini kepada pemilih melalui kanal yang aman." />
         <label class="select-field">Jenis pemilih<select v-model="form.voterType"><option value="STUDENT">Mahasiswa</option><option value="LECTURER">Dosen</option></select></label>
         <AppInput v-model="form.name" label="Nama lengkap" required autocomplete="name" />
-        <label class="select-field">Jurusan<select v-model="form.departmentCode"><option v-for="department in departments" :key="department.code" :value="department.code">{{ department.code }} · {{ department.name }}</option></select></label>
+        <label class="select-field">Jurusan<select v-model="form.departmentCode"><option v-for="department in formDepartments" :key="department.code" :value="department.code">{{ department.code }} · {{ department.name }}</option></select></label>
         <label class="check-field"><input v-model="form.activeStatus" type="checkbox"> Akun pemilih aktif</label>
       </form>
     </AppDialog>
 
     <AppDialog :open="importOpen" title="Impor DPT" :confirm-label="importPreview ? 'Commit impor' : 'Validasi berkas'" :loading="importLoading" :danger="false" @cancel="importOpen = false" @confirm="importPreview ? commitImport() : validateImport()">
       <div class="dialog-form">
-        <p class="dialog-copy">Gunakan template resmi. Identitas dibaca sebagai teks agar nol di depan tetap tersimpan.</p>
+        <p class="dialog-copy">Gunakan template resmi. Isi nama, NIM/NIP, dan password untuk setiap pemilih. Password tidak ditampilkan kembali setelah impor.</p>
         <button class="text-link" type="button" @click="downloadTemplate">Unduh template XLSX</button>
         <label class="file-field">Berkas XLSX<input type="file" accept=".xlsx" @change="onFileChange"></label>
         <AppAlert v-if="importError" kind="error" :message="importError" />
         <div v-if="importPreview" class="preview" aria-live="polite">
           <h3>Pratinjau {{ importPreview.totalRows }} baris valid</h3>
+          <p class="dialog-copy">Password sudah divalidasi dan sengaja tidak ditampilkan pada pratinjau.</p>
           <AppAlert v-if="importPreview.errorRows.length" kind="warning" :message="`${importPreview.errorRows.length} baris perlu diperbaiki sebelum commit.`" />
           <ul v-if="importPreview.errorRows.length" class="error-list"><li v-for="row in importPreview.errorRows.slice(0, 8)" :key="`${row.row}-${row.code}`">Baris {{ row.row }}: {{ row.message }}</li></ul>
           <div v-else class="preview-table" role="region" aria-label="Pratinjau data impor" tabindex="0"><table><thead><tr><th>Baris</th><th>Identitas</th><th>Nama</th><th>Jurusan</th></tr></thead><tbody><tr v-for="row in importPreview.preview" :key="row.row"><td>{{ row.row }}</td><td>{{ row.identifierValue }}</td><td>{{ row.name }}</td><td>{{ row.departmentCode }}</td></tr></tbody></table></div>
@@ -294,7 +312,7 @@ onMounted(load)
 .intro, .dialog-copy, .table-heading span { color: var(--color-text-muted); }
 .intro { margin: 0; }
 .header-actions, .dialog-actions { display: flex; gap: var(--space-3); flex-wrap: wrap; }
-.filters { border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); padding: var(--space-4); }
+.filters { border: 1px solid var(--color-border); border-radius: var(--radius-xl); background: var(--color-surface); padding: var(--card-padding); box-shadow: var(--shadow-sm); }
 .filters h2, .table-heading h2 { font-size: var(--text-lg); margin: 0; }
 .filter-grid { display: grid; grid-template-columns: 2fr repeat(3, minmax(10rem, 1fr)); gap: var(--space-4); margin-top: var(--space-4); }
 .select-field, .file-field { display: grid; gap: var(--space-1); font-size: var(--text-sm); font-weight: 600; }
@@ -316,7 +334,7 @@ onMounted(load)
 .file-field input { padding: var(--space-2) 0; font: inherit; }
 .preview { display: grid; gap: var(--space-3); }
 .preview h3 { font-size: var(--text-base); margin: 0; }
-.preview-table { overflow-x: auto; border: 1px solid var(--color-border); border-radius: var(--radius); }
+.preview-table { overflow-x: auto; border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); }
 .preview-table table { width: 100%; min-width: 32rem; border-collapse: collapse; font-size: var(--text-sm); }
 .preview-table th, .preview-table td { padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--color-border); text-align: start; }
 .preview-table th { background: var(--color-primary-soft); }

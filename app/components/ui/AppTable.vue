@@ -43,9 +43,11 @@ const emit = defineEmits<{ rowClick: [row: Record<string, unknown>] }>()
   color: var(--color-text-muted);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius);
+  border-style: dashed;
+  border-color: var(--color-border-strong);
+  border-radius: var(--radius-lg);
 }
-.scroll { overflow-x: auto; border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); }
+.scroll { overflow-x: auto; border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); box-shadow: var(--shadow-sm); }
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -58,9 +60,13 @@ th {
   text-align: start;
   padding: var(--space-3);
   border-bottom: 2px solid var(--color-border);
-  background: #f0f1fa;
+  background: var(--color-surface-muted);
+  color: var(--color-text-muted);
+  font-size: .75rem;
+  letter-spacing: .02em;
 }
-td { padding: var(--space-3); border-bottom: 1px solid var(--color-border); }
+td { padding: .9rem var(--space-3); border-bottom: 1px solid var(--color-border); }
+tbody tr:last-child td { border-bottom: 0; }
 tbody tr:hover { background: var(--color-primary-soft); }
 .end { text-align: end; }
 </style>

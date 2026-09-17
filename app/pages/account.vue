@@ -37,5 +37,5 @@ async function save() {
 </template>
 
 <style scoped>
-.account-page { max-width: 32rem; margin-inline: auto; padding: clamp(1.5rem, 5vw, 2.5rem); border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: white; box-shadow: var(--shadow-sm); }.account-page header > p:not(.eyebrow) { color: var(--color-text-muted); }.eyebrow { margin: 0 0 .5rem; color: var(--color-primary); font-size: .7rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
+.account-page { max-width: 32rem; margin: clamp(1rem, 5vw, 3rem) auto; padding: clamp(1.25rem, 5vw, 2.5rem); border: 1px solid var(--color-border); border-radius: var(--radius-xl); background: white; box-shadow: var(--shadow-sm); }.account-page header { padding-bottom: var(--space-4); border-bottom: 1px solid var(--color-border); }.account-page header > p:not(.eyebrow) { color: var(--color-text-muted); margin-bottom: 0; }.eyebrow { margin: 0 0 .5rem; color: var(--color-primary); font-size: .7rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
 </style>

@@ -74,8 +74,9 @@ onMounted(load)
   flex-direction: column;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: 1.5rem;
+  border-radius: var(--radius-xl);
+  padding: var(--card-padding);
+  box-shadow: var(--shadow-sm);
 }
 .period { margin-bottom: 3rem; padding-top: 2rem; border-top: 1px solid var(--color-border); }
 .card h3 { font-size: 1.3rem; margin: 1rem 0 0; overflow-wrap: anywhere; }
@@ -85,4 +86,5 @@ onMounted(load)
 .cardAction { display: flex; align-items: center; justify-content: center; min-height: 2.75rem; padding: 0.65rem 1rem; background: var(--color-primary); color: white; border-radius: var(--radius); text-decoration: none; font-weight: 600; }
 .cardAction:hover { background: var(--color-primary-strong); color: white; }
 .cardAction.secondary { background: var(--color-primary-soft); color: var(--color-primary-strong); }
+@media (max-width: 34rem) { .intro { padding-top: .5rem; }.dates { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }.card { min-height: 0; } }
 </style>

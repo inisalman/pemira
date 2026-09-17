@@ -11,6 +11,7 @@ const config = useRuntimeConfig()
         <nav :class="$style.nav" aria-label="Navigasi informasi">
           <a href="/#tentang-pemira">Tentang PEMIRA</a>
           <a href="/#jadwal-voting">Jadwal voting</a>
+          <NuxtLink to="/quick-count">Quick count</NuxtLink>
           <a href="/#tata-tertib">Tata tertib</a>
           <a href="/#panduan-video">Panduan</a>
         </nav>

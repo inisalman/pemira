@@ -63,7 +63,7 @@ const contestRows = computed(() => contests.value.map(contest => ({
   code: contest.code,
   title: contest.title,
   type: contest.optionType === 'PAIR' ? 'Pasangan ketua & wakil' : `Calon ${contest.office === 'CHAIR' ? 'ketua' : 'wakil'} tunggal`,
-  department: contest.departmentName ?? '—',
+  department: contest.departmentName ?? 'Tidak terikat',
   options: String(contest.options?.length ?? 0),
 })))
 
@@ -80,7 +80,7 @@ async function saveContest() {
       title: contestForm.title.trim(),
       office: contestForm.office as 'PAIR' | 'CHAIR' | 'VICE_CHAIR',
       optionType: contestForm.optionType as 'PAIR' | 'SINGLE',
-      scopeDepartmentId: contestDept.value?.id ?? null,
+      scopeDepartmentId: contestDept.value?.code ?? null,
     }
     await request(`/api/v1/admin/elections/${encodeURIComponent(contestElectionId.value)}/contests`, body)
     Object.assign(contestForm, { code: '', title: '', office: 'CHAIR', optionType: 'SINGLE', departmentCode: '' })
@@ -162,13 +162,13 @@ onMounted(load)
 <style scoped>
 .admin-elections { display: grid; gap: var(--space-6); }
 .admin-elections header p { color: var(--color-text-muted); }
-.create-form { max-width: 44rem; border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-6); background: var(--color-surface); box-shadow: var(--shadow-sm); }
+.create-form { max-width: 44rem; border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: var(--card-padding); background: var(--color-surface); box-shadow: var(--shadow-sm); }
 .create-form h2 { font-size: var(--text-lg); }
 .dates { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
 .dates label { display: grid; gap: var(--space-1); font-size: var(--text-sm); font-weight: 600; }
 .dates input { border: 1px solid var(--color-text-muted); border-radius: var(--radius); color: var(--color-text); font: inherit; min-height: 2.75rem; padding: var(--space-2); min-width: 0; }
 @media (max-width: 42rem) { .dates { grid-template-columns: 1fr; } }
-.contest-panel { max-width: 72rem; border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-6); background: var(--color-surface); box-shadow: var(--shadow-sm); display: grid; gap: var(--space-4); }
+.contest-panel { max-width: 72rem; border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: var(--card-padding); background: var(--color-surface); box-shadow: var(--shadow-sm); display: grid; gap: var(--space-4); }
 .contest-panel h2 { font-size: var(--text-lg); }
 .contest-intro { color: var(--color-text-muted); margin: 0; }
 .contest-form { display: grid; grid-template-columns: minmax(12rem, 1fr) minmax(10rem, 1fr) minmax(16rem, 2fr) minmax(14rem, 1.5fr) minmax(14rem, 1.5fr) auto; gap: var(--space-3); align-items: end; }

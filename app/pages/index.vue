@@ -17,6 +17,7 @@ const tutorialImages = ["https://lh3.googleusercontent.com/aida-public/AB6AXuBzv
 const links = [
   { label: 'Tentang Pemira', href: '#tentang-pemira' },
   { label: 'Jadwal Voting', href: '#jadwal-voting' },
+  { label: 'Quick Count', href: '/quick-count' },
   { label: 'Tata Tertib', href: '#tata-tertib' },
   { label: 'Panduan Voting', href: '#panduan-voting' },
 ]
@@ -104,7 +105,7 @@ onMounted(load)
       </section>
       <section id="jadwal-voting" class="section tinted">
         <div class="container">
-          <div class="section-heading"><div><p class="eyebrow">Jadwal resmi & bilik suara</p><h2>Jadwal Pemungutan Suara</h2><p>Periksa periode yang tersedia, lalu masuk untuk melihat kontes sesuai hak pilih Anda.</p></div><NuxtLink to="/results" class="button white">Lihat hasil pemilihan</NuxtLink></div>
+          <div class="section-heading"><div><p class="eyebrow">Jadwal resmi & bilik suara</p><h2>Jadwal Pemungutan Suara</h2><p>Periksa periode yang tersedia, lalu masuk untuk melihat kontes sesuai hak pilih Anda.</p></div><div class="section-actions"><NuxtLink to="/quick-count" class="button white">Lihat quick count</NuxtLink><NuxtLink to="/results" class="button soft">Hasil resmi</NuxtLink></div></div>
           <div class="period-info" aria-live="polite">
             <p v-if="loading">Memuat jadwal pemilihan…</p>
             <div v-else-if="error" class="load-error"><p>{{ error }}</p><button class="button soft" @click="load">Coba lagi</button></div>
@@ -136,7 +137,7 @@ onMounted(load)
       </section>
       <section class="section help-section"><div class="container"><div class="help-banner"><div><p class="eyebrow-tag">Bantuan pemilih</p><h2>Mengalami Kendala Saat Memilih?</h2><p>Hubungi panitia melalui kanal MPM untuk bantuan akses akun atau pemeriksaan daftar pemilih. Jangan bagikan password Anda.</p></div><div class="help-actions"><a class="button gold" href="https://instagram.com/MPMPOLTEKKESJAKARTA1" target="_blank" rel="noopener noreferrer">DM Instagram MPM</a><a class="button help-link" href="#panduan-voting">Baca panduan pemilih</a></div></div></div></section>
     </main>
-    <footer class="portal-footer"><div class="container"><div class="footer-grid"><div><h3>PEMIRA</h3><p>Pemilihan Raya Mahasiswa<br>Poltekkes Kemenkes Jakarta I</p></div><div><h3>Informasi pemilihan</h3><a href="#jadwal-voting">Jadwal voting</a><a href="#tata-tertib">Tata tertib</a><NuxtLink to="/results">Hasil pemilihan</NuxtLink></div><div><h3>Kanal MPM</h3><a href="https://instagram.com/MPMPOLTEKKESJAKARTA1" target="_blank" rel="noopener noreferrer">Instagram MPM</a><a href="#panduan-voting">Panduan pemilih</a></div><div><h3>Akses portal</h3><NuxtLink to="/login">Masuk sebagai pemilih</NuxtLink><NuxtLink to="/admin">Panel panitia & admin</NuxtLink></div></div><div class="footer-bottom"><span>PEMIRA · Poltekkes Kemenkes Jakarta I</span><span>Hasil sementara bukan penetapan pemenang.</span></div></div></footer>
+    <footer class="portal-footer"><div class="container"><div class="footer-grid"><div><h3>PEMIRA</h3><p>Pemilihan Raya Mahasiswa<br>Poltekkes Kemenkes Jakarta I</p></div><div><h3>Informasi pemilihan</h3><a href="#jadwal-voting">Jadwal voting</a><a href="#tata-tertib">Tata tertib</a><NuxtLink to="/quick-count">Quick count</NuxtLink><NuxtLink to="/results">Hasil resmi</NuxtLink></div><div><h3>Kanal MPM</h3><a href="https://instagram.com/MPMPOLTEKKESJAKARTA1" target="_blank" rel="noopener noreferrer">Instagram MPM</a><a href="#panduan-voting">Panduan pemilih</a></div><div><h3>Akses portal</h3><NuxtLink to="/login">Masuk sebagai pemilih</NuxtLink><NuxtLink to="/admin">Panel panitia & admin</NuxtLink></div></div><div class="footer-bottom"><span>PEMIRA · Poltekkes Kemenkes Jakarta I</span><span>Hasil sementara bukan penetapan pemenang.</span></div></div></footer>
   </div>
 </template>
 
@@ -172,6 +173,7 @@ onMounted(load)
 .soft { background: #eaedff; color: var(--green); }
 .soft:hover { background: #e2e7ff; }
 .white { background: white; color: var(--green); }
+.section-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
 .ochre { background: #855300; color: white; }
 .ochre:hover { background: #653e00; color: white; }
 .menu-toggle { display: none; min-height: 44px; padding: 0.5rem 0.8rem; border: 1px solid var(--line); border-radius: 0.5rem; color: var(--green); background: white; font: inherit; }
@@ -200,7 +202,7 @@ onMounted(load)
 .teal { background: #d9f8f3; color: #005049; }
 .hero-photo .badge { margin-left: auto; flex-shrink: 0; }
 .metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.4rem; margin-top: 3.5rem; }
-.metrics article { padding: 1.5rem; border-radius: 0.75rem; background: #fff; box-shadow: 0 1px 2px #131b2e08; }
+.metrics article { display: flex; flex-direction: column; min-width: 0; min-height: 9rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: 0.875rem; background: #fff; box-shadow: 0 1px 2px #131b2e08; }
 .metrics p { color: var(--muted); font-size: 0.65rem; letter-spacing: 0.04em; text-transform: uppercase; }
 .metrics strong { display: block; margin-top: 1rem; font-size: 1.6rem; line-height: 1.3; letter-spacing: -0.03em; }
 .metrics .metric-date { font-size: 1.1rem; }
@@ -215,10 +217,10 @@ onMounted(load)
 .mission { margin-top: 1.3rem; padding: 1.5rem; border-radius: 0.65rem; background: #f2f3ff; }
 .mission p + p { margin-top: 0.5rem; font-style: italic; }
 .values { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
-.values article { padding: 1.1rem; border-radius: 0.5rem; background: white; }
+.values article { padding: 1.1rem; border: 1px solid var(--line); border-radius: 0.65rem; background: white; }
 .values p { margin-top: 0.4rem; }
 .organization-list { display: grid; gap: 1rem; align-content: start; }
-.organization { padding: 1.5rem; border-radius: 0.8rem; background: white; }
+.organization { padding: 1.5rem; border: 1px solid var(--line); border-radius: 0.875rem; background: white; box-shadow: 0 1px 2px #131b2e08; }
 .org-heading { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.9rem; }
 .org-icon { flex-shrink: 0; display: grid; place-items: center; width: 2.8rem; height: 2.8rem; border-radius: 0.65rem; font-weight: 800; font-size: 0.75rem; }
 .org-heading .badge { margin-left: auto; white-space: nowrap; }
@@ -229,17 +231,17 @@ onMounted(load)
 .section-heading p:not(.eyebrow) { max-width: 48rem; color: var(--muted); font-size: 0.95rem; }
 .section-heading .button { flex-shrink: 0; }
 .period-info { margin-bottom: 1.5rem; font-size: 0.85rem; color: var(--muted); }
-.period-info article { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem; margin-bottom: 0.5rem; background: white; border-radius: 0.5rem; }
+.period-info article { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem; margin-bottom: 0.75rem; background: white; border: 1px solid var(--line); border-radius: 0.65rem; }
 .load-error { display: flex; align-items: center; flex-wrap: wrap; gap: 1rem; }
 .category-grid, .rules-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; }
-.category-card { display: flex; flex-direction: column; padding: 1.5rem; border-radius: 0.9rem; background: white; }
+.category-card { display: flex; flex-direction: column; min-width: 0; min-height: 18rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: 0.9rem; background: white; box-shadow: 0 1px 2px #131b2e08; }
 .card-kicker { font-size: 0.65rem; color: var(--green); margin-bottom: 1.3rem !important; }
 .category-title { display: flex; gap: 0.8rem; align-items: center; }
 .category-title .eyebrow { font-size: 0.6rem; color: var(--muted); }
 .category-title h3 { margin-top: 0.3rem; }
 .category-card > p:not(.card-kicker) { font-size: 0.8rem; color: var(--muted); margin: 1rem 0 1.5rem; flex: 1; }
 .category-card .button { justify-content: space-between; font-size: 0.75rem; }
-.rule-card { padding: 1.5rem; border-radius: 0.75rem; background: white; }
+.rule-card { min-width: 0; padding: 1.5rem; border: 1px solid var(--line); border-radius: 0.875rem; background: white; box-shadow: 0 1px 2px #131b2e08; }
 .rule-number { display: grid; place-items: center; width: 2.4rem; height: 2.4rem; margin-bottom: 1rem; border-radius: 50%; color: var(--green); background: #e2efea; font-size: 0.8rem; }
 .rule-card p { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
 .rule-card.danger { background: #fcecef; }
@@ -248,11 +250,11 @@ onMounted(load)
 .guide-heading { text-align: center; margin: 0 auto 2rem; max-width: 42rem; }
 .guide-heading > p:last-child { color: var(--muted); }
 .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem; }
-.steps article { display: flex; align-items: start; gap: 1rem; padding: 1.5rem; border-radius: 0.8rem; background: white; }
+.steps article { display: flex; align-items: start; gap: 1rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: 0.875rem; background: white; }
 .steps strong { display: grid; place-items: center; flex-shrink: 0; width: 2.6rem; height: 2.6rem; background: var(--green); color: white; font-size: 1.25rem; border-radius: 0.5rem; }
 .steps p { color: var(--muted); font-size: 0.8rem; margin-top: 0.4rem; }
 .tutorials { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-.tutorial { padding: 1.5rem; border-radius: 0.8rem; background: white; }
+.tutorial { min-width: 0; padding: 1.5rem; border: 1px solid var(--line); border-radius: 0.875rem; background: white; box-shadow: 0 1px 2px #131b2e08; }
 .tutorial > img { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 0.5rem; display: block; margin-bottom: 1.25rem; }
 .tutorial h3 { margin: 0.4rem 0 0.6rem; font-size: 1.15rem; }
 .tutorial > p:not(.eyebrow), .tutorial ol { font-size: 0.85rem; color: var(--muted); }
@@ -317,7 +319,10 @@ onMounted(load)
   .metrics .metric-date { font-size: 1rem; }
   .section { padding-block: 3rem; }
   .section-heading { align-items: start; flex-direction: column; gap: 1rem; }
+  .section-actions { width: 100%; }
+  .section-actions .button { flex: 1; }
   .category-grid, .rules-grid, .tutorials { grid-template-columns: 1fr; gap: 1rem; }
+  .category-card, .metrics article { min-height: 0; }
   .help-banner { padding: 1.5rem; }
   .help-actions { grid-template-columns: 1fr; }
   .footer-grid { gap: 1.5rem; }

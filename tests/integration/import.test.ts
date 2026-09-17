@@ -43,12 +43,6 @@ let electionId: string
 beforeEach(async () => {
   const e = await createElection({ actorId: 'a', name: 'I4 ' + randomUUID() })
   electionId = e.id
-  const depts = await pool.query<{ id: string }>('SELECT id FROM departments LIMIT 1')
-  await pool.query(
-    "INSERT INTO contests (id, election_id, code, title, office, option_type) VALUES ($1,$2,'BEM','BEM','PAIR','PAIR')",
-    [randomUUID(), electionId],
-  )
-  void depts
 })
 
 async function wbToBuffer(build: (wb: ExcelJS.Workbook) => void): Promise<Buffer> {
@@ -69,7 +63,7 @@ describe('template and parsing (P4-02/P4-03)', () => {
   it('leading-zero NIM survives round-trip as text', async () => {
     const buf = await wbToBuffer((wb) => {
       const ws = wb.getWorksheet('DATA')!
-      const r = ws.addRow(['STUDENT', 'NIM', '012345678901', 'Pemilih Nol', 'KEP'])
+      const r = ws.addRow(['STUDENT', 'NIM', '012345678901', 'Pemilih Nol', 'KEP', 'rahasia'])
       r.getCell(3).numFmt = '@' // text format
     })
     const { rows, errors } = await parseVoterWorkbook(buf)
@@ -81,7 +75,7 @@ describe('template and parsing (P4-02/P4-03)', () => {
   it('formula cells are rejected per-row without crashing', async () => {
     const buf = await wbToBuffer((wb) => {
       const ws = wb.getWorksheet('DATA')!
-      const r = ws.addRow(['STUDENT', 'NIM', '', 'Formula Guy', 'KEP'])
+      const r = ws.addRow(['STUDENT', 'NIM', '', 'Formula Guy', 'KEP', 'rahasia'])
       r.getCell(4).value = { formula: '1+1', result: 2 } as unknown as ExcelJS.CellValue
     })
     const { rows, errors } = await parseVoterWorkbook(buf)
@@ -92,8 +86,8 @@ describe('template and parsing (P4-02/P4-03)', () => {
   it('row-level zod errors appear with row numbers, not whole-file rejection', async () => {
     const buf = await wbToBuffer((wb) => {
       const ws = wb.getWorksheet('DATA')!
-      ws.addRow(['STUDENT', 'NIM', 'abc', 'Bukan Angka', 'KEP'])
-      ws.addRow(['STUDENT', 'NIM', '21101152610099', 'Valid', 'KEP'])
+      ws.addRow(['STUDENT', 'NIM', 'abc', 'Bukan Angka', 'KEP', 'rahasia'])
+      ws.addRow(['STUDENT', 'NIM', '21101152610099', 'Valid', 'KEP', 'rahasia'])
     })
     const { rows, errors } = await parseVoterWorkbook(buf)
     expect(rows).toHaveLength(1)
@@ -114,17 +108,17 @@ describe('scale check (P4-08): 600 voters → scoped default rights', () => {
     }
     const built = await buildDefaultRights({ actorId: 'a', electionId })
     expect(built.rolled).toBe(600)
-    expect(built.rights).toBe(600) // single unscoped BEM contest
+    expect(built.rights).toBe(2_400) // two global and two department-scoped contests per voter
   })
 
   it('voter upsert never duplicates on scale re-runs (P4-04)', async () => {
     await upsertVoter ({
       actorId: 'a',
-      input: { voterType: 'LECTURER', identifierType: 'NIP_LOCAL', identifierValue: '000900123456', name: 'Dosen Ulang', departmentCode: 'KEB', activeStatus: true },
+      input: { voterType: 'LECTURER', identifierType: 'NIP_LOCAL', identifierValue: '000900123456', name: 'Dosen Ulang', departmentCode: 'KEB', activeStatus: true, password: 'rahasia' },
     })
     await upsertVoter({
       actorId: 'a',
-      input: { voterType: 'LECTURER', identifierType: 'NIP_LOCAL', identifierValue: '000900123456', name: 'Dosen Ulang', departmentCode: 'KEB', activeStatus: true },
+      input: { voterType: 'LECTURER', identifierType: 'NIP_LOCAL', identifierValue: '000900123456', name: 'Dosen Ulang', departmentCode: 'KEB', activeStatus: true, password: 'tidak-menimpa' },
     })
     const { rows } = await pool.query<{ name: string }>("SELECT name FROM voters WHERE identifier_value='000900123456'")
     expect(rows).toHaveLength(1)

@@ -3,7 +3,7 @@ import { getPool, closePool } from './db'
 
 /**
  * Synthetic seed data per TASKLIST P0-05:
- * - 4 departments
+ * - 5 departments, including a non-department group for lecturers
  * - default election with 10 contests: 2 PAIR (BEM, MPM) + 8 SINGLE (4 Hima × chair/vice)
  * - synthetic voters (default 600) and matching accounts
  * - admin account with a generated password printed ONCE to stdout
@@ -16,7 +16,10 @@ const DEPARTMENTS = [
   { code: 'KEB', name: 'Kebidanan' },
   { code: 'KG', name: 'Kesehatan Gigi' },
   { code: 'OP', name: 'Ortotik Prostetik' },
+  { code: 'OTHER', name: 'Lainnya' },
 ]
+
+const VOTER_DEPARTMENTS = DEPARTMENTS.filter((department) => department.code !== 'OTHER')
 
 const CONTESTS = [
   { code: 'BEM', title: 'Ketua dan wakil BEM', office: 'PAIR', optionType: 'PAIR', department: null },
@@ -104,7 +107,7 @@ async function main(): Promise<void> {
 
     for (let i = created; i < VOTER_COUNT; i++) {
       const isLecturer = i % 10 === 9 // ~10% lecturers
-      const dept = DEPARTMENTS[i % DEPARTMENTS.length]
+      const dept = VOTER_DEPARTMENTS[i % VOTER_DEPARTMENTS.length]
       const deptId = deptIds.get(dept.code)!
       const identifier = isLecturer ? `L${String(1000 + i)}` : `N${String(100000 + i).padStart(6, '0')}`
       const voterId = randomUUID()
@@ -141,7 +144,7 @@ async function main(): Promise<void> {
 
     await client.query('COMMIT')
     const rights = await client.query<{ count: string }>('SELECT count(*)::text AS count FROM voting_rights')
-    console.log(`Seed complete: ${created} voters, ${rights.rows[0].count} voting rights, 10 contests, 4 departments.`)
+    console.log(`Seed complete: ${created} voters, ${rights.rows[0].count} voting rights, 10 contests, 5 departments.`)
   } catch (err) {
     await client.query('ROLLBACK')
     throw err

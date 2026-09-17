@@ -12,9 +12,16 @@ const confirming = ref(false)
 const uncertain = ref(false)
 const error = ref('')
 const notice = ref('')
+const failedPhotos = reactive(new Set<string>())
 const chosen = computed(() => ballot.value?.options.find(option => option.id === selected.value))
 const locked = computed(() => !ballot.value?.canVote || loading.value || sending.value || uncertain.value)
 const path = `/api/v1/voting/contests/${encodeURIComponent(String(route.params.id))}`
+function candidateNames(option: VoterBallot['options'][number]) {
+  return option.members.map(member => member.name).join(' dan ')
+}
+function photoUrl(key: string) {
+  return `/api/v1/public/candidate-photos/${encodeURIComponent(key)}`
+}
 
 async function load(reconcile = false) {
   if (loading.value) return
@@ -95,6 +102,22 @@ onMounted(() => load())
           <fieldset class="candidates" :disabled="locked">
             <legend>Pilih satu calon atau pasangan</legend>
             <article v-for="option in ballot.options" :key="option.id" class="candidate" :class="{ selected: selected === option.id }">
+              <div class="candidate-photo-wrap">
+                <img
+                  v-if="option.photoKey && !failedPhotos.has(option.photoKey)"
+                  class="candidate-photo"
+                  :src="photoUrl(option.photoKey)"
+                  :alt="`Foto ${candidateNames(option)}`"
+                  loading="lazy"
+                  decoding="async"
+                  @error="failedPhotos.add(option.photoKey)"
+                >
+                <div v-else class="candidate-photo-fallback" role="img" :aria-label="`Foto ${candidateNames(option)} belum tersedia`">
+                  <span>Nomor urut</span>
+                  <strong>{{ String(option.number).padStart(2, '0') }}</strong>
+                  <small>Foto belum tersedia</small>
+                </div>
+              </div>
               <label class="candidate-choice">
                 <input v-model="selected" type="radio" name="candidate" :value="option.id" required>
                 <strong class="candidate-number"><small>Nomor urut</small>{{ String(option.number).padStart(2, '0') }}</strong>
@@ -135,10 +158,10 @@ onMounted(() => load())
 .ballot-page { display: grid; gap: 1.5rem; max-width: 62rem; margin: auto; }
 .ballot-heading h1 { font-size: clamp(1.8rem, 5vw, 3rem); letter-spacing: -0.04em; overflow-wrap: anywhere; }
 .election-status { display: inline-block; margin: 0; padding: 0.35rem 0.75rem; border-radius: 0.4rem; background: var(--color-primary-soft); color: var(--color-primary-strong); font-size: 0.875rem; }
-.ballot-schedule { display: flex; flex-wrap: wrap; gap: 1rem 3rem; padding: 1.25rem 1.5rem; border-radius: var(--radius-lg); background: #f0f1fa; }
+.ballot-schedule { display: flex; flex-wrap: wrap; gap: 1rem 3rem; padding: var(--card-padding); border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface-muted); }
 .ballot-schedule div { display: grid; gap: 0.3rem; font-size: 0.875rem; }
 .ballot-schedule span { color: var(--color-text-muted); }
-.review-bar { display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; margin-top: 1.5rem; padding: 1.5rem; border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: white; }
+.review-bar { display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; margin-top: 1.5rem; padding: var(--card-padding); border: 1px solid var(--color-border); border-radius: var(--radius-xl); background: white; box-shadow: var(--shadow-sm); }
 .review-bar > div { min-width: 0; overflow-wrap: anywhere; }
 .review-bar p { margin: 0.3rem 0; }
 .review-bar small { color: var(--color-text-muted); }
@@ -147,8 +170,14 @@ onMounted(() => load())
 .period-name { color: var(--color-primary-strong); font-weight: 600; margin-bottom: 0.5rem; }
 .candidates { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; border: 0; padding: 0; margin: 0; min-width: 0; align-items: start; }
 .candidates legend { font-weight: 600; margin-bottom: 1rem; }
-.candidate { border: 2px solid var(--color-border); border-radius: var(--radius-lg); background: white; padding: 1.5rem; min-width: 0; overflow-wrap: anywhere; }
-.candidate.selected { border-color: var(--color-primary); background: #f3faf6; }
+.candidate { border: 1px solid var(--color-border); border-radius: var(--radius-xl); background: white; padding: var(--card-padding); min-width: 0; overflow-wrap: anywhere; box-shadow: var(--shadow-sm); }
+.candidate.selected { border: 2px solid var(--color-primary); background: #f3faf6; padding: calc(var(--card-padding) - 1px); }
+.candidate-photo-wrap { position: relative; width: calc(100% + (var(--card-padding) * 2)); aspect-ratio: 4 / 3; margin: calc(var(--card-padding) * -1) calc(var(--card-padding) * -1) var(--space-4); overflow: hidden; border-bottom: 1px solid var(--color-border); border-radius: var(--radius-xl) var(--radius-xl) 0 0; background: var(--color-surface-muted); }
+.candidate.selected .candidate-photo-wrap { width: calc(100% + ((var(--card-padding) - 1px) * 2)); margin-top: calc((var(--card-padding) - 1px) * -1); margin-inline: calc((var(--card-padding) - 1px) * -1); }
+.candidate-photo { display: block; width: 100%; height: 100%; object-fit: contain; object-position: center; }
+.candidate-photo-fallback { display: grid; place-content: center; justify-items: center; height: 100%; color: var(--color-primary-strong); text-align: center; }
+.candidate-photo-fallback span,.candidate-photo-fallback small { font-size: .75rem; font-weight: 600; }
+.candidate-photo-fallback strong { font-size: clamp(2.5rem, 8vw, 4rem); line-height: 1; }
 .candidate-number { display: grid; gap: 0.2rem; margin-right: auto; font-size: 2rem; line-height: 1.2; }
 .candidate-number small { font-size: 0.875rem; font-weight: 500; color: var(--color-text-muted); }
 .candidate-choice:has(input:disabled) { cursor: default; }
@@ -162,8 +191,8 @@ onMounted(() => load())
 summary { cursor: pointer; min-height: 2.75rem; padding-block: 0.5rem; color: var(--color-primary-strong); }
 details h2 { font-size: 1rem; margin: 1rem 0 0; }
 .profile-text { white-space: pre-wrap; }
-.receipt-panel { padding: clamp(1.5rem, 5vw, 3rem); text-align: center; background: white; border: 1px solid var(--color-border); border-radius: var(--radius-lg); }
+.receipt-panel { padding: clamp(1.5rem, 5vw, 3rem); text-align: center; background: white; border: 1px solid var(--color-border); border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); }
 .receipt-check { display: grid; place-items: center; margin: 0 auto 1.25rem; width: 3rem; height: 3rem; border-radius: 50%; background: var(--color-success-bg); color: var(--color-success); font-size: 1.5rem; }
 .receipt { padding: 1rem; background: #f0f1fa; border-radius: var(--radius); font-family: monospace; }
-@media (max-width: 42rem) { .candidates { grid-template-columns: 1fr; } .review-bar { align-items: stretch; flex-direction: column; } .candidate { padding: 1rem; } }
+@media (max-width: 42rem) { .candidates { grid-template-columns: 1fr; } .review-bar { align-items: stretch; flex-direction: column; } .candidate { padding: 1rem; }.candidate-photo-wrap { width:calc(100% + 2rem);margin:-1rem -1rem var(--space-4)}.candidate.selected .candidate-photo-wrap { width:calc(100% + (2rem - 2px));margin-top:calc(-1rem + 1px);margin-inline:calc(-1rem + 1px)} }
 </style>

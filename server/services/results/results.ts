@@ -18,7 +18,7 @@ export type ContestResult = {
   totalBallots: number
   eligible: number
   participation: number // percent, rounded 2dp, 0 when eligible = 0
-  options: { optionId: string; number: number; label: string; votes: number; percent: number }[]
+  options: { optionId: string; number: number; label: string; photoKey: string | null; votes: number; percent: number }[]
 }
 
 type AggRow = {
@@ -28,6 +28,7 @@ type AggRow = {
   option_order: string
   option_id: string
   label: string
+  photo_key: string | null
   ballots: string
   eligible: string
   participating: string
@@ -42,8 +43,10 @@ type AggRow = {
 export async function aggregateElection(electionId: string): Promise<ContestResult[]> {
   const pool = getPool()
   const { rows } = await pool.query<AggRow>(
-    `SELECT c.id AS contest_id, c.code, c.title, o.number::text AS option_order, o.id AS option_id,
-            coalesce(o.motto, 'Opsi ' || o.number) AS label,
+    `SELECT c.id AS contest_id, c.code, c.title, o.number::text AS option_order, o.id AS option_id, o.photo_key,
+            coalesce((SELECT string_agg(m.name, ' & ' ORDER BY CASE m.position WHEN 'CHAIR' THEN 1 ELSE 2 END, m.name)
+                      FROM candidate_members m WHERE m.option_id = o.id),
+                     o.motto, 'Opsi ' || o.number) AS label,
             (SELECT count(*) FROM ballots b WHERE b.contest_id = o.contest_id AND b.option_id = o.id)::text AS ballots,
             (SELECT count(*) FROM voting_rights vr
               WHERE vr.contest_id = c.id)::text AS eligible,
@@ -64,7 +67,7 @@ export async function aggregateElection(electionId: string): Promise<ContestResu
     }
     const votes = Number(r.ballots)
     result.totalBallots += votes
-    result.options.push({ optionId: r.option_id, number: Number(r.option_order), label: r.label, votes, percent: 0 })
+    result.options.push({ optionId: r.option_id, number: Number(r.option_order), label: r.label, photoKey: r.photo_key, votes, percent: 0 })
   }
   for (const result of byContest.values()) {
     const participating = result.eligible > 0 ? Math.min(result.totalBallots, result.eligible) : 0
