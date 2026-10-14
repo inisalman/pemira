@@ -4,7 +4,7 @@ type Member = { name: string; position: 'CHAIR' | 'VICE_CHAIR' }
 type Option = { id: string; contestId: string; number: number; photoKey: string | null; motto: string | null; vision: string | null; mission: string | null; programs: string | null; members: Member[] }
 type Contest = { id: string; code: string; title: string; office: 'PAIR' | 'CHAIR' | 'VICE_CHAIR'; optionType: 'PAIR' | 'SINGLE'; departmentCode: string | null; departmentName: string | null; options: Option[] }
 
-const { request } = useApi()
+const { request, upload } = useApi()
 const elections = ref<Election[]>([])
 const electionId = ref('')
 const contests = ref<Contest[]>([])
@@ -35,7 +35,7 @@ async function loadCandidates() {
   if (!electionId.value) return
   loading.value = true; error.value = ''
   try {
-    const result = await $fetch<{ contests: Contest[] }>(`/api/v1/admin/elections/${encodeURIComponent(electionId.value)}/candidates`, { retry: 0, timeout: 15_000 })
+    const result = await request<{ contests: Contest[] }>(`/api/v1/admin/elections/${encodeURIComponent(electionId.value)}/candidates`)
     contests.value = result.contests
     selectedContestId.value = contests.value.some(contest => contest.id === selectedContestId.value) ? selectedContestId.value : contests.value[0]?.id ?? ''
   } catch (cause) { error.value = apiErrorMessage(cause) }
@@ -54,8 +54,6 @@ function editCandidate(option: Option, contest: Contest) {
   Object.assign(form, { number: String(option.number), chair, viceChair, motto: option.motto ?? '', vision: option.vision ?? '', mission: option.mission ?? '', programs: option.programs ?? '' }); dialogOpen.value = true
 }
 
-function csrfToken() { const value = document.cookie.split('; ').find(item => item.startsWith('pemira_csrf='))?.slice(12); return value ? decodeURIComponent(value) : '' }
-
 async function saveCandidate() {
   const contest = selectedContest.value
   if (!contest) return
@@ -66,7 +64,7 @@ async function saveCandidate() {
     const members: Member[] = isPair.value ? [{ name: form.chair.trim(), position: 'CHAIR' }, { name: form.viceChair.trim(), position: 'VICE_CHAIR' }] : [{ name: form.chair.trim(), position: contest.office === 'VICE_CHAIR' ? 'VICE_CHAIR' : 'CHAIR' }]
     const body = { number: Number(form.number), members, motto: form.motto.trim() || undefined, vision: form.vision.trim() || undefined, mission: form.mission.trim() || undefined, programs: form.programs.trim() || undefined }
     const result = editingId.value
-      ? await $fetch<{ id?: string }>(`/api/v1/admin/options/${encodeURIComponent(editingId.value)}`, { method: 'PATCH', body, headers: { 'x-csrf-token': csrfToken() }, retry: 0 })
+      ? await request<{ id?: string }>(`/api/v1/admin/options/${encodeURIComponent(editingId.value)}`, body, { method: 'PATCH' })
       : await request<{ id: string }>(`/api/v1/admin/contests/${encodeURIComponent(contest.id)}/options`, body)
     const optionId = editingId.value ?? result.id
     if (selectedFile.value && optionId) await uploadPhoto(optionId)
@@ -84,7 +82,7 @@ function onPhotoChange(event: Event) {
 async function uploadPhoto(optionId: string) {
   const body = new FormData()
   body.append('file', selectedFile.value!)
-  await $fetch(`/api/v1/admin/options/${encodeURIComponent(optionId)}/photo`, { method: 'POST', body, headers: { 'x-csrf-token': csrfToken() }, retry: 0, timeout: 30_000 })
+  await upload(`/api/v1/admin/options/${encodeURIComponent(optionId)}/photo`, body)
 }
 
 watch(electionId, () => { if (electionId.value) void loadCandidates() })

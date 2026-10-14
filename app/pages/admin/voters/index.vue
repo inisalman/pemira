@@ -19,7 +19,7 @@ type ImportPreview = {
 }
 type ImportResult = { added: number; updated: number; skipped: number; accountsCreated: number }
 
-const { request } = useApi()
+const { request, upload } = useApi()
 const voters = ref<Voter[]>([])
 const total = ref(0)
 const page = ref(1)
@@ -166,11 +166,6 @@ function onFileChange(event: Event) {
   importError.value = ''
 }
 
-function csrfToken() {
-  const value = document.cookie.split('; ').find(item => item.startsWith('pemira_csrf='))?.slice(12)
-  return value ? decodeURIComponent(value) : ''
-}
-
 async function validateImport() {
   if (!selectedFile.value) {
     importError.value = 'Pilih berkas .xlsx terlebih dahulu.'
@@ -182,9 +177,7 @@ async function validateImport() {
   try {
     const body = new FormData()
     body.append('file', selectedFile.value)
-    importPreview.value = await $fetch<ImportPreview>('/api/v1/admin/voters/import', {
-      method: 'POST', body, headers: { 'x-csrf-token': csrfToken() }, retry: 0, timeout: 30_000,
-    })
+    importPreview.value = await upload<ImportPreview>('/api/v1/admin/voters/import', body)
   } catch (cause) {
     importError.value = apiErrorMessage(cause)
   } finally {
@@ -199,9 +192,7 @@ async function commitImport() {
   try {
     const body = new FormData()
     body.append('file', selectedFile.value)
-    const result = await $fetch<ImportResult>(`/api/v1/admin/voters/import?mode=commit&batchId=${encodeURIComponent(importPreview.value.batchId)}`, {
-      method: 'POST', body, headers: { 'x-csrf-token': csrfToken() }, retry: 0, timeout: 30_000,
-    })
+    const result = await upload<ImportResult>(`/api/v1/admin/voters/import?mode=commit&batchId=${encodeURIComponent(importPreview.value.batchId)}`, body)
     importOpen.value = false
     importPreview.value = null
     selectedFile.value = null
