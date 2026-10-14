@@ -8,7 +8,7 @@ const busy = ref(false)
 const error = ref('')
 async function save() {
   error.value = ''
-  if (newPassword.value.length < 12) { error.value = 'Password baru minimal 12 karakter.'; return }
+  if (newPassword.value.length < 8) { error.value = 'Password baru minimal 8 karakter.'; return }
   if (newPassword.value !== confirmation.value) { error.value = 'Konfirmasi password belum sama.'; return }
   busy.value = true
   try {
@@ -28,7 +28,7 @@ async function save() {
     <form @submit.prevent="save">
       <fieldset class="form-fields" :disabled="busy">
         <AppInput v-model="currentPassword" label="Password saat ini" type="password" autocomplete="current-password" required />
-        <AppInput v-model="newPassword" label="Password baru" type="password" autocomplete="new-password" hint="Minimal 12 karakter." required />
+        <AppInput v-model="newPassword" label="Password baru" type="password" autocomplete="new-password" hint="Minimal 8 karakter." required />
         <AppInput v-model="confirmation" label="Ulangi password baru" type="password" autocomplete="new-password" required />
         <AppButton type="submit" :loading="busy">Simpan password</AppButton>
       </fieldset>
