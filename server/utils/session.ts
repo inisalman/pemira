@@ -60,13 +60,17 @@ export async function getSessionUser(event: H3Event): Promise<SessionUser | null
   const pool = getPool()
   const { rows } = await pool.query<{
     user_id: string
-    credential_version: number
+    session_credential_version: number
+    user_credential_version: number
     login_kind: SessionUser['loginKind']
     login_identifier: string
     voter_id: string | null
     active: boolean
   }>(
-    `SELECT s.user_id, s.credential_version, u.login_kind, u.login_identifier, u.voter_id, u.active
+    `SELECT s.user_id,
+            s.credential_version AS session_credential_version,
+            u.credential_version AS user_credential_version,
+            u.login_kind, u.login_identifier, u.voter_id, u.active
      FROM sessions s JOIN users u ON u.id = s.user_id
      WHERE s.id_hash = $1 AND s.expires_at > clock_timestamp()`,
     [hashToken(token)],
@@ -74,9 +78,7 @@ export async function getSessionUser(event: H3Event): Promise<SessionUser | null
   const row = rows[0]
   if (!row || !row.active) return null
   // Session is invalid when the account's credential_version moved (reset/deactivation).
-  if (row.credential_version !== (await pool.query<{ credential_version: number }>(
-    'SELECT credential_version FROM users WHERE id = $1', [row.user_id],
-  )).rows[0]?.credential_version) {
+  if (row.session_credential_version !== row.user_credential_version) {
     return null
   }
   return {
@@ -84,7 +86,7 @@ export async function getSessionUser(event: H3Event): Promise<SessionUser | null
     loginKind: row.login_kind,
     loginIdentifier: row.login_identifier,
     voterId: row.voter_id,
-    credentialVersion: row.credential_version,
+    credentialVersion: row.user_credential_version,
   }
 }
 

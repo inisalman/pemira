@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { getPool } from '~~/database/db'
-import { verifyPassword } from '#server/utils/password'
+import { verifyPassword, verifyPasswordDummy } from '#server/utils/password'
 import { createSession } from '#server/utils/session'
 import { checkLoginRateLimit, recordLoginAttempt, clientIp } from '#server/utils/rate-limit'
 import { apiError, parseBody, sendApiError } from '#server/utils/errors'
@@ -22,10 +22,10 @@ export default defineEventHandler(async (event) => {
       [body.loginKind, body.identifier],
     )
     const user = rows[0]
-    // Constant-ish work whether or not the account exists (verify a dummy hash
-    // shape is skipped; Argon2 verify of a non-user falls back to a real hash
-    // of a random string to keep timing similar).
-    const ok = user ? await verifyPassword(user.password_hash, body.password) : false
+    // Equalize timing whether or not the account exists: when there is no
+    // matching user, spend the same Argon2 work on a dummy hash so response
+    // latency cannot be used to enumerate valid identifiers.
+    const ok = user ? await verifyPassword(user.password_hash, body.password) : await verifyPasswordDummy(body.password)
 
     if (!ok || !user || !user.active) {
       await recordLoginAttempt(body.loginKind, body.identifier, ip, false)

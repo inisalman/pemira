@@ -16,7 +16,7 @@ export interface AuditEventInput {
 }
 
 /** Keys whose values must never reach the audit log. */
-const SENSITIVE_KEY_PATTERN = /password|secret|token|hash|credential|identifier|initial_password/i
+const SENSITIVE_KEY_PATTERN = /password|secret|token|hash|credential|identifier|initial_password|receipt/i
 
 /** Recursively mask sensitive values; keeps key presence for traceability. */
 export function redactSensitive(value: unknown): unknown {

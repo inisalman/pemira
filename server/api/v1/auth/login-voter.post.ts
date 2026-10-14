@@ -1,6 +1,6 @@
 import { requireSession } from '#server/utils/session'
 import { getPool } from '~~/database/db'
-import { verifyPassword } from '#server/utils/password'
+import { verifyPassword, verifyPasswordDummy } from '#server/utils/password'
 import { createSession } from '#server/utils/session'
 import { checkLoginRateLimit, recordLoginAttempt, clientIp } from '#server/utils/rate-limit'
 import { parseBody, sendApiError, apiError } from '#server/utils/errors'
@@ -21,12 +21,15 @@ export default defineEventHandler(async (event) => {
       [body.identifier],
     )
     const user = rows[0]
-    const ok = user ? await verifyPassword(user.password_hash, body.password) : false
+    // Equalize timing for unknown identifiers (user enumeration defense).
+    const ok = user ? await verifyPassword(user.password_hash, body.password) : await verifyPasswordDummy(body.password)
     if (!ok || !user || !user.active || !user.voter_id) {
       await recordLoginAttempt('VOTER', body.identifier, ip, false)
       apiError('UNAUTHORIZED', 'Nomor identitas atau password salah.')
     }
-    await recordLoginAttempt(user.login_kind, body.identifier, ip, true)
+    // Record with the same 'VOTER' bucket used by checkLoginRateLimit and the
+    // failure path above, so login_attempts stays correlatable per door.
+    await recordLoginAttempt('VOTER', body.identifier, ip, true)
     await createSession(event, {
       userId: user.id,
       loginKind: user.login_kind,

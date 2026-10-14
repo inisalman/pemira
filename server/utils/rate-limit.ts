@@ -42,8 +42,36 @@ export async function recordLoginAttempt(kind: string, identifier: string, ip: s
   )
 }
 
+/**
+ * Resolve the client IP for rate-limiting in a spoof-resistant way.
+ *
+ * X-Forwarded-For is client-controllable, so trusting it blindly lets an
+ * attacker rotate the header to dodge the per-IP ceiling. We only read it when
+ * the operator declares how many trusted proxy hops sit in front of the app
+ * via NUXT_TRUSTED_PROXY_COUNT (e.g. 1 behind EasyPanel/nginx).
+ *
+ * - count = 0 (default): ignore XFF entirely, use the direct socket peer.
+ *   Safe default for a directly-exposed app.
+ * - count = N (N >= 1): take the Nth entry from the RIGHT of the XFF chain —
+ *   the address the outermost trusted proxy observed. Everything further left
+ *   is attacker-supplied and never trusted. Falls back to the socket peer when
+ *   the chain is shorter than expected.
+ */
+function trustedProxyCount(): number {
+  const raw = Number(process.env.NUXT_TRUSTED_PROXY_COUNT ?? '0')
+  return Number.isInteger(raw) && raw >= 0 ? raw : 0
+}
+
 export function clientIp(event: import('h3').H3Event): string {
-  // Campus NAT: do not trust arbitrary X-Forwarded-For chains blindly; use the
-  // immediate peer unless a trusted proxy header exists.
-  return getRequestIP(event, { xForwardedFor: true }) ?? 'unknown'
+  const hops = trustedProxyCount()
+  const peer = getRequestIP(event) ?? 'unknown'
+  if (hops === 0) return peer
+
+  const xff = getHeader(event, 'x-forwarded-for')
+  if (!xff) return peer
+  const chain = xff.split(',').map((part) => part.trim()).filter(Boolean)
+  // The rightmost `hops` entries were appended by trusted proxies; the client
+  // IP we want is the one just beyond the outermost trusted hop.
+  const idx = chain.length - hops
+  return (idx >= 0 ? chain[idx] : chain[0]) || peer
 }

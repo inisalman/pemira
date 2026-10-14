@@ -6,7 +6,7 @@
 
 const REDACTED = '[REDACTED]'
 
-const SENSITIVE_KEY_PATTERN = /password|secret|token|hash|credential|identifier|initial_password|option_id|voter/i
+const SENSITIVE_KEY_PATTERN = /password|secret|token|hash|credential|identifier|initial_password|option_id|voter|receipt/i
 
 /** Mask sensitive fields in an object tree for safe logging. */
 export function redactForLog(value: unknown): unknown {

@@ -112,8 +112,13 @@ export async function castVote(opts: {
 
     await recordAuditEvent(client, {
       action: 'VOTE_CAST',
-      target: receipt,
-      changes: { contestId: opts.contestId }, // never option id (privacy)
+      // Deliberately NO target: receipt_code also lives in `participations`
+      // (-> voting_rights -> voter_id). Storing it here alongside a precise
+      // occurred_at would let a DB admin join audit_events.target to
+      // participations.receipt_code and recover WHO voted and WHEN, breaking
+      // the ballot-unlinkability invariant (SDD section 3, README privacy note).
+      // We keep only the contest so the audit still proves a vote landed.
+      changes: { contestId: opts.contestId }, // never receipt_code or option_id (privacy)
     })
     await client.query('COMMIT') // durable; only now is it "tercatat"
 
