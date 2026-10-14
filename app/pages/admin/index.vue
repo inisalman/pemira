@@ -63,7 +63,12 @@ onMounted(loadElections)
 
 <template>
   <section class="admin-page dashboard">
-    <header class="page-header"><div><p class="eyebrow">Ringkasan</p><h1>Statistik periode pemilihan</h1><p class="intro">Pantau partisipasi dan perolehan suara seluruh kontes dalam satu halaman.</p></div></header>
+    <PageHeader
+      kicker="Ringkasan"
+      title="Statistik periode pemilihan"
+      lead="Pantau partisipasi dan perolehan suara seluruh kontes dalam satu halaman."
+      icon="chart"
+    />
     <section class="monitor" aria-labelledby="monitor-title">
       <header class="monitor-header">
         <div><p class="eyebrow">Pantauan pemilihan</p><h2 id="monitor-title">Statistik periode</h2><p>Lihat partisipasi dan perolehan suara agregat tanpa membuka data pilihan pemilih.</p></div>
@@ -74,16 +79,16 @@ onMounted(loadElections)
       </header>
       <AppAlert v-if="error" kind="error" :message="error" />
       <div v-if="loading" class="monitor-state" role="status">Memuat statistik pemilihan…</div>
-      <div v-else-if="!stats" class="monitor-state">Belum ada periode yang dapat dipantau.</div>
+      <AppEmptyState v-else-if="!stats" icon="chart" title="Belum ada periode" description="Belum ada periode yang dapat dipantau. Buat periode pada menu Periode terlebih dahulu." />
       <template v-else>
         <section class="metric-grid" aria-label="Ringkasan statistik">
-          <article><span>Status periode</span><strong class="status-value">{{ electionStatus(stats.status) }}</strong><small>{{ currentElection?.name }}</small></article>
-          <article><span>Pemilih dalam DPT</span><strong>{{ stats.totals.eligible.toLocaleString('id-ID') }}</strong><small>akun pemilih terdaftar</small></article>
-          <article><span>Suara masuk</span><strong>{{ stats.totals.ballots.toLocaleString('id-ID') }}</strong><small>dari seluruh kontes</small></article>
-          <article><span>Rata-rata partisipasi</span><strong>{{ averageParticipation }}%</strong><small>dihitung per kontes</small></article>
+          <article><span><AppIcon name="clock" :size="16" /> Status periode</span><strong class="status-value">{{ electionStatus(stats.status) }}</strong><small>{{ currentElection?.name }}</small></article>
+          <article><span><AppIcon name="users" :size="16" /> Pemilih dalam DPT</span><strong>{{ stats.totals.eligible.toLocaleString('id-ID') }}</strong><small>akun pemilih terdaftar</small></article>
+          <article><span><AppIcon name="vote" :size="16" /> Suara masuk</span><strong>{{ stats.totals.ballots.toLocaleString('id-ID') }}</strong><small>dari seluruh kontes</small></article>
+          <article><span><AppIcon name="chart" :size="16" /> Rata-rata partisipasi</span><strong>{{ averageParticipation }}%</strong><small>dihitung per kontes</small></article>
         </section>
         <AppAlert v-if="stats.anomalies.length" kind="warning" :message="`${stats.anomalies.length} anomali rekonsiliasi perlu diperiksa di halaman laporan.`" />
-        <div v-if="!groupedResults.length" class="chart-empty">Belum ada kontes pada periode ini.</div>
+        <AppEmptyState v-if="!groupedResults.length" icon="list" title="Belum ada kontes" description="Belum ada kontes pada periode ini." />
         <section v-else class="result-groups" aria-label="Statistik seluruh kontes">
           <section v-for="group in groupedResults" :key="group.key" class="result-group">
             <header class="group-header"><div><p class="group-code">{{ group.title }}</p><h3>{{ group.description }}</h3></div><span>{{ group.contests.length }} kontes</span></header>
@@ -119,7 +124,7 @@ onMounted(loadElections)
 .monitor-header h2 { margin:0 0 var(--space-1); font-size:var(--text-xl); }.monitor-header p,.metric-grid small,.chart-empty { margin:0; color:var(--color-text-muted); }
 .monitor-controls { display:flex; align-items:end; gap:var(--space-3); flex-wrap:wrap; }.monitor-controls label { display:grid; gap:var(--space-1); color:var(--color-text); font-size:var(--text-sm); font-weight:700; }.monitor select { min-width:15rem; min-height:2.75rem; padding:var(--space-2) var(--space-3); border:1px solid var(--color-border-strong); border-radius:var(--radius); background:var(--color-surface); color:var(--color-text); font:inherit; }.monitor select:focus-visible { outline:none; box-shadow:var(--focus-ring); }
 .monitor-state,.chart-empty { padding:var(--space-8) var(--space-4); border:1px dashed var(--color-border-strong); border-radius:var(--radius-lg); text-align:center; }
-.metric-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:var(--space-3); }.metric-grid article { display:grid; align-content:start; gap:.2rem; min-height:7rem; padding:var(--space-4); border:1px solid var(--color-border); border-radius:var(--radius-lg); background:var(--color-surface-muted); }.metric-grid span { color:var(--color-text-muted); font-size:var(--text-sm); }.metric-grid strong { color:var(--color-primary-strong); font-size:clamp(1.45rem,2.5vw,2rem); line-height:1.2; }.metric-grid .status-value { font-size:var(--text-xl); }
+.metric-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:var(--space-3); }.metric-grid article { display:grid; align-content:start; gap:.2rem; min-height:7rem; padding:var(--space-4); border:1px solid var(--color-border); border-radius:var(--radius-lg); background:var(--color-surface-muted); }.metric-grid span { display:inline-flex; align-items:center; gap:.4rem; color:var(--color-text-muted); font-size:var(--text-sm); }.metric-grid strong { color:var(--color-primary-strong); font-size:clamp(1.45rem,2.5vw,2rem); line-height:1.2; }.metric-grid .status-value { font-size:var(--text-xl); }
 .result-groups,.result-group { display:grid; gap:var(--space-6); }.result-group { padding-top:var(--space-2); }.group-header { display:flex; justify-content:space-between; align-items:end; gap:var(--space-4); padding-bottom:var(--space-3); border-bottom:2px solid var(--color-border); }.group-header h3 { margin:0; font-size:var(--text-lg); }.group-header>span { color:var(--color-text-muted); font-size:var(--text-sm); }.group-code { margin:0 0 .2rem; color:var(--color-primary); font-size:.75rem; font-weight:800; letter-spacing:.08em; }.contest-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:var(--space-4); }.contest-card { display:grid; align-content:start; gap:var(--space-4); min-width:0; padding:var(--card-padding); border:1px solid var(--color-border); border-radius:var(--radius-lg); background:var(--color-surface); box-shadow:var(--shadow-sm); }.contest-card>header { display:flex; justify-content:space-between; align-items:start; gap:var(--space-4); }.contest-card>header p { margin:0 0 .2rem; color:var(--color-primary); font-size:.72rem; font-weight:800; }.contest-card h4 { margin:0; font-size:var(--text-base); }.contest-card>header>strong { flex-shrink:0; color:var(--color-primary-strong); font-size:var(--text-sm); }.participation { padding:var(--space-3); border-radius:var(--radius); background:var(--color-surface-muted); }.participation small { display:block; margin-top:.45rem; color:var(--color-text-muted); font-size:.7rem; }.vote-bars { display:grid; gap:var(--space-3); margin:0; padding:0; list-style:none; }.bar-label { display:flex; justify-content:space-between; align-items:end; gap:var(--space-3); margin-bottom:.4rem; }.bar-label>span { min-width:0; }.bar-label b,.bar-label small { display:block; }.bar-label b { font-size:.78rem; }.bar-label small { overflow:hidden; color:var(--color-text-muted); font-size:.7rem; text-overflow:ellipsis; white-space:nowrap; }.bar-label>strong { flex-shrink:0; font-size:.78rem; }.bar-track { height:.65rem; overflow:hidden; border-radius:.2rem; background:#e3e5ee; }.bar-track span { display:block; min-width:0; height:100%; background:var(--color-primary); transition:width .2s ease; }.vote-track span { background:#b77a0d; }.candidate-empty { padding:var(--space-4); border:1px dashed var(--color-border-strong); border-radius:var(--radius); color:var(--color-text-muted); text-align:center; font-size:var(--text-sm); }.report-link { display:flex; justify-content:flex-end; padding-top:var(--space-2); border-top:1px solid var(--color-border); }
 @media(max-width:68rem){.metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.contest-grid{grid-template-columns:1fr}}
 @media(max-width:58rem){.monitor-header{align-items:stretch;flex-direction:column}.monitor-controls,.monitor-controls label,.monitor-controls select{width:100%}}

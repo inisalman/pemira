@@ -12,7 +12,7 @@ onMounted(async () => {
 
 <template>
   <section class="results-page">
-    <header><h1>Hasil pemilihan</h1><p>Periode yang sudah dibuka dapat dilihat sebagai hasil sementara. Hasil resmi hanya tampil setelah ditetapkan panitia.</p></header>
+    <PageHeader kicker="Transparansi" title="Hasil pemilihan" lead="Periode yang sudah dibuka dapat dilihat sebagai hasil sementara. Hasil resmi hanya tampil setelah ditetapkan panitia." icon="shield-check" />
     <AppAlert v-if="error" kind="error" :message="error" />
     <p v-if="loading" role="status">Memuat periode publik…</p>
     <AppAlert v-else-if="!elections.length && !error" message="Belum ada periode yang dapat dilihat." />

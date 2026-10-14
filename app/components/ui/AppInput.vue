@@ -67,7 +67,7 @@ const hintId = `${id}-hint`
 }
 .input:focus-visible { box-shadow: var(--focus-ring); outline: none; }
 .input:hover:not(:disabled) { border-color: var(--color-primary); }
-.input:disabled { opacity: 0.55; background: var(--color-primary-soft); }
+.input:disabled { opacity: 0.55; background: var(--color-primary-soft); cursor: not-allowed; }
 .error { color: var(--color-danger); font-size: var(--text-sm); margin: 0; }
 .hint { color: var(--color-text-muted); font-size: var(--text-sm); margin: 0; }
 </style>

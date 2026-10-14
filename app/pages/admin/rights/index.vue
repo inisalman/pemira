@@ -54,16 +54,16 @@ onMounted(loadElections)
 
 <template>
   <section class="admin-page admin-rights">
-    <header class="page-header"><div><p class="eyebrow">HAK PILIH</p><h1>DPT dan kesiapan</h1><p class="intro">Periksa cakupan hak pilih sebelum periode dibuka.</p></div><label class="period-select">Periode<select v-model="electionId"><option value="" disabled>Pilih periode</option><option v-for="election in elections" :key="election.id" :value="election.id">{{ election.name }} · {{ election.status }}</option></select></label></header>
+    <PageHeader kicker="Hak pilih" title="DPT dan kesiapan" lead="Periksa cakupan hak pilih sebelum periode dibuka." icon="id-card"><template #actions><label class="period-select">Periode<select v-model="electionId"><option value="" disabled>Pilih periode</option><option v-for="election in elections" :key="election.id" :value="election.id">{{ election.name }} · {{ election.status }}</option></select></label></template></PageHeader>
     <AppAlert v-if="error" kind="error" :message="error" /><AppAlert v-if="notice" kind="success" :message="notice" />
     <div v-if="loading" class="state" role="status">Memuat ringkasan…</div>
     <template v-else-if="electionId">
       <section class="actions"><div><h2>Bangun hak dasar</h2><p>Masukkan pemilih aktif ke DPT dan beri hak BEM/MPM serta Hima sesuai jurusan. Proses ini aman dijalankan ulang.</p></div><div class="action-group"><NuxtLink class="action-link" :to="`/admin/rights/matrix?election=${electionId}`">Atur per pemilih</NuxtLink><AppButton :loading="saving" :disabled="elections.find(e => e.id === electionId)?.status !== 'DRAFT'" @click="buildDefaults">Bangun hak dasar</AppButton></div></section>
       <section class="readiness" :class="readiness?.ready ? 'ready' : 'not-ready'"><div><h2>{{ readiness?.ready ? 'Siap dikunci' : 'Belum siap dikunci' }}</h2><p>{{ readiness?.ready ? 'Semua syarat periode terpenuhi.' : 'Perbaiki item berikut sebelum mengubah status ke READY.' }}</p></div><AppButton v-if="readiness?.ready" :loading="saving" @click="markReady">Kunci sebagai READY</AppButton><ul v-else><li v-for="problem in readiness?.problems" :key="problem">{{ problem }}</li></ul></section>
       <div class="table-heading"><h2>Ringkasan per kontes</h2><span>{{ rights.length }} kontes</span></div>
-      <div v-if="!rights.length" class="state">Belum ada kontes pada periode ini.</div><div v-else class="table-wrap"><table><thead><tr><th>Kontes</th><th>Masuk DPT</th><th>Hak diberikan</th><th>Belum punya hak</th></tr></thead><tbody><tr v-for="row in rights" :key="row.code"><th scope="row">{{ row.title }}</th><td>{{ row.rolled }}</td><td>{{ row.granted }}</td><td>{{ row.refused }}</td></tr></tbody></table></div>
+      <AppEmptyState v-if="!rights.length" icon="list" title="Belum ada kontes" description="Belum ada kontes pada periode ini." /><div v-else class="table-wrap"><table><thead><tr><th>Kontes</th><th>Masuk DPT</th><th>Hak diberikan</th><th>Belum punya hak</th></tr></thead><tbody><tr v-for="row in rights" :key="row.code"><th scope="row">{{ row.title }}</th><td>{{ row.rolled }}</td><td>{{ row.granted }}</td><td>{{ row.refused }}</td></tr></tbody></table></div>
     </template>
-    <div v-else class="state">Belum ada periode DRAFT atau READY.</div>
+    <AppEmptyState v-else icon="calendar" title="Belum ada periode" description="Belum ada periode berstatus DRAFT atau READY untuk diperiksa." />
   </section>
 </template>
 

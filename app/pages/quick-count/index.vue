@@ -19,27 +19,26 @@ onMounted(load)
 
 <template>
   <section class="quick-index" aria-labelledby="quick-count-list-title">
-    <header class="page-heading">
-      <p class="eyebrow">Hasil pemilihan</p>
-      <h1 id="quick-count-list-title">Quick Count PEMIRA</h1>
-      <p>Pilih periode untuk melihat partisipasi dan perolehan suara setiap kandidat.</p>
-    </header>
+    <PageHeader kicker="Hasil pemilihan" title="Quick Count PEMIRA" lead="Pilih periode untuk melihat partisipasi dan perolehan suara setiap kandidat." icon="chart" />
     <AppAlert kind="warning" message="Quick count selama pemungutan suara masih bersifat sementara. Hasil resmi hanya berlaku setelah ditetapkan dan dipublikasikan panitia." />
     <AppAlert v-if="error" kind="error" :message="error" />
     <div v-if="loading" class="state" role="status">Memuat periode pemilihan…</div>
-    <div v-else-if="!available.length" class="state">
-      <h2>Quick count belum tersedia</h2>
-      <p>Hasil sementara akan tampil setelah panitia membuka pemungutan suara.</p>
+    <AppEmptyState
+      v-else-if="!available.length"
+      icon="inbox"
+      title="Quick count belum tersedia"
+      description="Hasil sementara akan tampil setelah panitia membuka pemungutan suara."
+    >
       <NuxtLink to="/" class="action-link">Kembali ke beranda</NuxtLink>
-    </div>
+    </AppEmptyState>
     <div v-else class="period-list">
       <article v-for="election in available" :key="election.id" class="period-card">
         <div>
-          <span class="status">{{ election.status === 'PUBLISHED' ? 'Hasil resmi' : electionStatus(election.status) }}</span>
+          <span class="status"><AppIcon name="clock" :size="14" /> {{ election.status === 'PUBLISHED' ? 'Hasil resmi' : electionStatus(election.status) }}</span>
           <h2>{{ election.name }}</h2>
           <dl><div><dt>Mulai</dt><dd>{{ electionDate(election.startsAt) }}</dd></div><div><dt>Selesai</dt><dd>{{ electionDate(election.endsAt) }}</dd></div></dl>
         </div>
-        <NuxtLink :to="`/quick-count/${election.id}`" class="open-link">Lihat {{ election.status === 'PUBLISHED' ? 'hasil' : 'quick count' }}</NuxtLink>
+        <NuxtLink :to="`/quick-count/${election.id}`" class="open-link">Lihat {{ election.status === 'PUBLISHED' ? 'hasil' : 'quick count' }} <AppIcon name="arrow-right" :size="17" /></NuxtLink>
       </article>
     </div>
     <AppButton v-if="error" variant="secondary" :loading="loading" @click="load">Coba lagi</AppButton>
@@ -47,7 +46,7 @@ onMounted(load)
 </template>
 
 <style scoped>
-.quick-index{display:grid;gap:var(--space-6);padding-block:clamp(1.5rem,5vw,3rem)}.page-heading{max-width:44rem}.eyebrow{margin:0 0 var(--space-2);color:var(--color-primary);font-size:var(--text-sm);font-weight:800;letter-spacing:.08em;text-transform:uppercase}.page-heading h1{margin:0 0 var(--space-3);font-size:clamp(2rem,5vw,3.25rem);letter-spacing:-.04em}.page-heading>p:last-child{margin:0;color:var(--color-text-muted);font-size:var(--text-lg)}.state{display:grid;justify-items:start;gap:var(--space-3);padding:var(--space-8);border:1px dashed var(--color-border-strong);border-radius:var(--radius-xl);background:var(--color-surface)}.state h2,.state p{margin:0}.state p{color:var(--color-text-muted)}.period-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-4)}.period-card{display:flex;justify-content:space-between;align-items:end;gap:var(--space-6);min-width:0;padding:var(--card-padding);border:1px solid var(--color-border);border-radius:var(--radius-xl);background:var(--color-surface);box-shadow:var(--shadow-sm)}.period-card>div{min-width:0}.status{display:inline-block;margin-bottom:var(--space-3);padding:.3rem .55rem;border-radius:var(--radius);background:var(--color-primary-soft);color:var(--color-primary-strong);font-size:.75rem;font-weight:700}.period-card h2{margin:0;font-size:var(--text-xl);overflow-wrap:anywhere}.period-card dl{display:flex;flex-wrap:wrap;gap:var(--space-3) var(--space-6);margin:var(--space-4) 0 0}.period-card dt{color:var(--color-text-muted);font-size:.75rem}.period-card dd{margin:.15rem 0 0;font-size:var(--text-sm);font-weight:600}.open-link{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;min-height:2.75rem;padding:.65rem 1rem;border-radius:var(--radius);background:var(--color-primary);color:white;font-weight:700;text-decoration:none}.open-link:hover{background:var(--color-primary-strong);color:white}.open-link:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+.quick-index{display:grid;gap:var(--space-6);padding-block:clamp(1.5rem,5vw,3rem)}.state{display:grid;justify-items:center;text-align:center;gap:var(--space-2);padding:clamp(2rem,5vw,3.5rem);border:1px dashed var(--color-border-strong);border-radius:var(--radius-xl);background:var(--color-surface)}.state-icon{display:grid;place-items:center;width:3.5rem;height:3.5rem;margin-bottom:var(--space-2);border-radius:50%;color:var(--color-primary);background:var(--color-primary-tint)}.state h2,.state p{margin:0}.state p{color:var(--color-text-muted)}.state .action-link{margin-top:var(--space-2)}.period-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-4)}.period-card{display:flex;justify-content:space-between;align-items:end;gap:var(--space-6);min-width:0;padding:var(--card-padding);border:1px solid var(--color-border);border-radius:var(--radius-xl);background:var(--color-surface);box-shadow:var(--shadow-sm);transition:border-color 140ms ease,transform 140ms ease,box-shadow 140ms ease}.period-card:hover{border-color:var(--color-primary);transform:translateY(-2px);box-shadow:var(--shadow-md)}.period-card>div{min-width:0}.status{display:inline-flex;align-items:center;gap:.4rem;margin-bottom:var(--space-3);padding:.3rem .7rem;border-radius:var(--radius-pill);background:var(--color-primary-soft);color:var(--color-primary-strong);font-size:.75rem;font-weight:700}.period-card h2{margin:0;font-size:var(--text-xl);overflow-wrap:anywhere}.period-card dl{display:flex;flex-wrap:wrap;gap:var(--space-3) var(--space-6);margin:var(--space-4) 0 0}.period-card dt{color:var(--color-text-muted);font-size:.75rem}.period-card dd{margin:.15rem 0 0;font-size:var(--text-sm);font-weight:600}.open-link{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;flex-shrink:0;min-height:2.75rem;padding:.65rem 1.1rem;border-radius:var(--radius-pill);background:var(--color-primary);color:white;font-weight:700;text-decoration:none}.open-link:hover{background:var(--color-primary-strong);color:white}.open-link:focus-visible{outline:none;box-shadow:var(--focus-ring)}
 @media(max-width:58rem){.period-list{grid-template-columns:1fr}}
 @media(max-width:34rem){.period-card{align-items:stretch;flex-direction:column}.open-link{width:100%}.state{padding:var(--space-6)}}
 </style>

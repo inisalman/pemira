@@ -107,7 +107,12 @@ onMounted(load)
 
 <template>
   <section class="admin-page admin-elections">
-    <header class="page-header"><div><p class="eyebrow">PERSIAPAN PEMILIHAN</p><h1>Periode pemilihan</h1><p class="intro">Buat periode lalu lengkapi kontes dan calon sebelum mengajukan pemeriksaan kesiapan.</p></div></header>
+    <PageHeader
+      kicker="Persiapan pemilihan"
+      title="Periode pemilihan"
+      lead="Buat periode lalu lengkapi kontes dan calon sebelum mengajukan pemeriksaan kesiapan."
+      icon="calendar"
+    />
     <AppAlert v-if="error" kind="error" :message="error" />
     <AppAlert v-if="notice" kind="success" :message="notice" />
     <form class="create-form" @submit.prevent="create">
@@ -126,7 +131,7 @@ onMounted(load)
       <p class="contest-intro">Daftar jabatan yang diperebutkan dalam satu periode. Kandidat diisi di halaman Kandidat pemilihan.</p>
       <AppAlert v-if="contestError" kind="error" :message="contestError" />
       <AppAlert v-if="contestNotice" kind="success" :message="contestNotice" />
-      <div v-if="!draftElections.length" class="state">Belum ada periode DRAFT. Kontes hanya ditambah saat periode masih draft.</div>
+      <AppEmptyState v-if="!draftElections.length" icon="calendar" title="Belum ada periode DRAFT" description="Kontes hanya dapat ditambah saat periode masih berstatus draft." />
       <template v-else>
         <form class="contest-form" @submit.prevent="saveContest">
           <label class="period-select">Periode

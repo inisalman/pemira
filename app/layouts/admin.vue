@@ -18,11 +18,11 @@ function closeMenu() { menuOpen.value = false }
   <div :class="$style.shell">
     <a class="skip-link" href="#main-content">Lewati navigasi</a>
     <header :class="$style.mobileHeader">
-      <NuxtLink to="/admin" :class="$style.brand"><span :class="$style.brandMark">P</span><span>{{ config.public.appName }}<small>Ruang panitia</small></span></NuxtLink>
+      <NuxtLink to="/admin" :class="$style.brand"><span :class="$style.brandMark" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4" /><rect x="3" y="4" width="18" height="16" rx="2" /></svg></span><span>{{ config.public.appName }}<small>Ruang panitia</small></span></NuxtLink>
       <button :class="$style.menuButton" type="button" :aria-expanded="menuOpen" aria-controls="admin-navigation" @click="menuOpen = !menuOpen">Menu</button>
     </header>
     <aside :class="[$style.sidebar, { [$style.open]: menuOpen }]">
-      <div :class="$style.sidebarBrand"><NuxtLink to="/admin" :class="$style.brand" @click="closeMenu"><span :class="$style.brandMark">P</span><span>{{ config.public.appName }}<small>Ruang panitia</small></span></NuxtLink><p>Kelola periode, pemilih, dan hasil PEMIRA dalam satu ruang kerja.</p></div>
+      <div :class="$style.sidebarBrand"><NuxtLink to="/admin" :class="$style.brand" @click="closeMenu"><span :class="$style.brandMark" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4" /><rect x="3" y="4" width="18" height="16" rx="2" /></svg></span><span>{{ config.public.appName }}<small>Ruang panitia</small></span></NuxtLink><p>Kelola periode, pemilih, dan hasil PEMIRA dalam satu ruang kerja.</p></div>
       <nav id="admin-navigation" :class="$style.nav" aria-label="Navigasi admin"><NuxtLink v-for="link in links" :key="link.to" :to="link.to" @click="closeMenu"><span :class="$style.navMark" aria-hidden="true">{{ link.code }}</span>{{ link.label }}</NuxtLink></nav>
       <div :class="$style.sidebarFooter"><SessionActions /></div>
     </aside>
@@ -89,7 +89,7 @@ function closeMenu() { menuOpen.value = false }
   place-items: center;
   width: 2rem;
   height: 2rem;
-  border-radius: .45rem;
+  border-radius: .55rem;
   background: var(--color-primary);
   color: var(--color-primary-contrast);
 }
@@ -105,7 +105,7 @@ function closeMenu() { menuOpen.value = false }
   gap: .7rem;
   min-height: 2.75rem;
   padding: .55rem .65rem;
-  border-radius: .5rem;
+  border-radius: var(--radius-pill);
   color: var(--color-text-muted);
   font-size: .86rem;
   font-weight: 700;
@@ -123,8 +123,8 @@ function closeMenu() { menuOpen.value = false }
   place-items: center;
   width: 1.8rem;
   height: 1.8rem;
-  border-radius: .35rem;
-  background: #f0f1fa;
+  border-radius: .5rem;
+  background: var(--color-primary-tint);
   color: var(--color-primary);
   font-size: .58rem;
   font-weight: 800;
@@ -198,9 +198,9 @@ function closeMenu() { menuOpen.value = false }
 
   .menuButton {
     min-height: 2.75rem;
-    padding: .5rem .75rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
+    padding: .5rem 1.1rem;
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-pill);
     background: var(--color-surface);
     color: var(--color-primary-strong);
     font: inherit;

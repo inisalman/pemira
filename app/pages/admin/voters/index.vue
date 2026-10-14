@@ -237,17 +237,12 @@ onMounted(load)
 
 <template>
   <section class="admin-page admin-voters">
-    <header class="page-header">
-      <div>
-        <p class="eyebrow">DATA PEMILIH</p>
-        <h1>Daftar pemilih</h1>
-        <p class="intro">Siapkan DPT mahasiswa dan dosen sebelum hak pilih dibentuk.</p>
-      </div>
-      <div class="header-actions">
-        <AppButton variant="secondary" @click="importOpen = true">Impor Excel</AppButton>
-        <AppButton @click="openForm">Tambah pemilih</AppButton>
-      </div>
-    </header>
+    <PageHeader kicker="Data pemilih" title="Daftar pemilih" lead="Siapkan DPT mahasiswa dan dosen sebelum hak pilih dibentuk." icon="users">
+      <template #actions>
+        <AppButton variant="secondary" @click="importOpen = true"><AppIcon name="file-text" :size="18" /> Impor Excel</AppButton>
+        <AppButton @click="openForm"><AppIcon name="user" :size="18" /> Tambah pemilih</AppButton>
+      </template>
+    </PageHeader>
 
     <AppAlert v-if="error" kind="error" :message="error" />
     <AppAlert v-if="notice" kind="success" :message="notice" />

@@ -78,7 +78,7 @@ onBeforeUnmount(() => { if (refreshTimer) clearTimeout(refreshTimer); document.r
     <AppAlert v-if="isStale" kind="warning" message="Menampilkan pembaruan terakhir. Sistem akan mencoba memuat ulang secara otomatis." />
     <AppAlert v-if="errorMessage" kind="error" :message="errorMessage" />
     <div v-if="loading && !results.length" :class="$style.loading" role="status" aria-live="polite">Memuat hasil pemilihan…</div>
-    <div v-else-if="!results.length && !errorMessage" :class="$style.empty" role="status"><h2>Belum ada hasil yang dapat ditampilkan</h2><p>Quick Count tersedia setelah periode pemilihan dibuka.</p></div>
+    <AppEmptyState v-else-if="!results.length && !errorMessage" icon="chart" title="Belum ada hasil yang dapat ditampilkan" description="Quick Count tersedia setelah periode pemilihan dibuka." />
     <div v-else :class="$style.list">
       <article v-for="contest in results" :key="contest.contestId" :class="$style.contest">
         <header :class="$style.contestHeader"><div><h2>{{ contest.title }}</h2><p>{{ contest.totalBallots }} suara masuk dari {{ contest.eligible }} hak pilih</p></div><strong>{{ contest.participation.toLocaleString('id-ID', { maximumFractionDigits: 2 }) }}% partisipasi</strong></header>

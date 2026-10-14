@@ -93,11 +93,15 @@ onMounted(loadElections)
 
 <template>
   <section class="admin-page admin-candidates">
-    <header class="page-header"><div><p class="eyebrow">DATA CALON</p><h1>Kandidat pemilihan</h1><p class="intro">Masukkan pasangan dan calon individu sebelum periode dikunci.</p></div><label class="period-select">Periode<select v-model="electionId"><option value="" disabled>Pilih periode DRAFT</option><option v-for="election in elections" :key="election.id" :value="election.id">{{ election.name }}</option></select></label></header>
+    <PageHeader kicker="Data calon" title="Kandidat pemilihan" lead="Masukkan pasangan dan calon individu sebelum periode dikunci." icon="users">
+      <template #actions>
+        <label class="period-select">Periode<select v-model="electionId"><option value="" disabled>Pilih periode DRAFT</option><option v-for="election in elections" :key="election.id" :value="election.id">{{ election.name }}</option></select></label>
+      </template>
+    </PageHeader>
     <AppAlert v-if="error" kind="error" :message="error" /><AppAlert v-if="notice" kind="success" :message="notice" />
     <div v-if="loading" role="status" class="state">Memuat kontes…</div>
-    <div v-else-if="!electionId" class="state">Belum ada periode DRAFT. Buat periode terlebih dahulu.</div>
-    <div v-else-if="!contests.length" class="state">Periode ini belum memiliki kontes.</div>
+    <AppEmptyState v-else-if="!electionId" icon="calendar" title="Belum ada periode DRAFT" description="Buat periode terlebih dahulu sebelum menambahkan kandidat." />
+    <AppEmptyState v-else-if="!contests.length" icon="users" title="Belum ada kontes" description="Periode ini belum memiliki kontes. Tambahkan kontes pada menu Periode." />
     <div v-else class="contest-list">
       <article v-for="contest in contests" :key="contest.id" class="contest" :class="{ selected: contest.id === selectedContestId }">
         <header class="contest-header"><div><p class="contest-code">{{ contest.code }}<span v-if="contest.departmentCode"> · {{ contest.departmentCode }}</span></p><h2>{{ contest.title }}</h2><p class="meta">{{ contest.optionType === 'PAIR' ? 'Setiap opsi berisi ketua dan wakil.' : `Calon ${contest.office === 'CHAIR' ? 'ketua' : 'wakil'} berdiri sendiri.` }}</p></div><AppButton variant="secondary" @click="newCandidate(contest)">Tambah calon</AppButton></header>
