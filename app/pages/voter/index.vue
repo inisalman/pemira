@@ -104,7 +104,7 @@ onMounted(load)
 .badge {
   display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.3rem 0.65rem;
   border-radius: var(--radius-pill); background: var(--color-surface-muted); color: var(--color-text-muted);
-  border: 1px solid var(--color-border); font-size: 0.72rem; font-weight: 700;
+  border: 1px solid var(--color-border); font-size: 0.72rem; font-weight: 700; white-space: nowrap;
 }
 .badge.badgeDone { background: var(--color-success-bg); color: var(--color-success); border-color: var(--color-success-bg); }
 .cardGroup { color: var(--color-text-muted); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }

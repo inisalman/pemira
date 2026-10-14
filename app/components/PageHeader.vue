@@ -81,8 +81,14 @@ withDefaults(defineProps<{
 }
 .lead { margin: var(--space-3) 0 0; max-width: 44rem; color: var(--color-text-muted); }
 .actions { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+.actions :global(.period-select) { min-width: 0; }
 @media (max-width: 48rem) {
   .hero { flex-direction: column; }
   .actions { width: 100%; }
+  .actions > * { flex: 1 1 auto; }
+  .actions :global(.period-select),
+  .actions :global(.period-select) select,
+  .actions :global(button),
+  .actions :global(.action-link) { width: 100%; }
 }
 </style>

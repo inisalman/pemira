@@ -316,7 +316,7 @@ onMounted(load)
 h1, h2, h3 { letter-spacing: -0.03em; }
 
 /* Buttons */
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 46px; padding: 0.7rem 1.25rem; border: 1px solid transparent; border-radius: 999px; font: inherit; font-size: 0.9rem; font-weight: 600; transition: background 140ms ease, color 140ms ease, border-color 140ms ease; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 46px; padding: 0.7rem 1.25rem; border: 1px solid transparent; border-radius: 999px; font: inherit; font-size: 0.9rem; font-weight: 600; text-align: center; transition: background 140ms ease, color 140ms ease, border-color 140ms ease; }
 .portal .btn-solid { background: var(--green); color: #ffffff; font-weight: 700; }
 .portal .btn-solid:hover { background: var(--green-deep); color: #ffffff; }
 .portal .btn-line { background: transparent; color: var(--green-deep); border-color: var(--line); }

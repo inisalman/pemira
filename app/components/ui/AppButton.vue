@@ -38,6 +38,7 @@ withDefaults(defineProps<{
   font: inherit;
   font-size: 0.9rem;
   font-weight: 700;
+  text-align: center;
   cursor: pointer;
   min-height: 2.875rem;
   max-width: 100%;

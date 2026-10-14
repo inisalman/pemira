@@ -157,7 +157,7 @@ onMounted(() => load())
 <style scoped>
 .ballot-page { display: grid; gap: 1.5rem; max-width: 62rem; margin: auto; }
 .ballot-heading h1 { font-size: clamp(1.8rem, 5vw, 3rem); letter-spacing: -0.04em; overflow-wrap: anywhere; }
-.election-status { display: inline-block; margin: 0; padding: 0.35rem 0.75rem; border-radius: 0.4rem; background: var(--color-primary-soft); color: var(--color-primary-strong); font-size: 0.875rem; }
+.election-status { display: inline-block; margin: 0; padding: 0.35rem 0.8rem; border-radius: var(--radius-pill); background: var(--color-primary-soft); color: var(--color-primary-strong); font-size: 0.875rem; font-weight: 600; }
 .ballot-schedule { display: flex; flex-wrap: wrap; gap: 1rem 3rem; padding: var(--card-padding); border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface-muted); }
 .ballot-schedule div { display: grid; gap: 0.3rem; font-size: 0.875rem; }
 .ballot-schedule span { color: var(--color-text-muted); }
