@@ -123,7 +123,7 @@ function chartOf(period: Period): ChartData {
 .head-text{min-width:0}
 .head-text h2{margin:0;font-size:var(--text-xl);overflow-wrap:anywhere}
 .head-text .meta{margin:.25rem 0 0;color:var(--color-text-muted);font-size:.9rem}
-.key-stats{display:flex;flex-wrap:wrap;gap:var(--space-3) var(--space-6);margin:0;padding:var(--space-4) var(--space-5);border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface-muted)}
+.key-stats{display:flex;flex-wrap:wrap;gap:var(--space-3) var(--space-6);margin:0;padding:var(--space-5) var(--space-5) var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface-muted)}
 .key-stats dt{color:var(--color-text-muted);font-size:.75rem;font-weight:600}
 .key-stats dd{margin:.15rem 0 0;font-size:1.35rem;font-weight:800;color:var(--color-primary-strong)}
 .chart{margin:0;display:grid;gap:var(--space-2)}
