@@ -16,6 +16,7 @@ const links = [
   { label: 'Tentang', href: '#tentang-pemira' },
   { label: 'Jadwal', href: '#jadwal-voting' },
   { label: 'Quick count', href: '/quick-count' },
+  { label: 'Riwayat', href: '/riwayat' },
   { label: 'Tata tertib', href: '#tata-tertib' },
   { label: 'Panduan', href: '#panduan-voting' },
 ]

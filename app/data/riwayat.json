@@ -1,0 +1,53 @@
+{
+  "periods": [
+    {
+      "id": "pemira-2025",
+      "name": "PEMIRA 2025",
+      "organizer": "BEM",
+      "year": "2025",
+      "votingStart": "2026-02-09",
+      "votingEnd": "2026-02-16",
+      "stats": {
+        "validVotes": 328,
+        "uniqueVoters": 288,
+        "votingDays": 8
+      },
+      "daily": [
+        {
+          "date": "2026-02-09",
+          "votes": 96
+        },
+        {
+          "date": "2026-02-10",
+          "votes": 77
+        },
+        {
+          "date": "2026-02-11",
+          "votes": 7
+        },
+        {
+          "date": "2026-02-12",
+          "votes": 25
+        },
+        {
+          "date": "2026-02-13",
+          "votes": 57
+        },
+        {
+          "date": "2026-02-14",
+          "votes": 25
+        },
+        {
+          "date": "2026-02-15",
+          "votes": 39
+        },
+        {
+          "date": "2026-02-16",
+          "votes": 2
+        }
+      ],
+      "notes": "Data arsip sistem sebelumnya; validasi ketat 328 dari 355 baris tercatat.",
+      "results": null
+    }
+  ]
+}
