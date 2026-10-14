@@ -6,22 +6,26 @@ import type { H3Event } from 'h3'
  * served outside the Vue router.
  *
  * CSP notes for this SPA (ssr: false):
- * - script-src 'self': Nuxt serves its bundle from /_nuxt/ on the same origin.
- *   No third-party script origin is used; add explicit origins here if a CDN
- *   is introduced later.
- * - style-src allows 'unsafe-inline' because Vue injects scoped/module styles
- *   inline; this does not weaken script execution controls.
+ * - script-src needs 'unsafe-inline': the Nuxt SPA shell embeds an inline
+ *   bootstrap/payload script whose content (and therefore hash) changes every
+ *   build, so hash/nonce pinning is not maintainable here. 'self' covers the
+ *   /_nuxt/ bundle; static.cloudflareinsights.com is the Cloudflare Web
+ *   Analytics beacon auto-injected while the domain is orange-clouded.
+ * - style-src allows 'unsafe-inline' (Vue scoped/module styles + Nuxt inlined
+ *   critical CSS) plus fonts.googleapis.com (landing typography).
+ * - font-src allows fonts.gstatic.com (Google Fonts binaries).
+ * - connect-src allows cloudflareinsights.com (beacon reporting endpoint).
  * - img-src allows data: for the inline SVG/photo fallbacks.
  * - frame-ancestors 'none' blocks clickjacking of the voting pages.
  * - object-src 'none' and base-uri 'self' close common injection vectors.
  */
 const CSP = [
   "default-src 'self'",
-  "script-src 'self'",
-  "style-src 'self' 'unsafe-inline'",
+  "script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "img-src 'self' data:",
-  "font-src 'self' data:",
-  "connect-src 'self'",
+  "font-src 'self' data: https://fonts.gstatic.com",
+  "connect-src 'self' https://cloudflareinsights.com",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
