@@ -1,5 +1,5 @@
-/* PEMIRA design tokens: modern light, per DESIGN.md.
-   Primary green #2A6B5C, warm white #FFF9F2, font Inter (local, variable). */
+/* PEMIRA design tokens: modern light theme.
+   Primary green #005d42, lavender page background #faf8ff, font Plus Jakarta Sans. */
 
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 @import '@fontsource-variable/inter';
@@ -59,7 +59,7 @@
 }
 
 /* Color usage map (P1-01):
-   - background: --color-bg (warm white)
+   - background: --color-bg (lavender)
    - text: --color-text / --color-text-muted
    - actions (buttons, links, active nav): --color-primary (+ strong on hover)
    - focus: --focus-ring (2px offset ring in primary green)

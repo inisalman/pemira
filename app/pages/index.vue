@@ -12,27 +12,25 @@ const loading = ref(true)
 const error = ref('')
 const menuOpen = ref(false)
 const current = computed(() => elections.value.find(e => e.status === 'OPEN') ?? elections.value[0])
-const heroImage = "https://lh3.googleusercontent.com/aida-public/AB6AXuCxNVczZGrj1RNZsJ5gCRFw5PtSa5S0ycQTK6cQ4nfgn2QgrhWR103vS6yQazOIw1Y2UGBYXMK79mDdah2kVh7xg2ppOOE9wsOxmaBggfoopkcVJNoV5_PwiWTKjvKv1f7JhfpaMUJAawLfyJRyVdmqxChmPvzo_Sd9IgRmchWmiMLy48Xh5PKxyb4_IWvcKSN_ayuITKN5Oz2qISoj9-raBcMPgs8TEwXVUWGlWP2znRMltSmbE-3a"
-const tutorialImages = ["https://lh3.googleusercontent.com/aida-public/AB6AXuBzvsX85zuMvR4Z79pPN-nnlU7bG3DBw-aWSUAVyCIWKS7pXOdcYhSwn8O5txJ0etjJRBepYGHFf9HgM_cY3HwJlTvXZ0PQOV0QnItLFvSAZTcIYlq0GboaS9QHwkrUxaBu0CGLa8KD5PFV2zEZCN7XUtKXYqln4j6vJA6fGe40EFhyeJ0kL_3TvmbdjeJ1EJW7hjAPNhNwt-EIr8VU4YFJDa09fEvRYpr7Ys9P6phYLdXyT-moq8Yw","https://lh3.googleusercontent.com/aida-public/AB6AXuA9zK1yJTIMEJJmnK7FPcAwsXjiuFIDNoB_VQ5DPn4P2y4zGg4u-T4bfUNvE__9Uvc_Tcz9_ZRimOpIcVJEW3wMMyTSZkAmtJrYtnBzd-oM35YeYQl9ISATUvRY5yMQ7Cm5_GpsPgH3VYBIRRPtVAMq4oO4bK3CblxSnYiPf6JFYynOL4-TqvRRFiyLoLnbUTKcjulLLbwgGOSMrHKpuH3JMZm8VtveC8Ul0WgTp-5Mr5eCzsZrF8QQ"]
 const links = [
-  { label: 'Tentang Pemira', href: '#tentang-pemira' },
-  { label: 'Jadwal Voting', href: '#jadwal-voting' },
-  { label: 'Quick Count', href: '/quick-count' },
-  { label: 'Tata Tertib', href: '#tata-tertib' },
-  { label: 'Panduan Voting', href: '#panduan-voting' },
+  { label: 'Tentang', href: '#tentang-pemira' },
+  { label: 'Jadwal', href: '#jadwal-voting' },
+  { label: 'Quick count', href: '/quick-count' },
+  { label: 'Tata tertib', href: '#tata-tertib' },
+  { label: 'Panduan', href: '#panduan-voting' },
 ]
 const organizations = [
-  { short: 'MPM', name: 'Majelis Permusyawaratan Mahasiswa', category: 'Lembaga legislatif', badge: 'Tingkat institusi', tone: 'green', description: 'Lembaga perwakilan mahasiswa yang menampung aspirasi, mengawasi jalannya organisasi kemahasiswaan, dan menyelenggarakan PEMIRA.' },
-  { short: 'BEM', name: 'Badan Eksekutif Mahasiswa', category: 'Lembaga eksekutif pusat', badge: 'Presma & Wapresma', tone: 'amber', description: 'Badan eksekutif mahasiswa tingkat institusi yang menjalankan program kerja, menyalurkan aspirasi, dan menggerakkan kegiatan mahasiswa.' },
-  { short: 'HIMA', name: 'Himpunan Mahasiswa Jurusan', category: 'Tingkat jurusan', badge: '4 jurusan', tone: 'teal', description: 'Wadah mahasiswa jurusan Keperawatan, Kebidanan, Kesehatan Gigi, dan Ortotik Prostetik untuk berkarya dan mengembangkan potensi bersama.' },
+  { short: 'MPM', name: 'Majelis Permusyawaratan Mahasiswa', category: 'Legislatif · tingkat institusi', description: 'Lembaga perwakilan mahasiswa yang menampung aspirasi, mengawasi organisasi kemahasiswaan, dan menyelenggarakan PEMIRA.' },
+  { short: 'BEM', name: 'Badan Eksekutif Mahasiswa', category: 'Eksekutif · Presma & Wapresma', description: 'Badan eksekutif tingkat institusi yang menjalankan program kerja, menyalurkan aspirasi, dan menggerakkan kegiatan mahasiswa.' },
+  { short: 'HIMA', name: 'Himpunan Mahasiswa Jurusan', category: 'Perwakilan · 4 jurusan', description: 'Wadah mahasiswa jurusan Keperawatan, Kebidanan, Kesehatan Gigi, dan Ortotik Prostetik untuk berkarya bersama.' },
 ]
 const categories = [
-  { title: 'Jurusan Keperawatan', group: 'Himpunan mahasiswa', mark: 'KP', tone: 'green' },
-  { title: 'Jurusan Kebidanan', group: 'Himpunan mahasiswa', mark: 'KB', tone: 'amber' },
-  { title: 'Jurusan Kesehatan Gigi', group: 'Himpunan mahasiswa', mark: 'KG', tone: 'teal' },
-  { title: 'Jurusan Ortotik Prostetik', group: 'Himpunan mahasiswa', mark: 'OP', tone: 'green' },
-  { title: 'Badan Eksekutif Mahasiswa (BEM)', group: 'Eksekutif kampus', mark: 'BEM', tone: 'amber' },
-  { title: 'Majelis Permusyawaratan Mahasiswa (MPM)', group: 'Legislatif mahasiswa', mark: 'MPM', tone: 'teal' },
+  { title: 'Keperawatan', group: 'Himpunan Mahasiswa', mark: 'KP' },
+  { title: 'Kebidanan', group: 'Himpunan Mahasiswa', mark: 'KB' },
+  { title: 'Kesehatan Gigi', group: 'Himpunan Mahasiswa', mark: 'KG' },
+  { title: 'Ortotik Prostetik', group: 'Himpunan Mahasiswa', mark: 'OP' },
+  { title: 'Badan Eksekutif Mahasiswa', group: 'Eksekutif kampus', mark: 'BEM' },
+  { title: 'Majelis Permusyawaratan Mahasiswa', group: 'Legislatif mahasiswa', mark: 'MPM' },
 ]
 const rules = [
   { title: 'Terdaftar sebagai pemilih', description: 'Gunakan NIM atau NIP lokal yang telah terdaftar pada daftar pemilih panitia.' },
@@ -41,6 +39,11 @@ const rules = [
   { title: 'Jaga akses akun', description: 'Gunakan password yang dibagikan panitia. Jangan berikan password atau akses akun kepada orang lain.' },
   { title: 'Penetapan pilihan', description: 'Periksa calon, tinjau pilihan, lalu konfirmasi. Suara yang sudah tercatat tidak dapat diubah.' },
   { title: 'Larangan dalam pemilihan', description: 'Hindari intimidasi, politik uang, penyalahgunaan akun, dan tindakan yang mengganggu kebebasan pemilih.', danger: true },
+]
+const steps = [
+  { title: 'Siapkan akun', description: 'Gunakan NIM atau NIP lokal dan password yang dibagikan panitia.' },
+  { title: 'Buka surat suara', description: 'Pilih kontes yang tersedia, lalu baca profil dan program calon.' },
+  { title: 'Pilih & konfirmasi', description: 'Tinjau pilihan, kirim suara, lalu simpan kode tanda terima.' },
 ]
 async function load() {
   loading.value = true
@@ -55,276 +58,427 @@ onMounted(load)
 <template>
   <div class="portal">
     <a class="skip-link" href="#portal-content">Lewati navigasi</a>
-    <header class="portal-header">
-      <div class="container header-inner">
-        <NuxtLink to="/" class="brand"><span class="brand-symbol" aria-hidden="true">P</span><span>PEMIRA<small>Poltekkes Kemenkes Jakarta I</small></span></NuxtLink>
-        <nav class="desktop-nav" aria-label="Navigasi portal"><a v-for="link in links" :key="link.href" :href="link.href">{{ link.label }}</a></nav>
-        <NuxtLink to="/login" class="button primary header-cta">Mulai Voting / Cek Hak Suara</NuxtLink>
-        <button class="menu-toggle" :aria-expanded="menuOpen" aria-controls="portal-menu" @click="menuOpen = !menuOpen">Menu</button>
+    <header class="masthead">
+      <div class="container head-inner">
+        <NuxtLink to="/" class="brand">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4" /><rect x="3" y="4" width="18" height="16" rx="2" /></svg>
+          </span>
+          <span class="brand-text">PEMIRA<small>Poltekkes Kemenkes Jakarta I</small></span>
+        </NuxtLink>
+        <nav class="desktop-nav" aria-label="Navigasi portal">
+          <a v-for="link in links" :key="link.href" :href="link.href">{{ link.label }}</a>
+        </nav>
+        <NuxtLink to="/login" class="btn btn-solid head-cta">Masuk untuk memilih</NuxtLink>
+        <button class="menu-toggle" :aria-expanded="menuOpen" aria-controls="portal-menu" @click="menuOpen = !menuOpen">
+          <span aria-hidden="true" />Menu
+        </button>
       </div>
-      <nav v-if="menuOpen" id="portal-menu" class="mobile-nav container" aria-label="Navigasi mobile"><a v-for="link in links" :key="link.href" :href="link.href" @click="menuOpen = false">{{ link.label }}</a><NuxtLink to="/login">Mulai voting / cek hak suara</NuxtLink></nav>
+      <nav v-if="menuOpen" id="portal-menu" class="mobile-nav container" aria-label="Navigasi mobile">
+        <a v-for="link in links" :key="link.href" :href="link.href" @click="menuOpen = false">{{ link.label }}</a>
+        <NuxtLink to="/login" class="btn btn-solid mobile-cta" @click="menuOpen = false">Masuk untuk memilih</NuxtLink>
+      </nav>
     </header>
+
     <main id="portal-content" tabindex="-1">
-      <div class="announcement"><div class="container"><span>Pemberitahuan</span><p v-if="current">{{ current.name }} · <strong>{{ electionStatus(current.status) }}</strong>. Periksa jadwal dan hak pilih Anda sebelum memilih.</p><p v-else>Informasi jadwal PEMIRA diumumkan melalui portal ini. Persiapkan akun pemilih Anda.</p></div></div>
+      <!-- HERO -->
       <section class="hero">
-        <div class="container">
-          <div class="hero-grid">
-            <div class="hero-copy">
-              <p class="eyebrow-tag">Demokrasi Kampus · Pesta Demokrasi Mahasiswa</p>
-              <h1>Pemilihan Raya Mahasiswa <span>Poltekkes Kemenkes</span> Jakarta I</h1>
-              <p class="hero-description">Situs Pemilihan Raya Mahasiswa Poltekkes Jakarta I. Wujudkan kepemimpinan berintegritas, berdedikasi tinggi, dan representatif bagi seluruh civitas akademika.</p>
-              <div class="hero-actions"><a class="button primary" href="#jadwal-voting">Lihat Jadwal Pemungutan Suara <span aria-hidden="true">↓</span></a><a class="button soft" href="https://instagram.com/MPMPOLTEKKESJAKARTA1" target="_blank" rel="noopener noreferrer">Instagram MPM</a></div>
-              <div class="hero-notes"><span>Satu suara per kontes</span><span>Pilihan melalui akun terdaftar</span></div>
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <p class="status-line" aria-live="polite">
+              <span class="dot" :class="{ live: current?.status === 'OPEN' }" aria-hidden="true" />
+              <template v-if="loading">Memuat status pemilihan…</template>
+              <template v-else-if="current">{{ current.name }} — {{ electionStatus(current.status) }}</template>
+              <template v-else>Pendaftaran dan jadwal diumumkan melalui portal ini</template>
+            </p>
+            <h1>Pemilihan Raya Mahasiswa<br>Poltekkes Kemenkes <em>Jakarta&nbsp;I</em></h1>
+            <p class="hero-lead">Satu suara menentukan arah kepemimpinan mahasiswa. Pilih perwakilan MPM, BEM, dan HIMA secara langsung, bebas, dan rahasia melalui portal resmi panitia.</p>
+            <div class="hero-actions">
+              <NuxtLink to="/login" class="btn btn-solid">Masuk untuk memilih</NuxtLink>
+              <a class="btn btn-line" href="#jadwal-voting">Lihat jadwal pemungutan</a>
             </div>
-            <figure class="hero-photo">
-              <img :src="heroImage" alt="Ilustrasi mahasiswa berpartisipasi dalam PEMIRA" fetchpriority="high" width="640" height="520">
-              <figcaption><span class="calendar-mark" aria-hidden="true">▦</span><div><strong>{{ current?.startsAt ? electionDate(current.startsAt) : 'Bersiap untuk PEMIRA' }}</strong><small>{{ current ? current.name : 'Periksa hak pilih melalui akun Anda' }}</small></div><span class="badge green">{{ current ? electionStatus(current.status) : 'Info pemilihan' }}</span></figcaption>
-            </figure>
+            <dl class="hero-facts">
+              <div><dt>Jurusan</dt><dd>4</dd></div>
+              <div><dt>Organisasi</dt><dd>MPM · BEM · HIMA</dd></div>
+              <div><dt>Asas</dt><dd>Luber Jurdil</dd></div>
+            </dl>
           </div>
-          <div class="metrics">
-            <article><p>Jurusan / program</p><strong>4</strong><span>Jurusan di Poltekkes Jakarta I</span></article>
-            <article><p>Organisasi mahasiswa</p><strong>MPM · BEM · HIMA</strong><span>Wadah perwakilan mahasiswa</span></article>
-            <article><p>Jadwal pelaksanaan</p><strong class="metric-date">{{ loading ? 'Memuat…' : current?.startsAt ? electionDate(current.startsAt) : 'Menunggu jadwal' }}</strong><span>Sesuai periode dari panitia</span></article>
-            <article><p>Asas pemilihan</p><strong>Luber Jurdil</strong><span>Gunakan suara dengan tanggung jawab</span></article>
-          </div>
+
+          <!-- Surat suara stylized, murni CSS/SVG, bukan stock image -->
+          <aside class="ballot" aria-hidden="true">
+            <div class="ballot-head">
+              <span>SURAT SUARA</span>
+              <span class="ballot-seal">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 8 8 11 4.5-3 8-6 8-11V5z" /><path d="m9 12 2 2 4-4" /></svg>
+              </span>
+            </div>
+            <ul class="ballot-options">
+              <li class="is-marked"><span class="box"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-11" /></svg></span><span class="line line-1" /></li>
+              <li><span class="box" /><span class="line line-2" /></li>
+              <li><span class="box" /><span class="line line-3" /></li>
+            </ul>
+            <div class="ballot-foot">
+              <span>{{ current ? electionStatus(current.status) : 'Menunggu jadwal' }}</span>
+              <span>{{ current?.startsAt ? electionDate(current.startsAt) : '—' }}</span>
+            </div>
+          </aside>
         </div>
       </section>
-      <section id="tentang-pemira" class="section about">
-        <div class="container about-grid">
-          <div>
-            <p class="eyebrow">Mengenal lebih dekat</p><h2>Apa sih PEMIRA itu?</h2>
-            <p class="lead"><strong>Pemilihan Raya (PEMIRA)</strong> adalah pesta demokrasi mahasiswa Poltekkes Kemenkes Jakarta I untuk menentukan kepemimpinan organisasi kemahasiswaan.</p>
-            <p>Melalui PEMIRA, mahasiswa memilih perwakilan di <strong>Majelis Permusyawaratan Mahasiswa (MPM)</strong>, pemimpin <strong>Badan Eksekutif Mahasiswa (BEM)</strong>, serta pimpinan <strong>Himpunan Mahasiswa (HIMA)</strong> di setiap jurusan.</p>
-            <div class="mission"><p class="eyebrow">Amanah kepemimpinan</p><p>Kenali calon dan programnya. Pilih pemimpin yang siap membawa aspirasi mahasiswa dan bertanggung jawab atas amanahnya.</p></div>
-            <div class="values"><article><h3>Demokratis</h3><p>Gunakan hak pilih sendiri, sesuai hati nurani.</p></article><article><h3>Transparan</h3><p>Ikuti hasil yang dipublikasikan panitia.</p></article></div>
+
+      <!-- TENTANG -->
+      <section id="tentang-pemira" class="section">
+        <div class="container section-grid">
+          <div class="section-lead">
+            <p class="kicker">Tentang PEMIRA</p>
+            <h2>Pesta demokrasi mahasiswa Poltekkes Jakarta I</h2>
+            <p>Melalui PEMIRA, mahasiswa memilih perwakilan di <strong>MPM</strong>, pimpinan <strong>BEM</strong>, serta pengurus <strong>HIMA</strong> di setiap jurusan. Kenali calon dan programnya, lalu pilih pemimpin yang siap mengemban amanah.</p>
+            <div class="pillars">
+              <div><h3>Langsung &amp; rahasia</h3><p>Hak pilih digunakan sendiri sesuai hati nurani, tanpa diwakilkan.</p></div>
+              <div><h3>Transparan</h3><p>Hasil quick count dan penetapan dipublikasikan terbuka oleh panitia.</p></div>
+            </div>
           </div>
-          <div class="organization-list"><article v-for="org in organizations" :key="org.short" class="organization">
-            <div class="org-heading"><span class="org-icon" :class="org.tone">{{ org.short }}</span><div><p class="eyebrow">{{ org.category }}</p><h3>{{ org.short }} ({{ org.name }})</h3></div><span class="badge" :class="org.tone">{{ org.badge }}</span></div><p>{{ org.description }}</p>
-          </article></div>
+          <ul class="org-list">
+            <li v-for="org in organizations" :key="org.short">
+              <span class="org-mark">{{ org.short }}</span>
+              <div>
+                <p class="org-cat">{{ org.category }}</p>
+                <h3>{{ org.name }}</h3>
+                <p class="org-desc">{{ org.description }}</p>
+              </div>
+            </li>
+          </ul>
         </div>
       </section>
-      <section id="jadwal-voting" class="section tinted">
+
+      <!-- JADWAL -->
+      <section id="jadwal-voting" class="section band">
         <div class="container">
-          <div class="section-heading"><div><p class="eyebrow">Jadwal resmi & bilik suara</p><h2>Jadwal Pemungutan Suara</h2><p>Periksa periode yang tersedia, lalu masuk untuk melihat kontes sesuai hak pilih Anda.</p></div><div class="section-actions"><NuxtLink to="/quick-count" class="button white">Lihat quick count</NuxtLink><NuxtLink to="/results" class="button soft">Hasil resmi</NuxtLink></div></div>
-          <div class="period-info" aria-live="polite">
-            <p v-if="loading">Memuat jadwal pemilihan…</p>
-            <div v-else-if="error" class="load-error"><p>{{ error }}</p><button class="button soft" @click="load">Coba lagi</button></div>
-            <p v-else-if="!elections.length">Jadwal belum diumumkan. Informasi periode akan tampil di sini setelah tersedia.</p>
-            <article v-for="election in elections" v-else :key="election.id"><div><strong>{{ election.name }}</strong><p>{{ electionDate(election.startsAt) }} sampai {{ electionDate(election.endsAt) }}</p></div><span class="badge green">{{ electionStatus(election.status) }}</span></article>
+          <div class="band-head">
+            <div>
+              <p class="kicker">Jadwal resmi</p>
+              <h2>Jadwal pemungutan suara</h2>
+              <p class="muted">Periksa periode yang tersedia, lalu masuk untuk melihat kontes sesuai hak pilih Anda.</p>
+            </div>
+            <div class="band-actions">
+              <NuxtLink to="/quick-count" class="btn btn-line">Quick count</NuxtLink>
+              <NuxtLink to="/results" class="btn btn-ghost">Hasil resmi</NuxtLink>
+            </div>
           </div>
-          <div class="category-grid"><article v-for="category in categories" :key="category.mark" class="category-card">
-            <p class="card-kicker">Pilihan sesuai daftar pemilih</p>
-            <div class="category-title"><span class="org-icon" :class="category.tone">{{ category.mark }}</span><div><p class="eyebrow">{{ category.group }}</p><h3>{{ category.title }}</h3></div></div>
-            <p>Pemilihan perwakilan {{ category.title }}. Jadwal dan surat suara tersedia sesuai periode serta hak pilih akun Anda.</p>
-            <NuxtLink to="/login" class="button" :class="category.tone === 'amber' ? 'ochre' : 'primary'">Masuk untuk cek hak pilih <span aria-hidden="true">›</span></NuxtLink>
-          </article></div>
+
+          <div class="schedule" aria-live="polite">
+            <p v-if="loading" class="muted">Memuat jadwal pemilihan…</p>
+            <div v-else-if="error" class="schedule-error">
+              <p>{{ error }}</p>
+              <button class="btn btn-line" @click="load">Coba lagi</button>
+            </div>
+            <p v-else-if="!elections.length" class="muted">Jadwal belum diumumkan. Informasi periode akan tampil di sini setelah tersedia.</p>
+            <ol v-else class="schedule-list">
+              <li v-for="election in elections" :key="election.id">
+                <div class="sl-main">
+                  <strong>{{ election.name }}</strong>
+                  <span>{{ electionDate(election.startsAt) }} — {{ electionDate(election.endsAt) }}</span>
+                </div>
+                <span class="status-pill" :class="{ open: election.status === 'OPEN' }">{{ electionStatus(election.status) }}</span>
+              </li>
+            </ol>
+          </div>
+
+          <ul class="contest-grid">
+            <li v-for="category in categories" :key="category.mark">
+              <NuxtLink to="/login" class="contest-card">
+                <span class="contest-mark">{{ category.mark }}</span>
+                <span class="contest-body">
+                  <small>{{ category.group }}</small>
+                  <strong>{{ category.title }}</strong>
+                </span>
+                <span class="contest-go" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                </span>
+              </NuxtLink>
+            </li>
+          </ul>
         </div>
       </section>
+
+      <!-- TATA TERTIB -->
       <section id="tata-tertib" class="section">
-        <div class="container"><div class="section-heading"><div><p class="eyebrow">Panduan pemilih</p><h2>Tata Tertib Pemilihan Raya</h2><p>Jaga integritas, kerahasiaan, dan kelancaran pemilihan dengan mengikuti ketentuan berikut.</p></div></div>
-          <div class="rules-grid"><article v-for="(rule, index) in rules" :key="rule.title" class="rule-card" :class="{ danger: rule.danger }"><span class="rule-number">{{ String(index + 1).padStart(2, '0') }}</span><h3>{{ rule.title }}</h3><p>{{ rule.description }}</p></article></div>
+        <div class="container">
+          <div class="band-head">
+            <div>
+              <p class="kicker">Panduan pemilih</p>
+              <h2>Tata tertib pemilihan</h2>
+              <p class="muted">Jaga integritas, kerahasiaan, dan kelancaran pemilihan dengan mengikuti ketentuan berikut.</p>
+            </div>
+          </div>
+          <ol class="rules">
+            <li v-for="(rule, index) in rules" :key="rule.title" :class="{ danger: rule.danger }">
+              <span class="rule-no">{{ String(index + 1).padStart(2, '0') }}</span>
+              <div>
+                <h3>{{ rule.title }}</h3>
+                <p>{{ rule.description }}</p>
+              </div>
+            </li>
+          </ol>
         </div>
       </section>
-      <section id="panduan-voting" class="section tinted">
-        <div class="container"><div class="guide-heading"><p class="eyebrow-tag">Panduan Praktis Pemilih</p><h2>Panduan Cara Voting</h2><p>Pahami alur pemilihan agar hak suara Anda tercatat dengan benar.</p></div>
-          <div class="steps"><article><strong>1</strong><div><h3>Siapkan akun</h3><p>Gunakan NIM atau NIP lokal dan password yang dibagikan panitia.</p></div></article><article><strong>2</strong><div><h3>Buka surat suara</h3><p>Pilih kontes yang tersedia, lalu baca profil dan program calon.</p></div></article><article><strong>3</strong><div><h3>Pilih & konfirmasi</h3><p>Tinjau pilihan, kirim suara, lalu simpan kode tanda terima.</p></div></article></div>
-          <div class="tutorials"><article v-for="(name, index) in ['Himpunan Mahasiswa (HIMA)', 'Badan Eksekutif Mahasiswa (BEM)']" :key="name" class="tutorial">
-            <img :src="tutorialImages[index]" :alt="'Ilustrasi panduan pemilihan ' + name" width="640" height="360" loading="lazy">
-            <p class="eyebrow">Panduan pemilih {{ String(index + 1).padStart(2, '0') }}</p><h3>Panduan Voting {{ name }}</h3><p>Ikuti langkah pemilihan melalui dashboard hak pilih Anda.</p>
-            <details><summary>Baca panduan voting</summary><ol><li>Masuk ke akun pemilih.</li><li>Buka kontes {{ index === 0 ? 'HIMA sesuai jurusan' : 'BEM' }} yang tersedia.</li><li>Baca profil calon, lalu pilih satu calon atau pasangan.</li><li>Tekan “Tinjau pilihan”, periksa kembali, lalu kirim suara.</li><li>Pastikan status “Suara sudah tercatat” muncul.</li></ol></details>
-          </article></div>
+
+      <!-- PANDUAN -->
+      <section id="panduan-voting" class="section band">
+        <div class="container">
+          <div class="band-head center">
+            <div>
+              <p class="kicker">Alur pemilihan</p>
+              <h2>Cara memberikan suara</h2>
+              <p class="muted">Tiga langkah agar hak suara Anda tercatat dengan benar.</p>
+            </div>
+          </div>
+          <ol class="steps">
+            <li v-for="(step, index) in steps" :key="step.title">
+              <span class="step-no">{{ index + 1 }}</span>
+              <h3>{{ step.title }}</h3>
+              <p>{{ step.description }}</p>
+            </li>
+          </ol>
+          <details class="guide-detail">
+            <summary>Rincian langkah pemilihan HIMA &amp; BEM</summary>
+            <ol>
+              <li>Masuk ke akun pemilih menggunakan NIM / NIP lokal.</li>
+              <li>Buka kontes HIMA sesuai jurusan atau kontes BEM yang tersedia.</li>
+              <li>Baca profil calon, lalu pilih satu calon atau pasangan.</li>
+              <li>Tekan “Tinjau pilihan”, periksa kembali, lalu kirim suara.</li>
+              <li>Pastikan status “Suara sudah tercatat” muncul dan simpan tanda terima.</li>
+            </ol>
+          </details>
         </div>
       </section>
-      <section class="section help-section"><div class="container"><div class="help-banner"><div><p class="eyebrow-tag">Bantuan pemilih</p><h2>Mengalami Kendala Saat Memilih?</h2><p>Hubungi panitia melalui kanal MPM untuk bantuan akses akun atau pemeriksaan daftar pemilih. Jangan bagikan password Anda.</p></div><div class="help-actions"><a class="button gold" href="https://instagram.com/MPMPOLTEKKESJAKARTA1" target="_blank" rel="noopener noreferrer">DM Instagram MPM</a><a class="button help-link" href="#panduan-voting">Baca panduan pemilih</a></div></div></div></section>
+
+      <!-- BANTUAN -->
+      <section class="section">
+        <div class="container">
+          <div class="help">
+            <div class="help-copy">
+              <p class="kicker light">Bantuan pemilih</p>
+              <h2>Mengalami kendala saat memilih?</h2>
+              <p>Hubungi panitia melalui kanal MPM untuk bantuan akses akun atau pemeriksaan daftar pemilih. Jangan pernah membagikan password Anda kepada siapa pun.</p>
+            </div>
+            <div class="help-actions">
+              <a class="btn btn-accent" href="https://instagram.com/MPMPOLTEKKESJAKARTA1" target="_blank" rel="noopener noreferrer">Instagram MPM</a>
+              <a class="btn btn-on-dark" href="#panduan-voting">Baca panduan</a>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
-    <footer class="portal-footer"><div class="container"><div class="footer-grid"><div><h3>PEMIRA</h3><p>Pemilihan Raya Mahasiswa<br>Poltekkes Kemenkes Jakarta I</p></div><div><h3>Informasi pemilihan</h3><a href="#jadwal-voting">Jadwal voting</a><a href="#tata-tertib">Tata tertib</a><NuxtLink to="/quick-count">Quick count</NuxtLink><NuxtLink to="/results">Hasil resmi</NuxtLink></div><div><h3>Kanal MPM</h3><a href="https://instagram.com/MPMPOLTEKKESJAKARTA1" target="_blank" rel="noopener noreferrer">Instagram MPM</a><a href="#panduan-voting">Panduan pemilih</a></div><div><h3>Akses portal</h3><NuxtLink to="/login">Masuk sebagai pemilih</NuxtLink><NuxtLink to="/admin">Panel panitia & admin</NuxtLink></div></div><div class="footer-bottom"><span>PEMIRA · Poltekkes Kemenkes Jakarta I</span><span>Hasil sementara bukan penetapan pemenang.</span></div></div></footer>
+
+    <footer class="portal-footer">
+      <div class="container footer-grid">
+        <div class="footer-brand">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4" /><rect x="3" y="4" width="18" height="16" rx="2" /></svg>
+          </span>
+          <p>Pemilihan Raya Mahasiswa<br>Poltekkes Kemenkes Jakarta I</p>
+        </div>
+        <nav aria-label="Informasi pemilihan"><h3>Pemilihan</h3><a href="#jadwal-voting">Jadwal voting</a><a href="#tata-tertib">Tata tertib</a><NuxtLink to="/quick-count">Quick count</NuxtLink><NuxtLink to="/results">Hasil resmi</NuxtLink></nav>
+        <nav aria-label="Kanal MPM"><h3>Kanal MPM</h3><a href="https://instagram.com/MPMPOLTEKKESJAKARTA1" target="_blank" rel="noopener noreferrer">Instagram MPM</a><a href="#panduan-voting">Panduan pemilih</a></nav>
+        <nav aria-label="Akses portal"><h3>Portal</h3><NuxtLink to="/login">Masuk sebagai pemilih</NuxtLink><NuxtLink to="/admin">Panel panitia</NuxtLink></nav>
+      </div>
+      <div class="container footer-bottom">
+        <span>© PEMIRA · Poltekkes Kemenkes Jakarta I</span>
+        <span>Hasil sementara bukan penetapan pemenang.</span>
+      </div>
+    </footer>
   </div>
 </template>
 
 <style scoped>
 .portal {
-  --green: #005d42;
-  --ink: #131b2e;
-  --muted: #48544e;
-  --line: #e4e8e5;
+  --green: #0b5c43;
+  --green-deep: #073f2e;
+  --ink: #14201b;
+  --muted: #5a6b63;
+  --line: #e3e9e5;
+  --paper: #fbfcfb;
+  --accent: #c2410c;
   font-family: 'Plus Jakarta Sans', var(--font-sans);
   color: var(--ink);
-  background: #faf8ff;
-  line-height: 1.65;
+  background: var(--paper);
+  line-height: 1.6;
 }
-.portal :is(h1, h2, h3, p, figure) { margin: 0; }
-.portal h1, .portal h2, .portal h3 { line-height: 1.25; }
-.portal a { text-decoration: none; }
+.portal :is(h1, h2, h3, p, dl, dd, ol, ul, figure) { margin: 0; }
+.portal ol, .portal ul { list-style: none; padding: 0; }
+.portal a { text-decoration: none; color: inherit; }
 .portal button { cursor: pointer; }
-.portal :is(a, button, summary):focus-visible { outline: 3px solid #855300; outline-offset: 4px; box-shadow: none; }
-.portal section[id] { scroll-margin-top: 6.5rem; }
-.container { width: min(100% - 4rem, 1216px); margin-inline: auto; }
-.portal-header { position: sticky; top: 0; z-index: 30; border-bottom: 1px solid var(--line); background: #fff; }
-.header-inner { min-height: 80px; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
-.brand { display: flex; align-items: center; gap: 0.65rem; flex-shrink: 0; color: var(--green); font-size: 1.15rem; font-weight: 800; line-height: 1.2; }
-.brand-symbol { font-size: 1.35rem; border-bottom: 3px solid var(--green); }
-.brand small { display: block; margin-top: 0.3rem; color: var(--muted); font-size: 0.57rem; letter-spacing: 0.07em; text-transform: uppercase; font-weight: 600; }
-.desktop-nav { display: flex; gap: 0.25rem; }
-.desktop-nav a { padding: 0.7rem; color: var(--muted); font-size: 0.8rem; font-weight: 500; white-space: nowrap; }
-.desktop-nav a:hover { color: var(--green); background: #f2f3ff; border-radius: 0.5rem; }
-.button { display: inline-flex; align-items: center; justify-content: center; gap: 0.75rem; min-height: 44px; padding: 0.75rem 1.15rem; border: 0; border-radius: 0.5rem; font: inherit; font-size: 0.8rem; font-weight: 700; text-align: center; transition: background-color 150ms; }
-.primary { background: #047857; color: #fff; }
-.primary:hover { background: var(--green); color: #fff; }
-.soft { background: #eaedff; color: var(--green); }
-.soft:hover { background: #e2e7ff; }
-.white { background: white; color: var(--green); }
-.section-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
-.ochre { background: #855300; color: white; }
-.ochre:hover { background: #653e00; color: white; }
-.menu-toggle { display: none; min-height: 44px; padding: 0.5rem 0.8rem; border: 1px solid var(--line); border-radius: 0.5rem; color: var(--green); background: white; font: inherit; }
-.mobile-nav { display: grid; padding-block: 0.75rem; }
-.mobile-nav a { padding: 0.65rem; color: var(--green); }
-.announcement { padding-block: 0.55rem; background: #e2e7ff; font-size: 0.75rem; color: var(--muted); }
-.announcement .container { display: flex; justify-content: center; align-items: center; gap: 0.7rem; }
-.announcement span { background: #fea619; color: #4b3000; padding: 0.15rem 0.4rem; border-radius: 0.2rem; font-size: 0.6rem; font-weight: 800; text-transform: uppercase; }
-.hero { padding: 5.5rem 0 4rem; background: linear-gradient(115deg, #e1faf0 0%, #fff 35%, #fff 70%, #fff1e2 100%); }
-.hero-grid { display: grid; grid-template-columns: 1.2fr 1fr; align-items: center; gap: 3rem; }
-.eyebrow-tag { display: inline-block; background: #e2efea; color: var(--green); padding: 0.25rem 0.65rem; border-radius: 1rem; font-size: 0.65rem; font-weight: 600; }
-.hero h1 { margin-top: 1.25rem; font-size: clamp(2.3rem, 3.8vw, 3.5rem); letter-spacing: -0.045em; font-weight: 800; }
-.hero h1 span { color: var(--green); }
-.hero .hero-description { margin-top: 1.25rem; color: var(--muted); font-size: 1rem; line-height: 1.8; max-width: 37rem; }
-.hero-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.6rem; }
-.hero-notes { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 1.65rem; font-size: 0.7rem; color: var(--muted); }
-.hero-photo { position: relative; padding: 0.9rem; border-radius: 1rem; background: #eaedff; box-shadow: 0 10px 18px #131b2e1a; }
-.hero-photo > img { display: block; width: 100%; height: 370px; object-fit: cover; border-radius: 0.6rem; }
-.hero-photo figcaption { position: absolute; bottom: 1.6rem; left: 1.6rem; right: 1.6rem; display: flex; align-items: center; gap: 0.7rem; padding: 0.9rem; background: #fffffff2; border-radius: 0.6rem; }
-.hero-photo figcaption strong { display: block; font-size: 0.9rem; }
-.hero-photo figcaption small { display: block; font-size: 0.65rem; color: var(--muted); }
-.calendar-mark { padding: 0.45rem; color: var(--green); background: #e2efea; border-radius: 0.3rem; }
-.badge { display: inline-block; padding: 0.2rem 0.55rem; border-radius: 1rem; font-size: 0.65rem; font-weight: 600; }
-.green { background: #d7f6e7; color: #00513a; }
-.amber { background: #ffecd5; color: #653e00; }
-.teal { background: #d9f8f3; color: #005049; }
-.hero-photo .badge { margin-left: auto; flex-shrink: 0; }
-.metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.4rem; margin-top: 3.5rem; }
-.metrics article { display: flex; flex-direction: column; min-width: 0; min-height: 9rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: 0.875rem; background: #fff; box-shadow: 0 1px 2px #131b2e08; }
-.metrics p { color: var(--muted); font-size: 0.65rem; letter-spacing: 0.04em; text-transform: uppercase; }
-.metrics strong { display: block; margin-top: 1rem; font-size: 1.6rem; line-height: 1.3; letter-spacing: -0.03em; }
-.metrics .metric-date { font-size: 1.1rem; }
-.metrics span { display: block; color: var(--muted); font-size: 0.7rem; margin-top: 0.3rem; }
-.section { padding-block: 4rem; }
-.eyebrow { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--green); }
-.portal h2 { font-size: clamp(1.8rem, 3vw, 2.5rem); letter-spacing: -0.04em; margin: 0.4rem 0 1rem; }
-.portal h3 { font-size: 1rem; font-weight: 700; }
-.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; }
-.about p:not(.eyebrow) { color: var(--muted); font-size: 0.9rem; }
-.about .lead { margin-bottom: 1rem; font-size: 1rem; }
-.mission { margin-top: 1.3rem; padding: 1.5rem; border-radius: 0.65rem; background: #f2f3ff; }
-.mission p + p { margin-top: 0.5rem; font-style: italic; }
-.values { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
-.values article { padding: 1.1rem; border: 1px solid var(--line); border-radius: 0.65rem; background: white; }
-.values p { margin-top: 0.4rem; }
-.organization-list { display: grid; gap: 1rem; align-content: start; }
-.organization { padding: 1.5rem; border: 1px solid var(--line); border-radius: 0.875rem; background: white; box-shadow: 0 1px 2px #131b2e08; }
-.org-heading { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.9rem; }
-.org-icon { flex-shrink: 0; display: grid; place-items: center; width: 2.8rem; height: 2.8rem; border-radius: 0.65rem; font-weight: 800; font-size: 0.75rem; }
-.org-heading .badge { margin-left: auto; white-space: nowrap; }
-.org-heading h3 { margin-top: 0.25rem; font-size: 0.95rem; }
-.org-heading .eyebrow { font-size: 0.55rem; }
-.tinted { background: #f2f3ff; }
-.section-heading { display: flex; align-items: end; justify-content: space-between; gap: 2rem; margin-bottom: 2rem; }
-.section-heading p:not(.eyebrow) { max-width: 48rem; color: var(--muted); font-size: 0.95rem; }
-.section-heading .button { flex-shrink: 0; }
-.period-info { margin-bottom: 1.5rem; font-size: 0.85rem; color: var(--muted); }
-.period-info article { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem; margin-bottom: 0.75rem; background: white; border: 1px solid var(--line); border-radius: 0.65rem; }
-.load-error { display: flex; align-items: center; flex-wrap: wrap; gap: 1rem; }
-.category-grid, .rules-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; }
-.category-card { display: flex; flex-direction: column; min-width: 0; min-height: 18rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: 0.9rem; background: white; box-shadow: 0 1px 2px #131b2e08; }
-.card-kicker { font-size: 0.65rem; color: var(--green); margin-bottom: 1.3rem !important; }
-.category-title { display: flex; gap: 0.8rem; align-items: center; }
-.category-title .eyebrow { font-size: 0.6rem; color: var(--muted); }
-.category-title h3 { margin-top: 0.3rem; }
-.category-card > p:not(.card-kicker) { font-size: 0.8rem; color: var(--muted); margin: 1rem 0 1.5rem; flex: 1; }
-.category-card .button { justify-content: space-between; font-size: 0.75rem; }
-.rule-card { min-width: 0; padding: 1.5rem; border: 1px solid var(--line); border-radius: 0.875rem; background: white; box-shadow: 0 1px 2px #131b2e08; }
-.rule-number { display: grid; place-items: center; width: 2.4rem; height: 2.4rem; margin-bottom: 1rem; border-radius: 50%; color: var(--green); background: #e2efea; font-size: 0.8rem; }
-.rule-card p { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
-.rule-card.danger { background: #fcecef; }
-.danger h3 { color: #93000a; }
-.danger .rule-number { color: white; background: #ba1a1a; }
-.guide-heading { text-align: center; margin: 0 auto 2rem; max-width: 42rem; }
-.guide-heading > p:last-child { color: var(--muted); }
-.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem; }
-.steps article { display: flex; align-items: start; gap: 1rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: 0.875rem; background: white; }
-.steps strong { display: grid; place-items: center; flex-shrink: 0; width: 2.6rem; height: 2.6rem; background: var(--green); color: white; font-size: 1.25rem; border-radius: 0.5rem; }
-.steps p { color: var(--muted); font-size: 0.8rem; margin-top: 0.4rem; }
-.tutorials { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-.tutorial { min-width: 0; padding: 1.5rem; border: 1px solid var(--line); border-radius: 0.875rem; background: white; box-shadow: 0 1px 2px #131b2e08; }
-.tutorial > img { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 0.5rem; display: block; margin-bottom: 1.25rem; }
-.tutorial h3 { margin: 0.4rem 0 0.6rem; font-size: 1.15rem; }
-.tutorial > p:not(.eyebrow), .tutorial ol { font-size: 0.85rem; color: var(--muted); }
-.tutorial details { margin-top: 1rem; }
-.tutorial summary { cursor: pointer; color: var(--green); min-height: 44px; padding-block: 0.6rem; font-size: 0.85rem; font-weight: 600; }
-.tutorial ol { padding-left: 1.2rem; }
-.tutorial li + li { margin-top: 0.6rem; }
-.help-section { background: white; }
-.help-banner { display: grid; grid-template-columns: 1.8fr 1fr; gap: 3rem; align-items: center; padding: 3.5rem; border-radius: 1.3rem; color: white; background: linear-gradient(115deg, #005d42, #00665b); box-shadow: 0 5px 10px #131b2e15; }
-.help-banner .eyebrow-tag { background: #ffffff20; color: white; }
-.help-banner h2 { font-size: clamp(1.8rem, 2.6vw, 2.5rem); }
-.help-banner p:last-child { font-size: 0.95rem; color: #e3f2ec; }
+.portal :is(a, button, summary):focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+.portal section[id] { scroll-margin-top: 5.5rem; }
+.container { width: min(100% - 3rem, 1120px); margin-inline: auto; }
+.muted { color: var(--muted); }
+
+h1, h2, h3 { letter-spacing: -0.03em; }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 46px; padding: 0.7rem 1.25rem; border: 1px solid transparent; border-radius: 999px; font: inherit; font-size: 0.9rem; font-weight: 600; transition: background 140ms ease, color 140ms ease, border-color 140ms ease; }
+.portal .btn-solid { background: var(--green); color: #ffffff; font-weight: 700; }
+.portal .btn-solid:hover { background: var(--green-deep); color: #ffffff; }
+.portal .btn-line { background: transparent; color: var(--green-deep); border-color: var(--line); }
+.portal .btn-line:hover { border-color: var(--green); background: #fff; color: var(--green-deep); }
+.portal .btn-ghost { background: transparent; color: var(--green-deep); }
+.portal .btn-ghost:hover { text-decoration: underline; }
+.portal .btn-accent { background: var(--accent); color: #fff; }
+.portal .btn-accent:hover { background: #9a330a; color: #fff; }
+.portal .btn-on-dark { background: rgba(255,255,255,0.16); color: #fff; border-color: rgba(255,255,255,0.55); }
+.portal .btn-on-dark:hover { background: rgba(255,255,255,0.28); border-color: #fff; color: #fff; }
+
+/* Masthead */
+.masthead { position: sticky; top: 0; z-index: 30; background: rgba(251,252,251,0.9); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.head-inner { display: flex; align-items: center; gap: 1.5rem; min-height: 72px; }
+.brand { display: inline-flex; align-items: center; gap: 0.6rem; font-weight: 800; color: var(--green-deep); }
+.brand-mark { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 0.55rem; background: var(--green); color: #fff; flex-shrink: 0; }
+.brand-text { display: flex; flex-direction: column; font-size: 1.05rem; line-height: 1.1; }
+.brand-text small { font-size: 0.56rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-top: 0.2rem; }
+.desktop-nav { display: flex; gap: 0.3rem; margin-right: auto; margin-left: 1rem; }
+.desktop-nav a { padding: 0.55rem 0.75rem; border-radius: 999px; font-size: 0.85rem; font-weight: 500; color: var(--muted); }
+.desktop-nav a:hover { color: var(--green-deep); background: #eef3f0; }
+.menu-toggle { display: none; align-items: center; gap: 0.5rem; min-height: 44px; padding: 0.5rem 0.9rem; border: 1px solid var(--line); border-radius: 999px; background: #fff; font: inherit; font-weight: 600; color: var(--green-deep); }
+.menu-toggle span { width: 16px; height: 2px; background: currentColor; box-shadow: 0 5px 0 currentColor, 0 -5px 0 currentColor; }
+.mobile-nav { display: grid; gap: 0.15rem; padding-block: 0.75rem; }
+.mobile-nav a { padding: 0.7rem 0.5rem; border-radius: 0.5rem; font-weight: 600; color: var(--green-deep); }
+.mobile-nav a:hover { background: #eef3f0; }
+.mobile-cta { margin-top: 0.5rem; width: 100%; }
+.mobile-cta:hover { background: var(--green-deep); }
+
+/* Hero */
+.hero { position: relative; padding: clamp(3rem, 7vw, 5.5rem) 0 clamp(3rem, 6vw, 4.5rem); overflow: hidden; }
+.hero::before { content: ''; position: absolute; inset: 0; background:
+    radial-gradient(42rem 32rem at 85% -10%, #e8f3ee 0%, transparent 60%),
+    linear-gradient(var(--paper), var(--paper)); z-index: -1; }
+.hero-grid { display: grid; grid-template-columns: 1.25fr 0.85fr; align-items: center; gap: clamp(2rem, 5vw, 4rem); }
+.status-line { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; font-weight: 600; color: var(--green-deep); }
+.status-line .dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--muted); }
+.status-line .dot.live { background: var(--green); box-shadow: 0 0 0 4px #0b5c4322; }
+.hero h1 { margin-top: 1.1rem; font-size: clamp(2.4rem, 5.2vw, 4rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.045em; }
+.hero h1 em { font-style: normal; color: var(--green); }
+.hero-lead { margin-top: 1.35rem; max-width: 34rem; font-size: 1.05rem; color: var(--muted); }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.75rem; }
+.hero-facts { display: flex; flex-wrap: wrap; gap: 2.5rem; margin-top: 2.25rem; padding-top: 1.75rem; border-top: 1px solid var(--line); }
+.hero-facts dt { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+.hero-facts dd { margin-top: 0.3rem; font-size: 1.1rem; font-weight: 700; letter-spacing: -0.02em; }
+
+/* Ballot illustration */
+.ballot { display: flex; flex-direction: column; gap: 1.1rem; padding: 1.5rem; background: #fff; border: 1px solid var(--line); border-radius: 1rem; box-shadow: 0 24px 60px -32px #0b5c4355; transform: rotate(-1.4deg); }
+.ballot-head { display: flex; align-items: center; justify-content: space-between; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.12em; color: var(--green-deep); padding-bottom: 1rem; border-bottom: 2px solid var(--ink); }
+.ballot-seal { display: grid; place-items: center; width: 1.9rem; height: 1.9rem; border-radius: 50%; color: var(--green); background: #e8f3ee; }
+.ballot-options { display: grid; gap: 0.9rem; }
+.ballot-options li { display: flex; align-items: center; gap: 0.9rem; padding: 0.85rem; border: 1px solid var(--line); border-radius: 0.65rem; }
+.ballot-options li.is-marked { border-color: var(--green); background: #f1f8f4; }
+.ballot-options .box { display: grid; place-items: center; width: 1.6rem; height: 1.6rem; border: 2px solid var(--line); border-radius: 0.35rem; color: #fff; flex-shrink: 0; }
+.ballot-options li.is-marked .box { background: var(--green); border-color: var(--green); }
+.ballot-options .line { height: 0.55rem; border-radius: 999px; background: #eef1ef; }
+.ballot-options .line-1 { width: 70%; background: #cfe4d8; }
+.ballot-options .line-2 { width: 55%; }
+.ballot-options .line-3 { width: 62%; }
+.ballot-foot { display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--muted); padding-top: 1rem; border-top: 1px dashed var(--line); }
+
+/* Section scaffolding */
+.section { padding-block: clamp(3rem, 6vw, 4.5rem); }
+.band { background: #f3f7f4; border-block: 1px solid var(--line); }
+.kicker { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); }
+.kicker.light { color: #cde9df; }
+.section h2 { margin-top: 0.5rem; font-size: clamp(1.75rem, 3.4vw, 2.5rem); }
+.section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: start; }
+.section-lead > p { margin-top: 1rem; color: var(--muted); font-size: 1rem; max-width: 32rem; }
+.pillars { display: grid; gap: 1.25rem; margin-top: 2rem; }
+.pillars h3 { font-size: 1rem; }
+.pillars p { margin-top: 0.35rem; color: var(--muted); font-size: 0.9rem; }
+
+/* Organizations */
+.org-list { display: grid; gap: 1rem; }
+.org-list li { display: flex; gap: 1.1rem; padding: 1.4rem; background: #fff; border: 1px solid var(--line); border-radius: 0.9rem; }
+.org-mark { display: grid; place-items: center; width: 3rem; height: 3rem; flex-shrink: 0; border-radius: 0.7rem; background: var(--green); color: #fff; font-weight: 800; font-size: 0.78rem; letter-spacing: 0.02em; }
+.org-cat { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+.org-list h3 { margin: 0.3rem 0 0.4rem; font-size: 1.05rem; }
+.org-desc { color: var(--muted); font-size: 0.88rem; }
+
+/* Band head */
+.band-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap; }
+.band-head.center { justify-content: center; text-align: center; }
+.band-head .muted { margin-top: 0.75rem; max-width: 42rem; }
+.band-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+
+/* Schedule */
+.schedule { margin-bottom: 2.5rem; }
+.schedule-error { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
+.schedule-list { display: grid; gap: 0.75rem; }
+.schedule-list li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.1rem 1.25rem; background: #fff; border: 1px solid var(--line); border-radius: 0.75rem; }
+.sl-main { display: grid; gap: 0.2rem; }
+.sl-main strong { font-size: 1rem; }
+.sl-main span { font-size: 0.82rem; color: var(--muted); }
+.status-pill { padding: 0.3rem 0.75rem; border-radius: 999px; font-size: 0.72rem; font-weight: 700; color: #3a4a43; background: #eef1ef; border: 1px solid #d4ddd7; }
+.status-pill.open { color: #fff; background: var(--green); border-color: var(--green); }
+
+/* Contest grid */
+.contest-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.contest-card { display: flex; align-items: center; gap: 1rem; height: 100%; padding: 1.3rem; background: #fff; border: 1px solid var(--line); border-radius: 0.9rem; transition: border-color 140ms ease, transform 140ms ease; }
+.contest-card:hover { border-color: var(--green); transform: translateY(-2px); }
+.contest-mark { display: grid; place-items: center; width: 3rem; height: 3rem; flex-shrink: 0; border-radius: 0.7rem; background: #eef3f0; color: var(--green-deep); font-weight: 800; font-size: 0.8rem; }
+.contest-body { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.contest-body small { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.contest-body strong { font-size: 0.98rem; }
+.contest-go { color: var(--green); flex-shrink: 0; transition: transform 140ms ease; }
+.contest-card:hover .contest-go { transform: translateX(3px); }
+
+/* Rules */
+.rules { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.rules li { display: flex; gap: 1rem; padding: 1.4rem; background: #fff; border: 1px solid var(--line); border-radius: 0.9rem; }
+.rule-no { font-size: 1.1rem; font-weight: 800; color: var(--green); font-variant-numeric: tabular-nums; }
+.rules h3 { font-size: 1rem; }
+.rules p { margin-top: 0.4rem; color: var(--muted); font-size: 0.86rem; }
+.rules li.danger { border-color: #f3c9c0; background: #fdf3f1; }
+.rules li.danger .rule-no { color: var(--accent); }
+
+/* Steps */
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; counter-reset: step; }
+.steps li { position: relative; padding: 1.75rem 1.4rem 1.4rem; background: #fff; border: 1px solid var(--line); border-radius: 0.9rem; }
+.step-no { display: grid; place-items: center; width: 2.4rem; height: 2.4rem; border-radius: 0.6rem; background: var(--green); color: #fff; font-weight: 800; font-size: 1.1rem; margin-bottom: 1rem; }
+.steps h3 { font-size: 1.05rem; }
+.steps p { margin-top: 0.4rem; color: var(--muted); font-size: 0.88rem; }
+.guide-detail { max-width: 48rem; margin: 2rem auto 0; padding: 1.25rem 1.5rem; background: #fff; border: 1px solid var(--line); border-radius: 0.9rem; }
+.guide-detail summary { font-weight: 700; color: var(--green-deep); min-height: 44px; display: flex; align-items: center; }
+.guide-detail ol { list-style: decimal; padding-left: 1.25rem; margin-top: 0.75rem; display: grid; gap: 0.5rem; color: var(--muted); font-size: 0.9rem; }
+
+/* Help */
+.help { display: grid; grid-template-columns: 1.6fr 1fr; align-items: center; gap: 2.5rem; padding: clamp(2rem, 4vw, 3.25rem); border-radius: 1.25rem; color: #fff; background:
+    radial-gradient(30rem 20rem at 100% 0%, #0e6e50 0%, transparent 70%),
+    linear-gradient(135deg, var(--green-deep), var(--green)); }
+.help h2 { margin-top: 0.5rem; color: #fff; }
+.help p { margin-top: 0.9rem; color: #e4f1ea; font-size: 0.95rem; max-width: 36rem; }
 .help-actions { display: grid; gap: 0.75rem; }
-.gold { background: #fea619; color: #402800; }
-.gold:hover { background: #ffb95f; color: #402800; }
-.help-link { background: #ffffff18; color: white; }
-.help-link:hover { background: #ffffff28; color: white; }
-.portal-footer { padding-top: 2.5rem; }
-.footer-grid { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr; gap: 2rem; padding-bottom: 2.5rem; }
-.footer-grid h3 { font-size: 0.9rem; margin-bottom: 0.75rem; }
-.footer-grid p, .footer-grid a { color: var(--muted); font-size: 0.75rem; }
-.footer-grid a { display: block; padding-block: 0.6rem; }
-.footer-grid a:hover { text-decoration: underline; }
-.footer-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding-block: 1.2rem; border-top: 1px solid var(--line); font-size: 0.65rem; color: var(--muted); }
-@media (max-width: 1120px) {
+
+/* Footer */
+.portal-footer { border-top: 1px solid var(--line); padding-top: 2.75rem; }
+.footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 2rem; padding-bottom: 2.5rem; }
+.footer-brand { display: grid; gap: 0.9rem; align-content: start; }
+.footer-brand p { color: var(--muted); font-size: 0.82rem; }
+.footer-grid h3 { font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink); margin-bottom: 0.5rem; }
+.footer-grid nav a { display: block; padding-block: 0.5rem; color: var(--muted); font-size: 0.85rem; }
+.footer-grid nav a:hover { color: var(--green-deep); }
+.footer-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding-block: 1.25rem; border-top: 1px solid var(--line); font-size: 0.72rem; color: var(--muted); }
+
+@media (max-width: 980px) {
   .desktop-nav { display: none; }
-  .menu-toggle { display: block; }
-  .header-cta { margin-left: auto; }
-  .hero-grid { gap: 2rem; }
-  .org-heading { flex-wrap: wrap; }
-  .org-heading > div { flex: 1; }
-  .org-heading .badge { margin-left: 0; }
-  .hero-photo .badge { display: none; }
-}
-@media (max-width: 800px) {
-  .container { width: calc(100% - 3rem); }
-  .hero { padding-top: 3rem; }
-  .hero-grid, .about-grid { grid-template-columns: 1fr; }
-  .hero-copy { max-width: 40rem; }
-  .hero-photo { width: min(100%, 36rem); margin-inline: auto !important; }
-  .hero-photo > img { height: 350px; }
-  .metrics, .category-grid, .rules-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .steps { grid-template-columns: 1fr; gap: 0.75rem; }
-  .help-banner { grid-template-columns: 1fr; padding: 2rem; gap: 1.5rem; }
-  .help-actions { grid-template-columns: 1fr 1fr; }
+  .menu-toggle { display: inline-flex; margin-left: auto; }
+  .head-cta { display: none; }
+  .hero-grid, .section-grid, .help { grid-template-columns: 1fr; }
+  .ballot { max-width: 24rem; margin-inline: auto; order: -1; }
+  .contest-grid, .rules, .steps { grid-template-columns: repeat(2, 1fr); }
   .footer-grid { grid-template-columns: 1fr 1fr; }
 }
-@media (max-width: 520px) {
+@media (max-width: 560px) {
   .container { width: calc(100% - 2rem); }
-  .header-inner { min-height: 72px; gap: 0.75rem; }
-  .header-cta { display: none; }
-  .brand small { font-size: 0.52rem; }
-  .announcement .container { align-items: start; flex-direction: column; gap: 0.4rem; }
-  .hero h1 { font-size: 2.3rem; }
-  .hero-actions { display: grid; }
-  .hero-photo > img { height: 300px; }
-  .hero-photo figcaption { left: 1.3rem; right: 1.3rem; bottom: 1.3rem; padding: 0.6rem; }
-  .hero-photo figcaption strong { font-size: 0.8rem; }
-  .metrics { gap: 0.75rem; margin-top: 2rem; }
-  .metrics article { padding: 1rem; }
-  .metrics strong { font-size: 1.2rem; }
-  .metrics .metric-date { font-size: 1rem; }
-  .section { padding-block: 3rem; }
-  .section-heading { align-items: start; flex-direction: column; gap: 1rem; }
-  .section-actions { width: 100%; }
-  .section-actions .button { flex: 1; }
-  .category-grid, .rules-grid, .tutorials { grid-template-columns: 1fr; gap: 1rem; }
-  .category-card, .metrics article { min-height: 0; }
-  .help-banner { padding: 1.5rem; }
-  .help-actions { grid-template-columns: 1fr; }
-  .footer-grid { gap: 1.5rem; }
+  .hero-facts { gap: 1.5rem; }
+  .hero-actions .btn { flex: 1; }
+  .band-actions { width: 100%; }
+  .band-actions .btn { flex: 1; }
+  .contest-grid, .rules, .steps, .footer-grid { grid-template-columns: 1fr; }
+  .help-actions { grid-template-columns: 1fr 1fr; }
 }
 </style>
