@@ -21,7 +21,7 @@ export const voterLoginSchema = z.object({
 
 export const changePasswordSchema = z.object({
   currentPassword: z.string().min(1).max(256),
-  newPassword: z.string().min(12).max(256),
+  newPassword: z.string().min(8).max(256),
 })
 
 export const voteSchema = z.object({

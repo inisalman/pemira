@@ -34,8 +34,8 @@ export async function resetUserPassword(opts: {
 
   const generated = opts.newPassword ? undefined : generatePassword()
   const finalPassword = opts.newPassword ?? generated!
-  if (finalPassword.length < 12) {
-    apiError('VALIDATION_ERROR', 'Password minimal 12 karakter.')
+  if (finalPassword.length < 8) {
+    apiError('VALIDATION_ERROR', 'Password minimal 8 karakter.')
   }
 
   const passwordHash = await hashPassword(finalPassword)

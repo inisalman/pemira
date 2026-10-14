@@ -4,7 +4,7 @@ import { parseBody, sendApiError } from '#server/utils/errors'
 import { resetUserPassword } from '#server/services/identity/password-admin'
 
 const bodySchema = z.object({
-  newPassword: z.string().min(12).max(256).optional(),
+  newPassword: z.string().min(8).max(256).optional(),
   reason: z.string().min(3).max(500),
 })
 
