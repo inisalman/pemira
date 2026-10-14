@@ -17,6 +17,7 @@ const config = useRuntimeConfig()
           <a href="/#tentang-pemira">Tentang</a>
           <a href="/#jadwal-voting">Jadwal</a>
           <NuxtLink to="/quick-count">Quick count</NuxtLink>
+          <NuxtLink to="/riwayat">Riwayat</NuxtLink>
           <a href="/#tata-tertib">Tata tertib</a>
           <a href="/#panduan-voting">Panduan</a>
         </nav>
