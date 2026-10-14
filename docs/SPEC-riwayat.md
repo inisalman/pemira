@@ -97,8 +97,6 @@ Layout desktop-first, tetap responsif mobile:
 - Isi kartu: badge tahun ("2025"), nama periode + penyelenggara
   ("PEMIRA 2025 — BEM"), rentang tanggal voting, 3 angka kunci
   (total vote, pemilih unik, lama voting).
-- Chart batang partisipasi harian: SVG/CSS murni tanpa library, 8 batang,
-  label tanggal pendek (9–16 Feb), nilai di atas batang.
 - Blok "Hasil": kalau `results` masih null, tampil strip kecil
   "Data hasil belum diarsipkan." — bukan empty state besar.
 - Footer kartu: catatan metodologi 1 baris (font kecil, abu).
@@ -108,7 +106,7 @@ Layout desktop-first, tetap responsif mobile:
 
 1. Commit spec ini → review Salman.
 2. Implementasi script + JSON + halaman + nav link (1 commit kecil).
-3. Build, deploy, verifikasi: `/riwayat` 200, chart tampil, landing normal.
+3. Build, deploy, verifikasi: `/riwayat` 200, landing normal.
 4. Nanti kalau data paslon/hasil PEMIRA 2025 (atau periode lain) didapat,
    tinggal isi `results` + regenerate.
 
